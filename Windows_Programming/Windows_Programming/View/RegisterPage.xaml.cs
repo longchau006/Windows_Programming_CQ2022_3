@@ -24,77 +24,62 @@ namespace Windows_Programming.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginPage : Page
+    public sealed partial class RegisterPage : Page
     {
         private ApplicationDataContainer localSettings;
-        private string emailLocal = "";
-        private string passwordLocal = "";
-        private string emailDatabase = "";
-        private string passwordDatabase = "";
-        private MainWindow mainWindow;
-        public LoginPage()
+        private MainWindow mainWindow; 
+        public RegisterPage()
         {
-            System.Diagnostics.Debug.WriteLine("7");
             this.InitializeComponent();
-            System.Diagnostics.Debug.WriteLine("8");
             localSettings = ApplicationData.Current.LocalSettings;
-            System.Diagnostics.Debug.WriteLine("9");
-
+            
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("10");
             base.OnNavigatedTo(e);
             mainWindow = e.Parameter as MainWindow;
-            //Phai them cho nay vi naviagteTo chay sau ham constructor
-            PreProcess();
-            System.Diagnostics.Debug.WriteLine("11");
-        }
-        //Tien xu li load infor
-        void PreProcess()
-        {
+            System.Diagnostics.Debug.WriteLine("Khoi tao 2");
             if (mainWindow != null)
             {
-                mainWindow.Title = "Login";
-            }
-            ReadFromLocal();
-            //showDialog($"{usernameLocal} va {passwordLocal}");
-            //trc do da luu roi thì do thang mainWindow
-            if (emailLocal != "" && passwordLocal != "")
-            {
-                var screen = new HomeWindow();
-                screen.Activate();
-                // Dong MainWindow da dong lan dau roi
-                mainWindow.IsMainWindowClosed = true;
-                mainWindow.Close();
-                
-
-
+                mainWindow.Title = "Register";
             }
         }
-
-        private void LoginButtonClick(object sender, RoutedEventArgs e)
+        private void RegisterButtonClick(object sender, RoutedEventArgs e)
         {
-            string emailInput = EmailInputLogin_TextBox.Text;
-            string passwordInput = PasswordInputLogin_TextBox.Password;
+            string emailInput = EmailInputRegister_TextBox.Text;
+            string passwordInput = PasswordInputRegister_TextBox.Password;
+            string confirmPasswordInput = ConfirmPasswordInputRegister_TextBox.Password;
 
 
 
-            if (emailInput == "" || passwordInput == "")
+            if (emailInput == "" || passwordInput == "" || confirmPasswordInput == "")
             {
-                ShowDialog(emailInput == "" ? "Please enter email." : "Please enter password.");
+                ShowDialog(emailInput == "" ? "Please enter email." : (passwordInput == "" ? "Please enter password." : "Please enter confirm password."));
                 return;
             }
 
-            ReadFromDatabase();
-            if (emailInput != emailDatabase || passwordInput != passwordDatabase)
+            if (!CheckFormatEmail(emailInput))
             {
-                ShowDialog("Email or password is incorrect.");
+                ShowDialog("Invalid email format");
                 return;
             }
-            if (RememberMeLogin_CheckBox.IsChecked == true)
+            if (!CheckUsedEmail(emailInput))
             {
-
+                ShowDialog("Email has been used");
+                return;
+            }
+            if (!CheckFormatPassword(passwordInput))
+            {
+                ShowDialog("Password must contain at least 8 characters, including UPPER/lowercase and numbers");
+                return;
+            }
+            if (!CheckPasswordAndConfirmPassword(passwordInput, confirmPasswordInput))
+            {
+                ShowDialog("Password and Confirm Password are not the same");
+                return;
+            }
+            if (RememberMeRegister_CheckBox.IsChecked == true)
+            {
                 WriteToLocal(emailInput, passwordInput);
             }
             else
@@ -103,53 +88,22 @@ namespace Windows_Programming.View
                 DeleteFromLocal();
             }
 
+            WriteToDatabase(emailInput, passwordInput);
+
             var screen = new HomeWindow();
             screen.Activate();
             // Dong MainWindow
-            //if (mainWindow != null)
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Login bam vao mainwindow khong null");
-            //}
-            //else
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Login bam vao mainwindow null");
-            //}
+            
             mainWindow?.Close();
-
         }
 
-        private void ForgotPasswordClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void RegisterNowClick(object sender, RoutedEventArgs e)
+        private void LoginNowClick(object sender, RoutedEventArgs e)
         {
             // Navigate to RegisterPage
-            Frame.Navigate(typeof(RegisterPage),mainWindow);
+            Frame.Navigate(typeof(LoginPage),mainWindow);
             Frame.BackStack.Clear();
         }
-        //Read from database
-        void ReadFromDatabase()
-        {
-            emailDatabase = "admin";
-            passwordDatabase = "admin";
-        }
 
-        //doc, luu, xoa db o local
-        void ReadFromLocal()
-        {
-            if (localSettings.Values.ContainsKey("email") && localSettings.Values.ContainsKey("passwordInBase64"))
-            {
-                emailLocal = localSettings.Values["email"] as string;
-                passwordLocal = DecryptPassword(localSettings.Values["passwordInBase64"] as string);
-            }
-            else
-            {
-                emailLocal = "";
-                passwordLocal = "";
-            }
-        }
 
         void WriteToLocal(String emailInput, String passwordInput)
         {   //Neu co usernam roi, thi khong luu nua
@@ -174,12 +128,18 @@ namespace Windows_Programming.View
             }
         }
 
+        //Write to Database
+        void WriteToDatabase(string emailInput, string passwordInput)
+        {
+            //Write to database
+        }
+
         //Hien dialog
 
         private void ShowDialog(string message)
         {
-            NotificationLogin_TextBlock.Text = message;
-            NotificationLogin_TextBlock.Opacity = 1;
+            NotificationRegister_TextBlock.Text = message;
+            NotificationRegister_TextBlock.Opacity = 1;
 
 
             var timer = new DispatcherTimer
@@ -188,7 +148,7 @@ namespace Windows_Programming.View
             };
             timer.Tick += (s, e) =>
             {
-                NotificationLogin_TextBlock.Opacity = 0;
+                NotificationRegister_TextBlock.Opacity = 0;
                 timer.Stop(); // 
             };
             timer.Start(); //
@@ -234,6 +194,28 @@ namespace Windows_Programming.View
 
             return Encoding.UTF8.GetString(passwordInBytes);
         }
+        // May ham ho tro
+        private bool CheckFormatEmail(string email)
+        {
+            return true;
+        }
+
+        private bool CheckUsedEmail(string email)
+        {
+            return true;
+        }
+
+        private bool CheckFormatPassword(string password)
+        {
+            return true;
+        }
+
+        private bool CheckPasswordAndConfirmPassword(string password, string confirmPassword)
+        {
+            return true;
+        }
+
+
 
     }
 }

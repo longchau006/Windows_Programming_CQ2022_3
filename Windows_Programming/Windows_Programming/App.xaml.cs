@@ -58,10 +58,22 @@ namespace Windows_Programming
 
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            System.Diagnostics.Debug.WriteLine("1");
             MainWindow = new MainWindow();
-            MainWindow.Activate();
+            System.Diagnostics.Debug.WriteLine("2");
+            //Sau khi close ben preprocess ben login thi mainwindow mac du da bi dong nhung khong null
+            //nen k ktra theo kieu do dc, phai ktra theo bien IsMainWindowClosed
+            if (!MainWindow.IsMainWindowClosed)
+            {
+                MainWindow.Activate();
+            }
+            
+            System.Diagnostics.Debug.WriteLine("3");
         }
 
-        public Window MainWindow { get; private set; }
+        public MainWindow MainWindow { get; private set; }
+
+       
+        
     }
 }

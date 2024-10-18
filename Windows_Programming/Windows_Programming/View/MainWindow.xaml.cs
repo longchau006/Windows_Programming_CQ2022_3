@@ -25,8 +25,13 @@ namespace Windows_Programming.View
     {
         public MainWindow()
         {
+            System.Diagnostics.Debug.WriteLine("4");
             this.InitializeComponent();
-            MainFrame.Navigate(typeof(LoginPage));
+            System.Diagnostics.Debug.WriteLine("5");
+            MainFrame.Navigate(typeof(LoginPage),this);
+            System.Diagnostics.Debug.WriteLine("6");
         }
+        //Ham nay la de su dung ben trong loginpage cho preprocess
+        public bool IsMainWindowClosed { get; set; } = false;
     }
 }
