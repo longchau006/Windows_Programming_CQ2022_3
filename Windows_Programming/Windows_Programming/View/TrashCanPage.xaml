@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Windows_Programming.View.TrashCanPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Windows_Programming.View"
+    xmlns:myPath="using:Windows_Programming.Model"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <DataTemplate x:Key="VerticalFormat" x:DataType="myPath:Plan">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                <Image Source="{x:Bind PlanImage}" Width="50" Height="50" Margin="0, 0, 0, 10" />
+                <TextBlock Text="{x:Bind Name}" Foreground="Blue" FontWeight="Bold" />
+                <TextBlock Text="StartDate" Foreground="Black" />
+                <TextBlock Text="EndDate" Foreground="Black" />
+                <TextBlock Text="{x:Bind Description}" />
+                <TextBlock Text="{x:Bind StartLocation}" />
+                <TextBlock Text="{x:Bind EndLocation}" />
+                <Line X1="0" Y1="0" X2="1" Y2="0" Stroke="Gray" StrokeThickness="1" Margin="0, 10, 0, 10" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+    <StackPanel>
+        <ListView  Name="PlansInTrashCan_ListView" Width="500" Height="500" 
+                  ItemsSource="{x:Bind MyPlansTrashCanViewModel.PlansInTrashCan}"
+                  ItemTemplate="{StaticResource VerticalFormat}">
+        </ListView>
+    </StackPanel>
+</Page>

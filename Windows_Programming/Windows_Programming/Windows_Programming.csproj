@@ -20,6 +20,7 @@
     <None Remove="View\LoginPage.xaml" />
     <None Remove="View\MainWindow.xaml" />
     <None Remove="View\RegisterPage.xaml" />
+    <None Remove="View\TrashCanPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="View\TrashCanPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="View\RegisterPage.xaml">
