@@ -18,7 +18,7 @@ namespace Windows_Programming.Database
             new Plan
             {
                 Name = "Plan 1",
-                PlanImage = "Assets/plan01.jpg",
+                PlanImage = "/Assets/danang.jpg",
                 StartDate = new DateTime(2023, 1, 1),
                 EndDate = new DateTime(2023, 1, 10),
                 Description = "Description for Plan 1",
@@ -35,7 +35,7 @@ namespace Windows_Programming.Database
             new Plan
             {
                 Name = "Plan 2",
-                PlanImage = "Assets/plan02.jpg",
+                PlanImage = "/Assets/danang.jpg",
                 StartDate = new DateTime(2023, 2, 1),
                 EndDate = new DateTime(2023, 2, 10),
                 Description = "Description for Plan 2",
@@ -52,7 +52,7 @@ namespace Windows_Programming.Database
             new Plan
             {
                 Name = "Plan 3",
-                PlanImage = "Assets/plan03.jpg",
+                PlanImage = "/Assets/danang.jpg",
                 StartDate = new DateTime(2023, 3, 1),
                 EndDate = new DateTime(2023, 3, 10),
                 Description = "Description for Plan 3",
@@ -69,7 +69,7 @@ namespace Windows_Programming.Database
             new Plan
             {
                 Name = "Plan 4",
-                PlanImage = "Assets/plan04.jpg",
+                PlanImage = "/Assets/danang.jpg",
                 StartDate = new DateTime(2023, 4, 1),
                 EndDate = new DateTime(2023, 4, 10),
                 Description = "Description for Plan 4",
@@ -86,7 +86,7 @@ namespace Windows_Programming.Database
             new Plan
             {
                 Name = "Plan 5",
-                PlanImage = "Assets/plan05.jpg",
+                PlanImage = "/Assets/danang.jpg",
                 StartDate = new DateTime(2023, 5, 1),
                 EndDate = new DateTime(2023, 5, 10),
                 Description = "Description for Plan 5",

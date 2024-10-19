@@ -16,6 +16,9 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\danang.jpg" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="View\HomeWindow.xaml" />
     <None Remove="View\LoginPage.xaml" />
     <None Remove="View\MainWindow.xaml" />
@@ -47,6 +50,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\danang.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="View\TrashCanPage.xaml">
