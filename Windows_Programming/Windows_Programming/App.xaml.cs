@@ -43,6 +43,10 @@ namespace Windows_Programming
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
+            Frame rootFrame = new Frame();
+            rootFrame.Navigate(typeof(AccountPage), args.Arguments);
+            m_window.Content = rootFrame;
+            m_window.Title = "Quản lý tài khoản";
             m_window.Activate();
         }
 
