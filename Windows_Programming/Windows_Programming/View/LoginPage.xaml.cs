@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+ï»¿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Security.Cryptography;
 using Windows.Storage;
@@ -15,6 +15,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using System.Text;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,7 +32,7 @@ namespace Windows_Programming.View
         private string passwordLocal = "";
         private string emailDatabase = "";
         private string passwordDatabase = "";
-        private MainWindow mainWindow;
+        private LoginWindow loginWindow;
         public LoginPage()
         {
             System.Diagnostics.Debug.WriteLine("7");
@@ -45,7 +46,7 @@ namespace Windows_Programming.View
         {
             System.Diagnostics.Debug.WriteLine("10");
             base.OnNavigatedTo(e);
-            mainWindow = e.Parameter as MainWindow;
+            loginWindow = e.Parameter as LoginWindow;
             //Phai them cho nay vi naviagteTo chay sau ham constructor
             PreProcess();
             System.Diagnostics.Debug.WriteLine("11");
@@ -53,21 +54,21 @@ namespace Windows_Programming.View
         //Tien xu li load infor
         void PreProcess()
         {
-            if (mainWindow != null)
+            if (loginWindow != null)
             {
-                mainWindow.Title = "Login";
+                loginWindow.Title = "Login";
             }
             ReadFromLocal();
             //showDialog($"{usernameLocal} va {passwordLocal}");
-            //trc do da luu roi thì do thang mainWindow
+            //trc do da luu roi thï¿½ do thang loginWindow 
             if (emailLocal != "" && passwordLocal != "")
             {
-                var screen = new HomeWindow();
+                var screen = new MainWindow();
                 screen.Activate();
-                // Dong MainWindow da dong lan dau roi
-                mainWindow.IsMainWindowClosed = true;
-                mainWindow.Close();
-                
+                // Dong LoginWindow da dong lan dau roi
+                loginWindow.IsLoginWindowClosed = true;
+                loginWindow.Close();
+
 
 
             }
@@ -103,18 +104,10 @@ namespace Windows_Programming.View
                 DeleteFromLocal();
             }
 
-            var screen = new HomeWindow();
+            var screen = new MainWindow();
             screen.Activate();
-            // Dong MainWindow
-            //if (mainWindow != null)
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Login bam vao mainwindow khong null");
-            //}
-            //else
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Login bam vao mainwindow null");
-            //}
-            mainWindow?.Close();
+
+            loginWindow?.Close();
 
         }
 
@@ -126,7 +119,7 @@ namespace Windows_Programming.View
         private void RegisterNowClick(object sender, RoutedEventArgs e)
         {
             // Navigate to RegisterPage
-            Frame.Navigate(typeof(RegisterPage),mainWindow);
+            Frame.Navigate(typeof(RegisterPage), loginWindow);
             Frame.BackStack.Clear();
         }
         //Read from database

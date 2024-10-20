@@ -14,10 +14,12 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="View\AccountPage.xaml" />
     <None Remove="View\LoginPage.xaml" />
+    <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\MainWindow.xaml" />
     <None Remove="View\UserInformationPage.xaml" />
   </ItemGroup>
@@ -48,6 +50,11 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="View\UserInformationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -58,7 +65,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\MainWindow.xaml">
+    <Page Update="View\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -68,7 +75,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\MainWindow.xaml">
+    <Page Update="View\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
