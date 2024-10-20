@@ -27,21 +27,21 @@ namespace Windows_Programming.View
     public sealed partial class RegisterPage : Page
     {
         private ApplicationDataContainer localSettings;
-        private MainWindow mainWindow; 
+        private LoginWindow loginWindow;
         public RegisterPage()
         {
             this.InitializeComponent();
             localSettings = ApplicationData.Current.LocalSettings;
-            
+
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            mainWindow = e.Parameter as MainWindow;
+            loginWindow = e.Parameter as LoginWindow;
             System.Diagnostics.Debug.WriteLine("Khoi tao 2");
-            if (mainWindow != null)
+            if (loginWindow != null)
             {
-                mainWindow.Title = "Register";
+                loginWindow.Title = "Register";
             }
         }
         private void RegisterButtonClick(object sender, RoutedEventArgs e)
@@ -90,17 +90,17 @@ namespace Windows_Programming.View
 
             WriteToDatabase(emailInput, passwordInput);
 
-            var screen = new HomeWindow();
+            var screen = new MainWindow();
             screen.Activate();
-            // Dong MainWindow
-            
-            mainWindow?.Close();
+            // Dong loginWindow
+
+            loginWindow?.Close();
         }
 
         private void LoginNowClick(object sender, RoutedEventArgs e)
         {
             // Navigate to RegisterPage
-            Frame.Navigate(typeof(LoginPage),mainWindow);
+            Frame.Navigate(typeof(LoginPage), loginWindow);
             Frame.BackStack.Clear();
         }
 
@@ -214,8 +214,5 @@ namespace Windows_Programming.View
         {
             return true;
         }
-
-
-
     }
 }

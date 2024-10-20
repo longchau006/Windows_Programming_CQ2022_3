@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Windows_Programming.View.AccountDeletePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Windows_Programming.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
+        <TextBlock Text="Nhập mật khẩu để xác nhận xóa tài khoản:" FontSize="20" HorizontalAlignment="Center"/>
+        <TextBox x:Name="Password_TextBlock" Width="150"/>
+        <Button HorizontalAlignment="Center">Xác nhận xóa</Button>
+        <TextBlock Text="*Lưu ý: Một khi xác nhận xóa thì tài khoản của bạn sẽ biến mất vĩnh viễn trên hệ thống" Foreground="Red" TextWrapping="Wrap"/>
+    </StackPanel>
+    
+</Page>

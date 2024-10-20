@@ -1,4 +1,4 @@
- <Project Sdk="Microsoft.NET.Sdk">
+﻿ <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -14,16 +14,14 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="Assets\danang.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="View\HomeWindow.xaml" />
+    <None Remove="View\AccountPage.xaml" />
     <None Remove="View\LoginPage.xaml" />
+    <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\MainWindow.xaml" />
-    <None Remove="View\RegisterPage.xaml" />
-    <None Remove="View\TrashCanPage.xaml" />
+    <None Remove="View\UserInformationPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,22 +50,22 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Assets\danang.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\TrashCanPage.xaml">
+    <Page Update="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\RegisterPage.xaml">
+    <Page Update="View\UserInformationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\HomeWindow.xaml">
+    <Page Update="View\AccountPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="View\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -77,7 +75,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\MainWindow.xaml">
+    <Page Update="View\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
