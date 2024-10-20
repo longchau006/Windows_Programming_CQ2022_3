@@ -19,13 +19,19 @@ using Windows.Foundation.Collections;
 namespace Windows_Programming.View
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public sealed partial class TourListPage : Page
     {
-        public MainWindow()
+        public TourListPage()
         {
             this.InitializeComponent();
+        }
+
+        private void Tour_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var selectedTourId = (sender as StackPanel).Tag;
+            Frame.Navigate(typeof(TourPage), selectedTourId);
         }
     }
 }

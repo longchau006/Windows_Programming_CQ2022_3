@@ -9,6 +9,8 @@ namespace Windows_Programming.Database
 {
     public interface IDao
     {
-       List<Plan> GetAllPlanInTrashCan();
+        List<Account> GetAllAccount();
+        List<Blog> GetAllBlog();
+        List<Tour> GetAllTour();
     }
 }

@@ -19,11 +19,11 @@ using Windows.Foundation.Collections;
 namespace Windows_Programming.View
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HomeWindow : Window
+    public sealed partial class TourPage : Page
     {
-        public HomeWindow()
+        public TourPage()
         {
             this.InitializeComponent();
         }
