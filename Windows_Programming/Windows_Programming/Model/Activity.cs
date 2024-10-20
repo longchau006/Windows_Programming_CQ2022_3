@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace Windows_Programming.Model
 {
-    public class Tour
+    public class Activity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        public List<string> Places { get; set; }
         public string Description { get; set; }
-        public string Image { get; set; }
-        public int Price { get; set; }
-        public int Rating { get; set; }
     }
+    //Cac class con nhu datxe, datkhachsan,... se ke thua class nay
 }

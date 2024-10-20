@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Windows_Programming.Model
 {
-    public class Account
+    class AccountModel
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string Fullname { get; set; }
-        public string Address { get; set; }
+        string username { get; set; }
+        byte[] password { get; set; }
+        string email { get; set; }
+        string fullname { get; set; }
+        string address { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

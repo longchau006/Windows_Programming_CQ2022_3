@@ -25,7 +25,12 @@ namespace Windows_Programming.View
     {
         public MainWindow()
         {
+            System.Diagnostics.Debug.WriteLine("4");
             this.InitializeComponent();
+            System.Diagnostics.Debug.WriteLine("5");
+            MainFrame.Navigate(typeof(TrashCanPage),this);
+            System.Diagnostics.Debug.WriteLine("6");
         }
+
     }
 }

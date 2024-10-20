@@ -66,7 +66,7 @@ namespace Windows_Programming
             m_window.Activate();
         }
 
-        public MainWindow m_window;
+        public MainWindow MainWindow { get; private set; }
 
        
         

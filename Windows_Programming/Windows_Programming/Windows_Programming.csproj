@@ -16,14 +16,9 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="View\AccountDeletePage.xaml" />
     <None Remove="View\AccountPage.xaml" />
-    <None Remove="View\BlogListPage.xaml" />
-    <None Remove="View\BlogPage.xaml" />
+    <None Remove="View\LoginPage.xaml" />
     <None Remove="View\MainWindow.xaml" />
-    <None Remove="View\PasswordChangePage.xaml" />
-    <None Remove="View\TourListPage.xaml" />
-    <None Remove="View\TourPage.xaml" />
     <None Remove="View\UserInformationPage.xaml" />
   </ItemGroup>
 
@@ -53,36 +48,6 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="View\TourPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\TourListPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\BlogListPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\BlogPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\AccountDeletePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\PasswordChangePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="View\UserInformationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -94,6 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="View\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
