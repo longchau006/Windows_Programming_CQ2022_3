@@ -27,5 +27,9 @@ namespace Windows_Programming.View
         {
             this.InitializeComponent();
         }
+        private void Window_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            content.Navigate(typeof(HomePage));
+        }
     }
 }
