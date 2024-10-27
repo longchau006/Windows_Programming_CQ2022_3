@@ -21,12 +21,14 @@ namespace Windows_Programming.View
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public sealed partial class AccountWindow : Window
     {
-        public MainWindow()
+        public AccountWindow()
         {
             this.InitializeComponent();
-            MainFrame.Navigate(typeof(BlogListPage), this);
+            Frame frame = new Frame();
+            this.Content = frame;
+            frame.Navigate(typeof(AccountPage), this);
         }
     }
 }

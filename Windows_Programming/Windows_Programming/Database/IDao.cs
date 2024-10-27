@@ -15,5 +15,7 @@ namespace Windows_Programming.Database
         List<Account> GetAllAccount();
         List<Blog> GetAllBlog();
         List<Tour> GetAllTour();
+        List<Blog> GetLastestBlog();
+        Blog GetBlogById(int id);
     }
 }

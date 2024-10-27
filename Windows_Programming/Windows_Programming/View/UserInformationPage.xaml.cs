@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Windows_Programming.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,9 +24,104 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class UserInformationPage : Page
     {
+        public AccountViewModel accountViewModel = new AccountViewModel();
+        
         public UserInformationPage()
         {
             this.InitializeComponent();
+            accountViewModel.getInformation();
+            Username_TextBox.Text = accountViewModel.User.Username;
+            Fullname_TextBox.Text = accountViewModel.User.Fullname;
+            Email_TextBox.Text = accountViewModel.User.Email;
+            Address_TextBox.Text = accountViewModel.User.Address;
+        }
+
+        private void ModifyUsernameClick(object sender, RoutedEventArgs e)
+        {
+            SaveUsername_Button.Visibility = Visibility.Visible;
+            CancelUsername_Button.Visibility = Visibility.Visible;
+            ModifyUsername_Button.Visibility = Visibility.Collapsed;
+            Username_TextBox.IsEnabled = true;
+        }
+
+        private void ModifyFullnameClick(object sender, RoutedEventArgs e)
+        {
+            SaveFullname_Button.Visibility = Visibility.Visible;
+            CancelFullname_Button.Visibility = Visibility.Visible;
+            ModifyFullname_Button.Visibility = Visibility.Collapsed;
+            Fullname_TextBox.IsEnabled = true;
+        }
+
+        private void ModifyEmailClick(object sender, RoutedEventArgs e)
+        {
+            SaveEmail_Button.Visibility = Visibility.Visible;
+            CancelEmail_Button.Visibility = Visibility.Visible;
+            ModifyEmail_Button.Visibility = Visibility.Collapsed;
+            Email_TextBox.IsEnabled = true;
+        }
+
+        private void ModifyAddressClick(object sender, RoutedEventArgs e)
+        {
+            SaveAddress_Button.Visibility = Visibility.Visible;
+            CancelAddress_Button.Visibility = Visibility.Visible;
+            ModifyAddress_Button.Visibility = Visibility.Collapsed;
+            Address_TextBox.IsEnabled = true;
+        }
+
+        private void SaveUsernameClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CancelUsernameClick(object sender, RoutedEventArgs e)
+        {
+            Username_TextBox.Text = accountViewModel.User.Username;
+            SaveUsername_Button.Visibility = Visibility.Collapsed;
+            CancelUsername_Button.Visibility = Visibility.Collapsed;
+            ModifyUsername_Button.Visibility = Visibility.Visible;
+            Username_TextBox.IsEnabled = false;
+        }
+
+        private void SaveFullnameClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CancelFullnameClick(object sender, RoutedEventArgs e)
+        {
+            Fullname_TextBox.Text = accountViewModel.User.Fullname;
+            SaveFullname_Button.Visibility = Visibility.Collapsed;
+            CancelFullname_Button.Visibility = Visibility.Collapsed;
+            ModifyFullname_Button.Visibility = Visibility.Visible;
+            Fullname_TextBox.IsEnabled = false;
+        }
+
+        private void SaveEmailClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CancelEmailClick(object sender, RoutedEventArgs e)
+        {
+            Email_TextBox.Text = accountViewModel.User.Email;
+            SaveEmail_Button.Visibility = Visibility.Collapsed;
+            CancelEmail_Button.Visibility = Visibility.Collapsed;
+            ModifyEmail_Button.Visibility = Visibility.Visible;
+            Email_TextBox.IsEnabled = false;
+        }
+
+        private void SaveAddressClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CancelAddressClick(object sender, RoutedEventArgs e)
+        {
+            Address_TextBox.Text = accountViewModel.User.Address;
+            SaveAddress_Button.Visibility = Visibility.Collapsed;
+            CancelAddress_Button.Visibility = Visibility.Collapsed;
+            ModifyAddress_Button.Visibility = Visibility.Visible;
+            Address_TextBox.IsEnabled = false;
         }
     }
 }
