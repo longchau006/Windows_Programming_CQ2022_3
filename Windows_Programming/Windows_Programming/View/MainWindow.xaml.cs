@@ -51,10 +51,10 @@ namespace Windows_Programming.View
                             pageType = typeof(TrashCanPage);
                             break;
                         case "TourPage":
-                            pageType = typeof(TourPage);
+                            pageType = typeof(TourListPage);
                             break;
                         case "BlogPage":
-                            pageType = typeof(BlogPage);
+                            pageType = typeof(BlogListPage);
                             break;
                         case "AccountPage":
                             pageType = typeof(AccountPage);

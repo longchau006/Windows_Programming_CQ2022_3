@@ -12,6 +12,7 @@ namespace Windows_Programming.Model
         public string Name { get; set; }
         public List<string> Places { get; set; }
         public string Description { get; set; }
+        public string Schedule { get; set; }
         public string Image { get; set; }
         public int Price { get; set; }
         public int Rating { get; set; }

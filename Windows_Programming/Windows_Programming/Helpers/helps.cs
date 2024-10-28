@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Windows_Programming.Model
+namespace Windows_Programming.Helpers
 {
-    internal class activityModel
+    internal class helps
     {
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +26,19 @@ namespace Windows_Programming.View
         public AccountDeletePage()
         {
             this.InitializeComponent();
+        }
+
+        private async void DeleteAccountClick(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Xóa tài khoản",
+                Content = "Xóa tài khoản thành công!",
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
+            await dialog.ShowAsync();
+            
         }
     }
 }
