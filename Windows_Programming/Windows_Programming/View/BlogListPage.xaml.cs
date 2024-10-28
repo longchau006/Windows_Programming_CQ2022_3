@@ -52,6 +52,7 @@ namespace Windows_Programming.View
             {
                 // Navigate to BlogDetailPage with the selected blog's ID
                 Frame.Navigate(typeof(BlogPage), blog.Id);
+                
             }
         }
     }

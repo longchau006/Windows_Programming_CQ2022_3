@@ -17,5 +17,6 @@ namespace Windows_Programming.Database
         List<Tour> GetAllTour();
         List<Blog> GetLastestBlog();
         Blog GetBlogById(int id);
+        Tour GetTourById(int id);
     }
 }

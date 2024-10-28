@@ -29,6 +29,7 @@ namespace Windows_Programming.View
         public BlogPage()
         {
             this.InitializeComponent();
+       
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

@@ -26,7 +26,7 @@ namespace Windows_Programming.View
         public MainWindow()
         {
             this.InitializeComponent();
-            MainFrame.Navigate(typeof(BlogListPage), this);
+            MainFrame.Navigate(typeof(TourListPage), this);
         }
     }
 }

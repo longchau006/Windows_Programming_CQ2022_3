@@ -49,14 +49,14 @@
                             <DataTemplate x:DataType="local1:Blog">
                                 <Grid Margin="0,12,0,12" AutomationProperties.Name="{Binding Title}" Tapped="OnBlogTapped">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" MinWidth="150"/>
+                                        <ColumnDefinition Width="150"/>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Image Source="{Binding Image}" MaxHeight="100" Stretch="Fill"/>
 
                                     <StackPanel Margin="12,0,0,0" Grid.Column="1" >
                                         <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20"/>
-                                        <TextBlock Text="{Binding Content}" FontFamily="Segoe UI" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"/>
+                                        <TextBlock Text="{Binding Content}" FontFamily="Segoe UI" HorizontalAlignment="Left" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="19k" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"/>
                                             <TextBlock Text=" Views " HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}"/>
