@@ -1,3 +1,0 @@
-API_KEY= 
-File Private.json
-Lien he Sa
