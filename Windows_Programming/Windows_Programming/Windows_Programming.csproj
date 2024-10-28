@@ -18,9 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="View\AccountPage.xaml" />
-    <None Remove="View\AccountWindow.xaml" />
     <None Remove="View\BlogListPage.xaml" />
-    <None Remove="View\BlogWindow.xaml" />
     <None Remove="View\LoginPage.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\MainWindow.xaml" />
@@ -54,16 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="View\BlogListPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\BlogWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="View\AccountWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
