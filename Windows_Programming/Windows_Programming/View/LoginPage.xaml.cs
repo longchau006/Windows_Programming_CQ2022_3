@@ -2,20 +2,11 @@
 using Microsoft.UI.Xaml.Controls;
 using System.Security.Cryptography;
 using Windows.Storage;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using System.Text;
-using Windows.UI.Core;
+using Windows_Programming.Database;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,6 +18,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class LoginPage : Page
     {
+        private FirebaseServicesDAO firebaseServices;
+
         private ApplicationDataContainer localSettings;
         private string emailLocal = "";
         private string passwordLocal = "";
@@ -40,6 +33,9 @@ namespace Windows_Programming.View
             System.Diagnostics.Debug.WriteLine("8");
             localSettings = ApplicationData.Current.LocalSettings;
             System.Diagnostics.Debug.WriteLine("9");
+
+            //Get FirebaseService instance
+            firebaseServices = FirebaseServicesDAO.Instance;
 
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -74,7 +70,7 @@ namespace Windows_Programming.View
             }
         }
 
-        private void LoginButtonClick(object sender, RoutedEventArgs e)
+        private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             string emailInput = EmailInputLogin_TextBox.Text;
             string passwordInput = PasswordInputLogin_TextBox.Password;
@@ -87,12 +83,12 @@ namespace Windows_Programming.View
                 return;
             }
 
-            ReadFromDatabase();
-            if (emailInput != emailDatabase || passwordInput != passwordDatabase)
-            {
-                ShowDialog("Email or password is incorrect.");
-                return;
-            }
+            await ReadFromDatabase(emailInput,passwordInput);
+            //if (emailInput != emailDatabase || passwordInput != passwordDatabase)
+            //{
+            //    ShowDialog("Email or password is incorrect.");
+            //    return;
+            //}
             if (RememberMeLogin_CheckBox.IsChecked == true)
             {
 
@@ -123,10 +119,29 @@ namespace Windows_Programming.View
             Frame.BackStack.Clear();
         }
         //Read from database
-        void ReadFromDatabase()
+        async Task ReadFromDatabase(string emailInput,string passwordInput)
         {
-            emailDatabase = "admin";
-            passwordDatabase = "admin";
+            try
+            {
+                var userCredential = await firebaseServices.SignInWithEmailAndPasswordInFireBase(emailInput,passwordInput);
+                if (userCredential != null)
+                {
+                    // Get user info
+                    var user = userCredential.User;
+                    var email = user.Info.Email;
+                    var uid = user.Uid;
+                }
+                else
+                {
+                    ShowDialog("Email or password is incorrect.");
+                }
+            }
+            catch (Exception ex) { 
+            
+            }
+
+
+
         }
 
         //doc, luu, xoa db o local
