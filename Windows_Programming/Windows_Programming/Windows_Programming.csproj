@@ -26,6 +26,7 @@
     <None Remove="View\AccountPage.xaml" />
     <None Remove="View\AddTripPage.xaml" />
     <None Remove="View\HomePage.xaml" />
+    <None Remove="View\BlogListPage.xaml" />
     <None Remove="View\LoginPage.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\MainWindow.xaml" />
@@ -75,6 +76,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="View\BlogListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -103,6 +109,9 @@
     <Page Update="View\LoginWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Tour\" />
   </ItemGroup>
 
   <!--

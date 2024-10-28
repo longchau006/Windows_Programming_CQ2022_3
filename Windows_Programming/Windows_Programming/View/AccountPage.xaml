@@ -12,16 +12,16 @@
     <NavigationView x:Name="nvAccount"
                             Header="Quản lý tài khoản"
                             PaneDisplayMode="Left"
-                            SelectionChanged="NavigationView_SelectionChanged9"
                             IsSettingsVisible="False"
                             IsBackEnabled="True"
+                            SelectionChanged="Account_SelectionChanged" BackRequested="Account_BackRequested"
                     >
         <NavigationView.MenuItems>
             <NavigationViewItem Content="Thông tin tài khoản" Tag="UserInformationPage" Icon="ContactInfo" />
             <NavigationViewItem Content="Đổi mật khẩu" Tag="ChangePasswordPage" Icon="Admin" />
             <NavigationViewItem Content="Xóa tài khoản" Tag="DeleteAccountPage" Icon="Delete" />
         </NavigationView.MenuItems>
-        <Frame x:Name="contentFrame9" />
+        <Frame x:Name="AccountFrame" />
     </NavigationView>
 
 </Page>

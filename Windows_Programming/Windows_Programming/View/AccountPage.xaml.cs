@@ -26,10 +26,31 @@ namespace Windows_Programming.View
         public AccountPage()
         {
             this.InitializeComponent();
+        }
+
+        private void Account_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            switch (args.SelectedItemContainer.Tag)
+            {
+                case "UserInformationPage":
+                    AccountFrame.Navigate(typeof(UserInformationPage));
+                    break;
+                case "ChangePasswordPage":
+                    AccountFrame.Navigate(typeof(PasswordChangePage));
+                    break;
+                case "DeleteAccountPage":
+                    AccountFrame.Navigate(typeof(AccountDeletePage));
+                    break;
+            }
             
         }
 
-        private void NavigationView_SelectionChanged9(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private void nvAccount_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+
+        }
+
+        private void Account_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
 
         }

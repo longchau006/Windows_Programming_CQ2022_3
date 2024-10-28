@@ -9,7 +9,34 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Button>ok</Button>
-    </Grid>
+    <StackPanel Spacing="20" Padding="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <TextBlock Text="Tên đăng nhập:" FontSize="20" FontWeight="Bold"/>
+            <TextBox x:Name="Username_TextBox" IsEnabled="False" Text="admin" Foreground="Red" Background="Azure"/>
+            <Button x:Name="ModifyUsername_Button" Click="ModifyUsernameClick">Sửa</Button>
+            <Button x:Name="SaveUsername_Button" Visibility="Collapsed" Click="SaveUsernameClick" >Lưu</Button>
+            <Button x:Name="CancelUsername_Button" Visibility="Collapsed" Click="CancelUsernameClick">Hủy</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <TextBlock Text="Tên người dùng:" FontSize="20" FontWeight="Bold"/>
+            <TextBox x:Name="Fullname_TextBox" IsEnabled="False" Text="admin đẹp trai" Foreground="Red" Background="Azure"/>
+            <Button x:Name="ModifyFullname_Button" Click="ModifyFullnameClick">Sửa</Button>
+            <Button x:Name="SaveFullname_Button" Visibility="Collapsed" Click="SaveFullnameClick">Lưu</Button>
+            <Button x:Name="CancelFullname_Button" Visibility="Collapsed" Click="CancelFullnameClick">Hủy</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <TextBlock Text="Email:" FontSize="20" FontWeight="Bold" />
+            <TextBox x:Name="Email_TextBox" IsEnabled="False" Text="admin@gmail.com" Foreground="Red" Background="Azure"/>
+            <Button x:Name="ModifyEmail_Button" Click="ModifyEmailClick">Sửa</Button>
+            <Button x:Name="SaveEmail_Button" Visibility="Collapsed" Click="SaveEmailClick">Lưu</Button>
+            <Button x:Name="CancelEmail_Button" Visibility="Collapsed" Click="CancelEmailClick">Hủy</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <TextBlock Text="Địa chỉ:" FontSize="20" FontWeight="Bold"/>
+            <TextBox x:Name="Address_TextBox" IsEnabled="False" Text="227 Nguyễn Văn Cừ, Hồ Chí Minh" Foreground="Red" Background="Azure"/>
+            <Button x:Name="ModifyAddress_Button" Click="ModifyAddressClick">Sửa</Button>
+            <Button x:Name="SaveAddress_Button" Visibility="Collapsed" Click="SaveAddressClick">Lưu</Button>
+            <Button x:Name="CancelAddress_Button" Visibility="Collapsed" Click="CancelAddressClick">Hủy</Button>
+        </StackPanel>
+    </StackPanel>
 </Page>
