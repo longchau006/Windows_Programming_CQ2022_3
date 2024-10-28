@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -26,7 +26,57 @@ namespace Windows_Programming.View
         public MainWindow()
         {
             this.InitializeComponent();
-            MainFrame.Navigate(typeof(TourListPage), this);
         }
+
+        private void HomeNagigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            var selectedItem = args.SelectedItem as NavigationViewItem;
+            if (selectedItem != null)
+            {
+                if (selectedItem == SignOut)
+                {
+                    Home_Nagigation.SelectedItem = null;
+                }
+                else
+                {
+                    string selectedTag = selectedItem.Tag.ToString();
+                    Type pageType = null;
+
+                    switch (selectedTag)
+                    {
+                        case "HomePage":
+                            pageType = typeof(HomePage);
+                            break;
+                        case "TrashCanPage":
+                            pageType = typeof(TrashCanPage);
+                            break;
+                        case "TourPage":
+                            pageType = typeof(TourListPage);
+                            break;
+                        case "BlogPage":
+                            pageType = typeof(BlogListPage);
+                            break;
+                        case "AccountPage":
+                            pageType = typeof(AccountPage);
+                            break;
+                    }
+                    if (pageType != null)
+                    {
+                        // Điều hướng sang trang mới
+                        contentNavigation.Navigate(pageType);
+                    }
+                }
+            }
+
+        }
+        private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            // Kiểm tra nếu có thể quay lại trang trước đó
+            if (contentNavigation.CanGoBack)
+            {
+                contentNavigation.GoBack();
+            }
+        }
+        
     }
 }

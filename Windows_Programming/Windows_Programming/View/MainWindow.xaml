@@ -8,5 +8,21 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Frame x:Name="MainFrame"/>
+    <NavigationView x:Name="Home_Nagigation" PaneDisplayMode="Left" IsSettingsVisible="False" IsBackEnabled="True" SelectionChanged="HomeNagigationSelectionChanged" BackRequested="OnBackRequested" CompactPaneLength="50" OpenPaneLength="150">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Home" Tag="HomePage" Icon="Home"/>
+            <NavigationViewItem Content="Tour" Tag="TourPage" Icon="Calendar"/>
+            <NavigationViewItem Content="Blog" Tag="BlogPage" Icon="Message" />
+            <NavigationViewItem Content="Delete" Tag="TrashCanPage" Icon="Delete" />
+            <NavigationViewItem Content="Account" Tag="AccountPage" Icon="ContactInfo" />
+            <NavigationViewItemSeparator />
+            <NavigationViewItemSeparator />
+
+            <NavigationViewItem x:Name="SignOut" Content="Sign out"  Icon="BlockContact" />
+        </NavigationView.MenuItems>
+
+        <Frame Name="contentNavigation"/>
+
+    </NavigationView>
+
 </Window>

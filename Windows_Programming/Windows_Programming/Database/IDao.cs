@@ -11,6 +11,7 @@ namespace Windows_Programming.Database
 {
     public interface IDao
     {
+        List<Plan> GetAllPlanInHome();
         List<Plan> GetAllPlanInTrashCan();
         List<Account> GetAllAccount();
         List<Blog> GetAllBlog();

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Windows_Programming.View.PlanTripPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Windows_Programming.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Back to Trips -->
+        <StackPanel Grid.Row="0" Padding="20">
+            <Button x:Name="BackToTrip_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationBackToTripClick">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Undo" Foreground="Blue"/>
+                    <TextBlock Text="Back to Trip" Margin="10,0,0,0" Foreground="Blue"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <!-- Main Content -->
+        <StackPanel Grid.Row="1" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Spacing="10" Padding="10">
+                    <TextBlock x:Name="NameTripAlone_TextBlock" Text="{x:Bind PlanTripViewModel.Name}"  FontSize="30" FontWeight="Bold"/>
+                    <TextBlock x:Name="LocationTripAlone_TextBlock" FontSize="18" >
+                         <Run Text="{x:Bind PlanTripViewModel.StartLocation}" />
+                         <Run Text=" - " />
+                         <Run Text="{x:Bind PlanTripViewModel.EndLocation}" />  
+                    </TextBlock>
+                    <TextBlock x:Name="DateTripAlone_TextBlock" FontSize="18" >
+                         <Run Text="{x:Bind PlanTripViewModel.StartDate}" />
+                         <Run Text=" - " />
+                         <Run Text="{x:Bind PlanTripViewModel.EndDate}" />  
+                    </TextBlock>
+
+                    <Button x:Name="ManageSharingAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Link" />
+                            <TextBlock Text="Manage Sharing" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <Button x:Name="EditTripInfoAlone_Button" BorderBrush ="White" Foreground="Blue">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Edit" />
+                                <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="MoreOptionsAlone_Button" BorderBrush ="White" Foreground="Blue">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="More" />
+                                <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                            </StackPanel>
+                            <Button.Flyout >
+                                <MenuFlyout Placement="Bottom">
+                                    <MenuFlyoutItem x:Name="PrintTripAlone_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
+                                    <MenuFlyoutItem x:Name="MergeTripAlone_MenuFlyoutItem" Text="Merge Trip" Foreground="Blue"/>
+                                    <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue"/>
+                                    <MenuFlyoutItem x:Name="ExportTripToCalendarAlone_MenuFlyoutItem" Text="Export Trip to Calendar" Foreground="Blue"/>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <Image x:Name="TripAlone_Image" Source ="{x:Bind PlanTripViewModel.PlanImage}" Grid.Column="1" Width="200" Height="200" Stretch="UniformToFill" Margin="20" />
+
+            </Grid>
+        </StackPanel>
+        <!-- Add a Plan Button -->
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center">
+            <Button x:Name="AddAPlan_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Add" Foreground="Blue"/>
+                    <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+
+
+</Page>
