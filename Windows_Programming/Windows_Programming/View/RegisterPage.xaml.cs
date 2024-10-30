@@ -8,6 +8,7 @@ using System.Text;
 using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Firebase.Auth;
+using Windows_Programming.Model;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -140,6 +141,24 @@ namespace Windows_Programming.View
                 var user = userCredential.User;
                 var email = user.Info.Email;
                 var uid = user.Uid;
+
+                // Create user in Firestore
+                int numberCurrentAccounts=await firebaseServices.GetAccountsCount();
+
+                //Add user to firestore
+                var newAccount = new Account 
+                {
+                    Id = numberCurrentAccounts,
+                    Username = email,
+                    Email = email,
+                    Fullname = email,
+                    Address = ""
+                };
+                await firebaseServices.CreateAccountInFirestore(newAccount);
+                
+                var getAccount = await firebaseServices.GetAccountByID(newAccount.Id);
+
+                getAccount.PrintAccountInfo();
 
                 // Show success message
                 System.Diagnostics.Debug.WriteLine("Create ok");

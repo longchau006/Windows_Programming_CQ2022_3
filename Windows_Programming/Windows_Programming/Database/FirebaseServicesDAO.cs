@@ -10,6 +10,7 @@ using System.IO;
 using Google.Cloud.Storage.V1;
 using Windows_Programming.Model;
 using Windows_Programming.Configs;
+using Windows_Programming.Helpers;
 
 
 
@@ -56,7 +57,7 @@ namespace Windows_Programming.Database
             return FirestoreDb.Create("tripplandatabase-8fbf9");
         }
 
-        //Function
+        //Function of Authentication
         public async Task<FirebaseUserCredential> SignInWithEmailAndPasswordInFireBase(string email, string password)
         {
             return await authClient.SignInWithEmailAndPasswordAsync(email, password);
@@ -66,6 +67,42 @@ namespace Windows_Programming.Database
         {
             return await authClient.CreateUserWithEmailAndPasswordAsync(email, password);
         }
+
+        //FirestoreDB
+
+        public async Task<int> GetAccountsCount()
+        {
+            var accountsRef = firestoreDb.Collection("accounts");
+            var snapshot = await accountsRef.GetSnapshotAsync();
+
+            return snapshot.Documents.Count;
+        }
+
+
+
+        public async Task CreateAccountInFirestore(Account account){
+            var accountsRef = firestoreDb.Collection("accounts");
+            var docRef = accountsRef.Document(account.Id.ToString());
+            //Convert to Dictionary
+            var accountJson=Helps.ToFirestoreDocument(account);
+
+            await docRef.SetAsync(accountJson);
+        }
+
+        public async Task<Account> GetAccountByID(int id)
+        {
+            var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
+            var snapshot = await docRef.GetSnapshotAsync();
+            
+            if (snapshot.Exists)
+            {
+                var accountData = snapshot.ToDictionary();
+                return Helps.FromFirestoreDocument(accountData);
+            }
+            
+            return null;
+        }
+
 
 
 
