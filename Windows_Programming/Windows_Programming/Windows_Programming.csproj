@@ -17,15 +17,10 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Helpers\**" />
-    <EmbeddedResource Remove="Helpers\**" />
-    <None Remove="Helpers\**" />
-    <Page Remove="Helpers\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="View\AccountPage.xaml" />
     <None Remove="View\AddTripPage.xaml" />
     <None Remove="View\HomePage.xaml" />
+    <None Remove="View\BlogListPage.xaml" />
     <None Remove="View\LoginPage.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\MainWindow.xaml" />
@@ -44,6 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
+    <PackageReference Include="FirebaseAuthentication.WinUI3" Version="4.1.0" />
+    <PackageReference Include="Google.Cloud.Firestore" Version="3.9.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
@@ -71,6 +70,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="View\HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="View\BlogListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -104,6 +108,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Tour\" />
+  </ItemGroup>
 
   <!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
@@ -114,6 +121,14 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
   <ItemGroup>
-    <PRIResource Remove="Helpers\**" />
+    <Content Remove="C:\Users\phanv\.nuget\packages\firebaseauthentication.winui3\4.1.0\contentFiles\any\net6.0-windows10.0.19041\anonymous.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Configs\EnvVariableSample.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configs\Private.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

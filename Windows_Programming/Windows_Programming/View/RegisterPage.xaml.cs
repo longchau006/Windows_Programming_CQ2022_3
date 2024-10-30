@@ -2,19 +2,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Security.Cryptography;
 using Windows.Storage;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using System.Text;
+using Windows_Programming.Database;
+using System.Threading.Tasks;
+using Firebase.Auth;
+using Windows_Programming.Model;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,13 +19,18 @@ namespace Windows_Programming.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class RegisterPage : Page
-    {
+    {   
+        private FirebaseServicesDAO firebaseServices;
+
         private ApplicationDataContainer localSettings;
         private LoginWindow loginWindow;
         public RegisterPage()
         {
             this.InitializeComponent();
             localSettings = ApplicationData.Current.LocalSettings;
+
+            //Get FirebaseService instance
+            firebaseServices = FirebaseServicesDAO.Instance;
 
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -44,7 +43,7 @@ namespace Windows_Programming.View
                 loginWindow.Title = "Register";
             }
         }
-        private void RegisterButtonClick(object sender, RoutedEventArgs e)
+        private async void RegisterButtonClick(object sender, RoutedEventArgs e)
         {
             string emailInput = EmailInputRegister_TextBox.Text;
             string passwordInput = PasswordInputRegister_TextBox.Password;
@@ -88,7 +87,7 @@ namespace Windows_Programming.View
                 DeleteFromLocal();
             }
 
-            WriteToDatabase(emailInput, passwordInput);
+            await WriteToDatabase(emailInput, passwordInput);
 
             var screen = new MainWindow();
             screen.Activate();
@@ -129,10 +128,48 @@ namespace Windows_Programming.View
         }
 
         //Write to Database
-        void WriteToDatabase(string emailInput, string passwordInput)
+        async Task WriteToDatabase(string emailInput, string passwordInput)
         {
-            //Write to database
+            try
+            {
+                var userCredential = await firebaseServices.CreateAccountInFireBase(
+                    emailInput,
+                    passwordInput
+                );
+
+                // Get user info
+                var user = userCredential.User;
+                var email = user.Info.Email;
+                var uid = user.Uid;
+
+                // Create user in Firestore
+                int numberCurrentAccounts=await firebaseServices.GetAccountsCount();
+
+                //Add user to firestore
+                var newAccount = new Account 
+                {
+                    Id = numberCurrentAccounts,
+                    Username = email,
+                    Email = email,
+                    Fullname = email,
+                    Address = ""
+                };
+                await firebaseServices.CreateAccountInFirestore(newAccount);
+                
+                var getAccount = await firebaseServices.GetAccountByID(newAccount.Id);
+
+                getAccount.PrintAccountInfo();
+
+                // Show success message
+                System.Diagnostics.Debug.WriteLine("Create ok");
+            }
+            catch (FirebaseAuthException ex)
+            {
+                // Show error message
+                System.Diagnostics.Debug.WriteLine("Create sai");
+            }
         }
+
 
         //Hien dialog
 

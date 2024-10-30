@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +26,18 @@ namespace Windows_Programming.View
         public PasswordChangePage()
         {
             this.InitializeComponent();
+        }
+
+        private async void ChangePasswordClick(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Đổi mật khẩu",
+                Content = "Đổi mật khẩu thành công!",
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
+            await dialog.ShowAsync();
         }
     }
 }

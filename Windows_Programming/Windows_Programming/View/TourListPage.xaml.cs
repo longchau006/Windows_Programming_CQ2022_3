@@ -12,6 +12,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows_Programming.Model;
+using Windows_Programming.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,12 +28,19 @@ namespace Windows_Programming.View
         public TourListPage()
         {
             this.InitializeComponent();
+
+            var viewModel = new TourViewModel();
+            viewModel.ViewAllTour();
+            TourListView.DataContext = viewModel;
         }
 
-        private void Tour_Tapped(object sender, TappedRoutedEventArgs e)
+        private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
         {
-            var selectedTourId = (sender as StackPanel).Tag;
-            Frame.Navigate(typeof(TourPage), selectedTourId);
+            if (sender is FrameworkElement element && element.DataContext is Tour tour)
+            {
+                Frame.Navigate(typeof(TourPage), tour.Id);
+
+            }
         }
     }
 }
