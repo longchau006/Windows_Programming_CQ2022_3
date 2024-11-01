@@ -41,7 +41,7 @@
                 Margin="0,0,0,20" 
                 FontSize="14"/>
 
-        <Button Content="Login" 
+        <Button x:Name="Login_Button" Content="Login" 
               Click="LoginButtonClick" 
               HorizontalAlignment="Center"
               Background="blue" 
@@ -59,10 +59,26 @@
 
         <TextBlock x:Name="NotificationLogin_TextBlock"
              Opacity="0"
+             Visibility="Collapsed"
              Foreground="Red" 
              FontSize="16" 
              HorizontalAlignment="Center" 
              VerticalAlignment="Top" 
              Margin="0,40,0,0" />
+        <Grid x:Name="LoadingOverlay" 
+          Visibility="Collapsed"
+          Background="#80000000">
+            <StackPanel VerticalAlignment="Center" 
+                    HorizontalAlignment="Center">
+                <ProgressRing x:Name="Loading_ProgressRing"
+                         Width="50" 
+                         Height="50"
+                         IsActive="False"
+                         Foreground="White"/>
+                <TextBlock Text="Logging in..." 
+                     Foreground="White" 
+                     Margin="0,10,0,0"/>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </Page>

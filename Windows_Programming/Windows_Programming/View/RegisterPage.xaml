@@ -63,6 +63,7 @@
         <TextBlock x:Name="NotificationRegister_TextBlock"
              Opacity="0"
              Foreground="Red" 
+             Visibility="Collapsed"
              FontSize="16" 
              HorizontalAlignment="Center" 
              VerticalAlignment="Top" 
