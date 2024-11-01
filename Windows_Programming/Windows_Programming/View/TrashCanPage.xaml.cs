@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -24,13 +25,29 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class TrashCanPage : Page
     {
-        public PlansInTrashCanViewModel MyPlansTrashCanViewModel { get; set; }
-
+        public PlansInTrashCanViewModel MyPlansTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
+        public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public TrashCanPage()
         {
             this.InitializeComponent();
-            MyPlansTrashCanViewModel = new PlansInTrashCanViewModel();
-            MyPlansTrashCanViewModel.Init();
+        }
+        private void OnNavigationRestoreClick(object sender, RoutedEventArgs e)
+        {
+            var selectedPlan = (sender as Button).DataContext as Plan;
+            if (selectedPlan != null)
+            {
+                selectedPlan.DeletedDate = null;
+                MyPlansHomeViewModel.AddPlanInHome(selectedPlan);
+                MyPlansTrashCanViewModel.RemovePlanInTrashCan(selectedPlan);
+            }
+        }
+        private void OnNavigationDeleteClick(object sender, RoutedEventArgs e)
+        {
+            var selectedPlan = (sender as Button).DataContext as Plan;
+            if (selectedPlan != null)
+            {
+                MyPlansTrashCanViewModel.RemovePlanInTrashCan(selectedPlan);
+            }
         }
     }
 }
