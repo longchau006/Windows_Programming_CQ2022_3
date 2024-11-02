@@ -21,42 +21,37 @@
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <StackPanel Spacing="5">
                         <TextBlock Text="Mới nhất" FontSize="20" Foreground="DarkRed" FontWeight="ExtraBlack" FontStretch="ExtraCondensed" Margin="10,0,0,0"/>
-                        <FlipView Width="400" Height="400" HorizontalAlignment="Left">
-                                <StackPanel Tag="FlipView_Tag1">
-                                    <Image x:Name="FlipView_Image1" Width="400" Height="300" Stretch="Uniform"/>
-                                    <TextBlock x:Name="FlipView_TextBlock1" Padding="10" TextWrapping="Wrap" FontSize="20" FontWeight="Bold"/>
-                                </StackPanel>
-
-                                <StackPanel Tag="FlipView_Tag2">
-                                    <Image x:Name="FlipView_Image2" Width="400" Height="300" Stretch="Uniform"/>
-                                    <TextBlock x:Name="FlipView_TextBlock2" Padding="10" TextWrapping="Wrap" FontSize="20" FontWeight="Bold"/>
-                                </StackPanel>
-
-                            <StackPanel Tag="FlipView_Tag3">
-                                <Image x:Name="FlipView_Image3" Width="400" Height="300" Stretch="Uniform"/>
-                                <TextBlock x:Name="FlipView_TextBlock3" Padding="10" TextWrapping="Wrap" FontSize="20" FontWeight="Bold"/>
-                            </StackPanel>
+                        <FlipView x:Name="BlogFlipView" ItemsSource="{Binding lastestBlog}" Width="400" Height="400" HorizontalAlignment="Left">
+                            <FlipView.ItemTemplate>
+                                <DataTemplate x:DataType="local1:Blog">
+                                    <StackPanel Tapped="FlipView_Tag">
+                                        <Image Source="{Binding Image, Mode=TwoWay}" Width="400" Height="300" Stretch="Uniform"/>
+                                        <TextBlock Text="{Binding Title, Mode=TwoWay}" Padding="10" TextWrapping="Wrap" FontSize="20" FontWeight="Bold" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </FlipView.ItemTemplate>
                         </FlipView>
+                        <HyperlinkButton Content="Chia sẻ trải nghiệm của bạn" FontSize="20" FontWeight="SemiBold" Click="HyperlinkButton_Click"/>
                     </StackPanel>
 
                     <ListView x:Name="BlogListView"
-                     Height="400"
-                     MinWidth="550"
-                     BorderThickness="1"
-                     BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}"
-                     ItemsSource="{Binding blogInBlogList}">
+                         Height="500"
+                         MaxWidth="650"
+                         BorderThickness="1"
+                         BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}"
+                         ItemsSource="{Binding blogInBlogList}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local1:Blog">
-                                <Grid Margin="0,12,0,12" AutomationProperties.Name="{Binding Title}" Tapped="OnBlogTapped">
+                                <Grid Margin="0,12,0,12" AutomationProperties.Name="{Binding Title, Mode=TwoWay}" Tapped="OnBlogTapped">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="150"/>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Image Source="{Binding Image}" MaxHeight="100" Stretch="Fill"/>
+                                    <Image Source="{Binding Image, Mode=TwoWay}" MaxHeight="100" Stretch="Fill"/>
 
                                     <StackPanel Margin="12,0,0,0" Grid.Column="1" >
-                                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20"/>
-                                        <TextBlock Text="{Binding Content}" FontFamily="Segoe UI" HorizontalAlignment="Left" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"/>
+                                        <TextBlock Text="{Binding Title, Mode=TwoWay}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20"/>
+                                        <TextBlock Text="{Binding Content, Mode=TwoWay}" FontFamily="Segoe UI" HorizontalAlignment="Left" FontWeight="Normal" Style="{ThemeResource BodyTextBlockStyle}" TextTrimming="CharacterEllipsis" Width="350" MaxLines="1"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="19k" HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,0,0,0"/>
                                             <TextBlock Text=" Views " HorizontalAlignment="Left" Style="{ThemeResource CaptionTextBlockStyle}"/>

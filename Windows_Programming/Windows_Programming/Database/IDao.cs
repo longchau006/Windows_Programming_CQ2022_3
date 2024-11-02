@@ -19,5 +19,6 @@ namespace Windows_Programming.Database
         List<Blog> GetLastestBlog();
         Blog GetBlogById(int id);
         Tour GetTourById(int id);
+        void addBlog(Blog blog);
     }
 }

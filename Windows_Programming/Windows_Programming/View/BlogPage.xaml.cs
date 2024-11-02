@@ -29,7 +29,7 @@ namespace Windows_Programming.View
         public BlogPage()
         {
             this.InitializeComponent();
-       
+
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -48,6 +48,9 @@ namespace Windows_Programming.View
                 BlogImage.Source = new BitmapImage(new Uri(blog.Image));
                 BlogTitle.Text = blog.Title;
                 BlogContent.Text = blog.Content;
+                BlogAuthor.Text = blog.Author;
+                BlogPublishDate.Text = blog.PublishDate.ToString();
+
             }
         }
     }
