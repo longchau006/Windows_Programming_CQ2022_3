@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows_Programming.Model;
+using Windows_Programming.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,6 +26,8 @@ namespace Windows_Programming.View
     public sealed partial class PlanTripPage : Page
     {
         public Plan PlanTripViewModel { get; set; }
+        public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
+        public PlansInTrashCanViewModel MyPlansInTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
         public PlanTripPage()
         {
             this.InitializeComponent();
@@ -33,19 +36,36 @@ namespace Windows_Programming.View
         {
             base.OnNavigatedTo(e);
 
-            // Nh?n ??i t??ng Plan t? HomePage
             PlanTripViewModel = e.Parameter as Plan;
 
-            // Ki?m tra n?u ??i t??ng ???c truy?n h?p l?
             if (PlanTripViewModel != null)
             {
-                // Binding ??i t??ng Plan vào giao di?n
                 this.DataContext = PlanTripViewModel;
             }
         }
-        private void OnNavigationBackToTripClick(object sender, RoutedEventArgs e)
+        private void OnNavigationDeleteTripClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(HomePage));
+            if (PlanTripViewModel != null)
+            {
+                // Gọi phương thức xóa kế hoạch từ PlansInHomeViewModel
+                PlanTripViewModel.DeletedDate = DateTime.Now;
+                MyPlansInTrashCanViewModel.AddPlanInTrashCan(PlanTripViewModel);
+                MyPlansHomeViewModel.RemovePlanInHome(PlanTripViewModel);
+
+                // Chuyển hướng về trang Home sau khi xóa 
+                Frame.Navigate(typeof(HomePage));
+            }
+        }
+        private void OnNavigationEditTripInfoForTripClick(object sender, RoutedEventArgs e)
+        {
+            if (PlanTripViewModel != null)
+            {
+                Frame.Navigate(typeof(EditTripPage), PlanTripViewModel);
+            }
+        }
+        private void OnNavigationAddActivitiesForTripClick(object sender, RoutedEventArgs e)
+        {
+                Frame.Navigate(typeof(AddActivitiesTripPage), PlanTripViewModel);
         }
     }
 }

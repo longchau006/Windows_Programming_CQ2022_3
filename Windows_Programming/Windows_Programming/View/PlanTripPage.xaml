@@ -15,15 +15,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!-- Back to Trips -->
-        <StackPanel Grid.Row="0" Padding="20">
-            <Button x:Name="BackToTrip_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationBackToTripClick">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Undo" Foreground="Blue"/>
-                    <TextBlock Text="Back to Trip" Margin="10,0,0,0" Foreground="Blue"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
         <!-- Main Content -->
         <StackPanel Grid.Row="1" Padding="20">
             <Grid>
@@ -53,7 +44,7 @@
                     </Button>
 
                     <StackPanel Orientation="Horizontal" Spacing="20">
-                        <Button x:Name="EditTripInfoAlone_Button" BorderBrush ="White" Foreground="Blue">
+                        <Button x:Name="EditTripInfoAlone_Button" BorderBrush ="White" Foreground="Blue" Click="OnNavigationEditTripInfoForTripClick">
                             <StackPanel Orientation="Horizontal">
                                 <SymbolIcon Symbol="Edit" />
                                 <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
@@ -68,7 +59,7 @@
                                 <MenuFlyout Placement="Bottom">
                                     <MenuFlyoutItem x:Name="PrintTripAlone_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
                                     <MenuFlyoutItem x:Name="MergeTripAlone_MenuFlyoutItem" Text="Merge Trip" Foreground="Blue"/>
-                                    <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue"/>
+                                    <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" Click="OnNavigationDeleteTripClick"/>
                                     <MenuFlyoutItem x:Name="ExportTripToCalendarAlone_MenuFlyoutItem" Text="Export Trip to Calendar" Foreground="Blue"/>
                                 </MenuFlyout>
                             </Button.Flyout>
@@ -82,10 +73,10 @@
         </StackPanel>
         <!-- Add a Plan Button -->
         <StackPanel Grid.Row="2" HorizontalAlignment="Center">
-            <Button x:Name="AddAPlan_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White">
+            <Button x:Name="AddAPlan_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White" Click="OnNavigationAddActivitiesForTripClick">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Add" Foreground="Blue"/>
-                    <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
+                    <TextBlock Text="Add a Activities" Margin="10,0,0,0" Foreground="Blue"/>
                 </StackPanel>
             </Button>
         </StackPanel>

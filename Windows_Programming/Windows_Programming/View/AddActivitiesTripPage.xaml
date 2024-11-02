@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Windows_Programming.View.AddActivitiesTripPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Windows_Programming.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="50"/>
+        </Style>
+
+        <Style x:Key="SelectedButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+            <Setter Property="BorderBrush" Value="Blue"/>
+        </Style>
+    </Page.Resources>
+        
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row = "0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+            <!-- Discover Button -->
+            <Button x:Name="Discover_Button" Width="100" Height="100"  Style="{StaticResource ButtonStyle}" Click="OnNavigationButtonClick">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">
+                    <SymbolIcon Symbol="Map"  Foreground= "#32C8D4"/>
+                    <TextBlock Text="Discover" FontSize="14" Foreground="Blue" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <!-- Vehicle Button -->
+            <Button x:Name="Vehicle_Button" Width="100" Height="100" Style="{StaticResource ButtonStyle}" Margin ="30,0,30,0" Click="OnNavigationButtonClick">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">
+                    <SymbolIcon Symbol="Street" Foreground= "#32C8D4"/>
+                    <TextBlock Text="Vehicle" FontSize="14" Foreground="Blue" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <!-- Lodging Button -->
+            <Button x:Name="Lodging_Button" Width="100" Height="100" Style="{StaticResource ButtonStyle}" Click="OnNavigationButtonClick">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">
+                    <SymbolIcon Symbol="Home" Foreground= "#32C8D4"/>
+                    <TextBlock Text="Lodging" FontSize="14" Foreground="Blue" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        
+        <!-- Discover Panel -->
+        <StackPanel x:Name="Discover_Panel" Grid.Row="1" Orientation="Vertical" >
+            <TextBlock Text="Discover" FontSize="24" FontWeight="Bold" />
+            
+            <TextBlock Text="Event Name" Grid.ColumnSpan="2" />
+            <TextBox x:Name ="NameDiscover_TextBox" PlaceholderText="Enter Event Name" BorderBrush="Black" BorderThickness="1" />
+
+            <TextBlock Text="Description" Grid.ColumnSpan="2" />
+            <TextBox x:Name ="DescriptionDiscover_TextBox" PlaceholderText="Enter Description" BorderBrush="Black" BorderThickness="1" />
+
+            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0" HorizontalAlignment="Center">
+                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
+                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
+            </StackPanel>
+        </StackPanel>
+        <!-- Vehicle Panel-->
+        <StackPanel x:Name="Vehicle_Panel" Grid.Row="1" Orientation="Vertical" >
+            <TextBlock Text="Vehicle" FontSize="24" FontWeight="Bold" />
+
+            <TextBlock Text="Event Name" Grid.ColumnSpan="2" />
+            <TextBox x:Name ="NameVehicle_TextBox" PlaceholderText="Enter Event Name" BorderBrush="Black" BorderThickness="1" />
+
+            <TextBlock Text="Description" Grid.ColumnSpan="2" />
+            <TextBox x:Name ="DescriptionVehicle_TextBox" PlaceholderText="Enter Description" BorderBrush="Black" BorderThickness="1" />
+
+            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0" HorizontalAlignment="Center">
+                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
+                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
+            </StackPanel>
+        </StackPanel>
+        <!-- Lodging Panel -->
+        <StackPanel x:Name="Lodging_Panel" Grid.Row="1" Orientation="Vertical" >
+            <TextBlock Text="Lodging" FontSize="24" FontWeight="Bold" />
+
+            <TextBlock Text="Event Name" Grid.ColumnSpan="2" />
+            <TextBox x:Name ="NameLodging_TextBox" PlaceholderText="Enter Event Name" BorderBrush="Black" BorderThickness="1" />
+
+            <TextBlock Text="Description" Grid.ColumnSpan="2" />
+            <TextBox x:Name ="DescriptionLodging_TextBox" PlaceholderText="Enter Description" BorderBrush="Black" BorderThickness="1" />
+
+            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0" HorizontalAlignment="Center">
+                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
+                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

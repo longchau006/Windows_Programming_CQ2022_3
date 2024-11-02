@@ -25,7 +25,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class HomePage : Page
     {
-        public PlansInHomeViewModel MyPlansHomeViewModel { get; set; }
+        public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
+        public PlansInTrashCanViewModel MyPlansInTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
         public HomePage()
         {
             this.InitializeComponent();
@@ -33,8 +34,6 @@ namespace Windows_Programming.View
             Schedule_Panel.Visibility = Visibility.Collapsed;
             NoSchedule_Panel.Visibility = Visibility.Visible;
 
-            MyPlansHomeViewModel = new PlansInHomeViewModel();
-            MyPlansHomeViewModel.Init();
             if (MyPlansHomeViewModel != null)
             {
                 Schedule_Panel.Visibility = Visibility.Visible;
@@ -50,7 +49,7 @@ namespace Windows_Programming.View
             Button clickedButton = sender as Button;
             clickedButton.Style = (Style)Resources["SelectedButtonStyle"];
 
-            // Ki?m tra nút nào ?ã ???c nh?n và thay ??i n?i dung TextBlock t??ng ?ng
+            // Kiểm tra nút nào đã được nhấn và thay đổi nội dung TextBlock tuong ung
             if (clickedButton == UpcomingTrips_Button)
             {
                 NoSchedule_TextBlock.Text = "No Upcoming Trips";
@@ -100,6 +99,25 @@ namespace Windows_Programming.View
                 Frame.Navigate(typeof(PlanTripPage), selectedPlan);
             }
 
+        }
+        private void OnNavigationEditTripInfoForTripClick(object sender, RoutedEventArgs e)
+        {
+            var selectedPlan = (sender as Button).DataContext as Plan;
+            if (selectedPlan != null)
+            {
+                Frame.Navigate(typeof(EditTripPage), selectedPlan);
+            }
+        }
+        private void OnNavigationDeleteTripClick(object sender, RoutedEventArgs e)
+        {
+            var selectedPlan = (sender as MenuFlyoutItem).CommandParameter as Plan;
+            if (selectedPlan != null)
+            {
+                // Gọi phương thức xóa kế hoạch từ PlansInHomeViewModel
+                selectedPlan.DeletedDate = DateTime.Now;
+                MyPlansInTrashCanViewModel.AddPlanInTrashCan(selectedPlan);
+                MyPlansHomeViewModel.RemovePlanInHome(selectedPlan);
+            }
         }
     }
 }

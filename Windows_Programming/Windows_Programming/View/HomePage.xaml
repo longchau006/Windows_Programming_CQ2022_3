@@ -69,7 +69,7 @@
                          </Button>
 
                         <StackPanel Orientation="Horizontal" Spacing="20">
-                            <Button x:Name="EditTripInfo_Button" BorderBrush ="White" Foreground="Blue">
+                            <Button x:Name="EditTripInfo_Button" BorderBrush ="White" Foreground="Blue" DataContext="{x:Bind}" Click="OnNavigationEditTripInfoForTripClick">
                                 <StackPanel Orientation="Horizontal">
                                     <SymbolIcon Symbol="Edit" />
                                     <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
@@ -84,7 +84,7 @@
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutItem x:Name="PrintTrip_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
                                         <MenuFlyoutItem x:Name="MergeTrip_MenuFlyoutItem" Text="Merge Trip" Foreground="Blue"/>
-                                        <MenuFlyoutItem x:Name="DeleteTrip_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue"/>
+                                        <MenuFlyoutItem x:Name="DeleteTrip_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteTripClick"/>
                                         <MenuFlyoutItem x:Name="ExportTripToCalendar_MenuFlyoutItem" Text="Export Trip to Calendar" Foreground="Blue"/>
                                      </MenuFlyout>
                                 </Button.Flyout>
@@ -98,6 +98,7 @@
         </DataTemplate>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -127,7 +128,7 @@
                         <Button x:Name="AddATrip_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationAddButtonClick">
                             <StackPanel Orientation="Horizontal">
                                 <SymbolIcon Symbol="Add" Foreground="Blue"/>
-                                <TextBlock Text="Add a Trip" Margin="10,0,0,0" Foreground="Blue"/>
+                                <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
                             </StackPanel>
                         </Button>
 
@@ -162,8 +163,8 @@
                 <!-- SchedulePanel -->
                 <StackPanel x:Name="Schedule_Panel" Grid.Row="1">
                     <ListView  Name="PlansInHome_ListView" Width="800" Height="600" 
-          ItemsSource="{x:Bind MyPlansHomeViewModel.PlansInHome}"
-          ItemTemplate="{StaticResource VerticalFormat}">
+                              ItemsSource="{x:Bind MyPlansHomeViewModel.PlansInHome, Mode=OneWay}"
+                              ItemTemplate="{StaticResource VerticalFormat}">   
                     </ListView>
                 </StackPanel>
                 <!-- NoSchedulePanel -->
