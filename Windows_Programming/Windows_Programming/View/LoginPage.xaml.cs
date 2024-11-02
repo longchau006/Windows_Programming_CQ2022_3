@@ -151,6 +151,7 @@ namespace Windows_Programming.View
             catch (Exception ex)
             {
                 ShowDialog($"{ex.Message}");
+                loadingDialog.Hide();
             }
             finally
             {
