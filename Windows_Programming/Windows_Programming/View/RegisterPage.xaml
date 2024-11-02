@@ -65,6 +65,8 @@
              Foreground="Red" 
              Visibility="Collapsed"
              FontSize="16" 
+             Width="300"
+             TextWrapping="Wrap"
              HorizontalAlignment="Center" 
              VerticalAlignment="Top" 
              Margin="0,40,0,0" />

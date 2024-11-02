@@ -62,23 +62,11 @@
              Visibility="Collapsed"
              Foreground="Red" 
              FontSize="16" 
+             Width="300"
+             TextWrapping="Wrap"
              HorizontalAlignment="Center" 
              VerticalAlignment="Top" 
              Margin="0,40,0,0" />
-        <Grid x:Name="LoadingOverlay" 
-          Visibility="Collapsed"
-          Background="#80000000">
-            <StackPanel VerticalAlignment="Center" 
-                    HorizontalAlignment="Center">
-                <ProgressRing x:Name="Loading_ProgressRing"
-                         Width="50" 
-                         Height="50"
-                         IsActive="False"
-                         Foreground="White"/>
-                <TextBlock Text="Logging in..." 
-                     Foreground="White" 
-                     Margin="0,10,0,0"/>
-            </StackPanel>
-        </Grid>
+        
     </StackPanel>
 </Page>
