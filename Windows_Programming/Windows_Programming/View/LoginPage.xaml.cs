@@ -7,6 +7,7 @@ using System;
 using System.Text;
 using Windows_Programming.Database;
 using System.Threading.Tasks;
+using Windows_Programming.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -84,7 +85,15 @@ namespace Windows_Programming.View
                 ShowDialog(emailInput == "" ? "Please enter email." : "Please enter password.");
                 return;
             }
-
+            if (CheckInput.CheckFormatEmail(emailInput) == false)
+            {
+                ShowDialog("Email is not valid.");
+                return;
+            }
+            if (CheckInput.CheckFormatPassword(passwordInput) == false){
+                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.");
+                return;
+            }
             await ReadFromDatabase(emailInput,passwordInput);
             //if (emailInput != emailDatabase || passwordInput != passwordDatabase)
             //{

@@ -9,6 +9,7 @@ using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using Windows_Programming.Model;
+using Windows_Programming.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,22 +61,16 @@ namespace Windows_Programming.View
                 return;
             }
 
-            if (!CheckFormatEmail(emailInput))
+            if (CheckInput.CheckFormatEmail(emailInput) == false)
             {
-                ShowDialog("Invalid email format");
+                ShowDialog("Email is not valid.");
                 return;
             }
-            if (!CheckUsedEmail(emailInput))
-            {
-                ShowDialog("Email has been used");
+            if (CheckInput.CheckFormatPassword(passwordInput) == false){
+                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.");
                 return;
             }
-            if (!CheckFormatPassword(passwordInput))
-            {
-                ShowDialog("Password must contain at least 8 characters, including UPPER/lowercase and numbers");
-                return;
-            }
-            if (!CheckPasswordAndConfirmPassword(passwordInput, confirmPasswordInput))
+            if (passwordInput!=confirmPasswordInput)
             {
                 ShowDialog("Password and Confirm Password are not the same");
                 return;
