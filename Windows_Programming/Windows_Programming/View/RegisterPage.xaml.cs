@@ -9,6 +9,7 @@ using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using Windows_Programming.Model;
+using Windows_Programming.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,6 +25,9 @@ namespace Windows_Programming.View
 
         private ApplicationDataContainer localSettings;
         private LoginWindow loginWindow;
+        String tokenLocal = "";
+
+        private ContentDialog loadingDialog;
         public RegisterPage()
         {
             this.InitializeComponent();
@@ -57,43 +61,24 @@ namespace Windows_Programming.View
                 return;
             }
 
-            if (!CheckFormatEmail(emailInput))
+            if (CheckInput.CheckFormatEmail(emailInput) == false)
             {
-                ShowDialog("Invalid email format");
+                ShowDialog("Email is not valid.");
                 return;
             }
-            if (!CheckUsedEmail(emailInput))
-            {
-                ShowDialog("Email has been used");
+            if (CheckInput.CheckFormatPassword(passwordInput) == false){
+                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.");
                 return;
             }
-            if (!CheckFormatPassword(passwordInput))
-            {
-                ShowDialog("Password must contain at least 8 characters, including UPPER/lowercase and numbers");
-                return;
-            }
-            if (!CheckPasswordAndConfirmPassword(passwordInput, confirmPasswordInput))
+            if (passwordInput!=confirmPasswordInput)
             {
                 ShowDialog("Password and Confirm Password are not the same");
                 return;
             }
-            if (RememberMeRegister_CheckBox.IsChecked == true)
-            {
-                WriteToLocal(emailInput, passwordInput);
-            }
-            else
-            {
 
-                DeleteFromLocal();
-            }
 
             await WriteToDatabase(emailInput, passwordInput);
-
-            var screen = new MainWindow();
-            screen.Activate();
-            // Dong loginWindow
-
-            loginWindow?.Close();
+            
         }
 
         private void LoginNowClick(object sender, RoutedEventArgs e)
@@ -104,69 +89,149 @@ namespace Windows_Programming.View
         }
 
 
-        void WriteToLocal(String emailInput, String passwordInput)
-        {   //Neu co usernam roi, thi khong luu nua
-            if (localSettings.Values.ContainsKey("email"))
+
+        void WriteToLocal(String userToken)
+        {
+
+            if (localSettings.Values.ContainsKey("UserToken"))
             {
                 return;
             }
 
             //chua luu
-            string encryptedPasswordBase64 = EncryptPassword(passwordInput);// da luu entropy trong nay
-            localSettings.Values["email"] = emailInput;
-            localSettings.Values["passwordInBase64"] = encryptedPasswordBase64;
+            string encryptedPasswordBase64 = EncryptPassword(userToken);// da luu entropy trong nay
+            localSettings.Values["UserToken"] = encryptedPasswordBase64;
         }
         void DeleteFromLocal()
         {
 
-            if (localSettings.Values.ContainsKey("email"))
+            if (localSettings.Values.ContainsKey("UserToken"))
             {
-                localSettings.Values.Remove("email");
-                localSettings.Values.Remove("passwordInBase64");
-                localSettings.Values.Remove("entropyInBase64");
+                localSettings.Values.Remove("UserToken");
             }
         }
 
         //Write to Database
-        async Task WriteToDatabase(string emailInput, string passwordInput)
+        //async Task WriteToDatabase(string emailInput, string passwordInput)
+        //{
+        //    try
+        //    {
+        //        var userCredential = await firebaseServices.CreateAccountInFireBase(
+        //            emailInput,
+        //            passwordInput
+        //        );
+
+        //        // Get user info
+        //        var user = userCredential.User;
+        //        var email = user.Info.Email;
+        //        var uid = user.Uid;
+
+        //        // Create user in Firestore
+        //        int numberCurrentAccounts=await firebaseServices.GetAccountsCount();
+
+        //        //Add user to firestore
+        //        var newAccount = new Account 
+        //        {
+        //            Id = numberCurrentAccounts,
+        //            Username = email,
+        //            Email = email,
+        //            Fullname = email,
+        //            Address = ""
+        //        };
+        //        await firebaseServices.CreateAccountInFirestore(newAccount);
+
+        //        //var getAccount = await firebaseServices.GetAccountByID(newAccount.Id);
+
+        //        //getAccount.PrintAccountInfo();
+
+        //        // Show success message
+        //        System.Diagnostics.Debug.WriteLine("Create ok");
+        //    }
+        //    catch (FirebaseAuthException ex)
+        //    {
+        //        // Show error message
+        //        System.Diagnostics.Debug.WriteLine("Create sai");
+        //    }
+        //}
+        private void CreateLoadingDialog()
         {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
+        }
+
+        private async Task WriteToDatabase(string emailInput, string passwordInput)
+        {
+            CreateLoadingDialog();
+            var dialogTask = loadingDialog.ShowAsync(); // Store the task
+
             try
             {
-                var userCredential = await firebaseServices.CreateAccountInFireBase(
-                    emailInput,
-                    passwordInput
-                );
+                var userCredential = await firebaseServices.CreateAccountInFireBase(emailInput, passwordInput);
 
-                // Get user info
                 var user = userCredential.User;
-                var email = user.Info.Email;
-                var uid = user.Uid;
+                tokenLocal = await user.GetIdTokenAsync();
 
-                // Create user in Firestore
-                int numberCurrentAccounts=await firebaseServices.GetAccountsCount();
+                if (RememberMeRegister_CheckBox.IsChecked == true)
+                {
+                    WriteToLocal(tokenLocal);
+                }
+                else
+                {
+                    DeleteFromLocal();
+                }
 
-                //Add user to firestore
-                var newAccount = new Account 
+                var screen = new MainWindow();
+                screen.Activate();
+                loginWindow?.Close();
+
+                int numberCurrentAccounts = await firebaseServices.GetAccountsCount();
+
+                var newAccount = new Account
                 {
                     Id = numberCurrentAccounts,
-                    Username = email,
-                    Email = email,
-                    Fullname = email,
+                    Username = emailInput,
+                    Email = emailInput,
+                    Fullname = emailInput,
                     Address = ""
                 };
+
                 await firebaseServices.CreateAccountInFirestore(newAccount);
-                
-                var getAccount = await firebaseServices.GetAccountByID(newAccount.Id);
 
-                getAccount.PrintAccountInfo();
-
-                // Show success message
-                System.Diagnostics.Debug.WriteLine("Create ok");
+                // Close the dialog by completing the task
+                await dialogTask;
             }
-            catch (FirebaseAuthException ex)
+            catch (Exception ex)
             {
-                // Show error message
-                System.Diagnostics.Debug.WriteLine("Create sai");
+                ShowDialog(ex.Message);
+                // Close the dialog in case of error
+                await dialogTask;
             }
         }
 
@@ -177,7 +242,7 @@ namespace Windows_Programming.View
         {
             NotificationRegister_TextBlock.Text = message;
             NotificationRegister_TextBlock.Opacity = 1;
-
+            NotificationRegister_TextBlock.Visibility = Visibility.Visible;
 
             var timer = new DispatcherTimer
             {
@@ -186,6 +251,7 @@ namespace Windows_Programming.View
             timer.Tick += (s, e) =>
             {
                 NotificationRegister_TextBlock.Opacity = 0;
+                NotificationRegister_TextBlock.Visibility = Visibility.Collapsed;
                 timer.Stop(); // 
             };
             timer.Start(); //

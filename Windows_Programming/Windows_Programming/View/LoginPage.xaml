@@ -41,7 +41,7 @@
                 Margin="0,0,0,20" 
                 FontSize="14"/>
 
-        <Button Content="Login" 
+        <Button x:Name="Login_Button" Content="Login" 
               Click="LoginButtonClick" 
               HorizontalAlignment="Center"
               Background="blue" 
@@ -59,10 +59,14 @@
 
         <TextBlock x:Name="NotificationLogin_TextBlock"
              Opacity="0"
+             Visibility="Collapsed"
              Foreground="Red" 
              FontSize="16" 
+             Width="300"
+             TextWrapping="Wrap"
              HorizontalAlignment="Center" 
              VerticalAlignment="Top" 
              Margin="0,40,0,0" />
+        
     </StackPanel>
 </Page>
