@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows_Programming.ViewModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,6 +24,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private static PlansInHomeViewModel _myPlansHomeViewModel;
+        private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         public MainWindow()
         {
             this.InitializeComponent();
@@ -63,7 +66,7 @@ namespace Windows_Programming.View
                     if (pageType != null)
                     {
                         // Điều hướng sang trang mới
-                        contentNavigation.Navigate(pageType);
+                        contentNavigation.Navigate(pageType);      
                     }
                 }
             }
@@ -77,6 +80,31 @@ namespace Windows_Programming.View
                 contentNavigation.GoBack();
             }
         }
-        
+
+        public static PlansInHomeViewModel MyPlansHomeViewModel
+        {
+            get
+            {
+                if (_myPlansHomeViewModel == null)
+                {
+                    _myPlansHomeViewModel = new PlansInHomeViewModel();
+                    _myPlansHomeViewModel.Init();
+                }
+                return _myPlansHomeViewModel;
+            }
+        }
+
+        public static PlansInTrashCanViewModel MyPlansTrashCanViewModel
+        {
+            get
+            {
+                if (_myPlansInTrashCanViewModel == null)
+                {
+                    _myPlansInTrashCanViewModel = new PlansInTrashCanViewModel();
+                    _myPlansInTrashCanViewModel.Init();
+                }
+                return _myPlansInTrashCanViewModel;
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="View\AccountPage.xaml" />
+    <None Remove="View\AddActivitiesTripPage.xaml" />
     <None Remove="View\AddTripPage.xaml" />
     <None Remove="View\CreateBlogPage.xaml" />
     <None Remove="View\HomePage.xaml" />
@@ -123,6 +124,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="C:\Users\phanv\.nuget\packages\firebaseauthentication.winui3\4.1.0\contentFiles\any\net6.0-windows10.0.19041\anonymous.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Configs\EnvVariables.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="Configs\EnvVariableSample.txt">

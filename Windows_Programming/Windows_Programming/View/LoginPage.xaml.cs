@@ -7,6 +7,7 @@ using System;
 using System.Text;
 using Windows_Programming.Database;
 using System.Threading.Tasks;
+using Windows_Programming.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,10 +22,12 @@ namespace Windows_Programming.View
         private FirebaseServicesDAO firebaseServices;
 
         private ApplicationDataContainer localSettings;
+        private ContentDialog loadingDialog;
         private string emailLocal = "";
         private string passwordLocal = "";
         private string emailDatabase = "";
         private string passwordDatabase = "";
+        private string tokenLocal = "";
         private LoginWindow loginWindow;
         public LoginPage()
         {
@@ -57,7 +60,7 @@ namespace Windows_Programming.View
             ReadFromLocal();
             //showDialog($"{usernameLocal} va {passwordLocal}");
             //trc do da luu roi th� do thang loginWindow 
-            if (emailLocal != "" && passwordLocal != "")
+            if (tokenLocal!="")
             {
                 var screen = new MainWindow();
                 screen.Activate();
@@ -82,29 +85,22 @@ namespace Windows_Programming.View
                 ShowDialog(emailInput == "" ? "Please enter email." : "Please enter password.");
                 return;
             }
-
+            if (CheckInput.CheckFormatEmail(emailInput) == false)
+            {
+                ShowDialog("Email is not valid.");
+                return;
+            }
+            if (CheckInput.CheckFormatPassword(passwordInput) == false){
+                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.");
+                return;
+            }
             await ReadFromDatabase(emailInput,passwordInput);
             //if (emailInput != emailDatabase || passwordInput != passwordDatabase)
             //{
             //    ShowDialog("Email or password is incorrect.");
             //    return;
             //}
-            if (RememberMeLogin_CheckBox.IsChecked == true)
-            {
-
-                WriteToLocal(emailInput, passwordInput);
-            }
-            else
-            {
-
-                DeleteFromLocal();
-            }
-
-            var screen = new MainWindow();
-            screen.Activate();
-
-            loginWindow?.Close();
-
+            
         }
 
         private void ForgotPasswordClick(object sender, RoutedEventArgs e)
@@ -119,66 +115,117 @@ namespace Windows_Programming.View
             Frame.BackStack.Clear();
         }
         //Read from database
-        async Task ReadFromDatabase(string emailInput,string passwordInput)
+        private async Task ReadFromDatabase(string emailInput, string passwordInput)
         {
+            CreateLoadingDialog();
+
+            // Show loading dialog
+            
             try
             {
-                var userCredential = await firebaseServices.SignInWithEmailAndPasswordInFireBase(emailInput,passwordInput);
-                if (userCredential != null)
+                var dialogTask = loadingDialog.ShowAsync();
+                var userCredential = await firebaseServices.SignInWithEmailAndPasswordInFireBase(emailInput, passwordInput);
+
+                // Get token and save to local settings
+                string tokenResponse = await userCredential.User.GetIdTokenAsync();
+                
+
+                // Get user info
+                var user = userCredential.User;
+                var email = user.Info.Email;
+                var uid = user.Uid;
+
+                if (RememberMeLogin_CheckBox.IsChecked == true)
                 {
-                    // Get user info
-                    var user = userCredential.User;
-                    var email = user.Info.Email;
-                    var uid = user.Uid;
+                    WriteToLocal(tokenResponse);
                 }
                 else
                 {
-                    ShowDialog("Email or password is incorrect.");
+                    DeleteFromLocal();
                 }
+
+                var screen = new MainWindow();
+                screen.Activate();
+                loginWindow?.Close();
             }
-            catch (Exception ex) { 
-            
+            catch (Exception ex)
+            {
+                ShowDialog($"{ex.Message}");
+                loadingDialog.Hide();
             }
-
-
-
+            finally
+            {
+                // Hide loading dialog
+                loadingDialog.Hide();
+            }
         }
 
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
+        }
         //doc, luu, xoa db o local
         void ReadFromLocal()
         {
-            if (localSettings.Values.ContainsKey("email") && localSettings.Values.ContainsKey("passwordInBase64"))
+
+            if (localSettings.Values.ContainsKey("UserToken"))
             {
-                emailLocal = localSettings.Values["email"] as string;
-                passwordLocal = DecryptPassword(localSettings.Values["passwordInBase64"] as string);
+                
+                tokenLocal = DecryptPassword(localSettings.Values["UserToken"] as string);
             }
             else
             {
-                emailLocal = "";
-                passwordLocal = "";
+                tokenLocal = "";
             }
+
         }
 
-        void WriteToLocal(String emailInput, String passwordInput)
-        {   //Neu co usernam roi, thi khong luu nua
-            if (localSettings.Values.ContainsKey("email"))
+        void WriteToLocal(String userToken)
+        {  
+
+            if (localSettings.Values.ContainsKey("UserToken"))
             {
                 return;
             }
 
             //chua luu
-            string encryptedPasswordBase64 = EncryptPassword(passwordInput);// da luu entropy trong nay
-            localSettings.Values["email"] = emailInput;
-            localSettings.Values["passwordInBase64"] = encryptedPasswordBase64;
+            string encryptedPasswordBase64 = EncryptPassword(userToken);// da luu entropy trong nay
+            localSettings.Values["UserToken"] = encryptedPasswordBase64;
         }
         void DeleteFromLocal()
         {
 
-            if (localSettings.Values.ContainsKey("email"))
+            if (localSettings.Values.ContainsKey("UserToken"))
             {
-                localSettings.Values.Remove("email");
-                localSettings.Values.Remove("passwordInBase64");
-                localSettings.Values.Remove("entropyInBase64");
+                localSettings.Values.Remove("UserToken");
             }
         }
 
@@ -188,7 +235,7 @@ namespace Windows_Programming.View
         {
             NotificationLogin_TextBlock.Text = message;
             NotificationLogin_TextBlock.Opacity = 1;
-
+            NotificationLogin_TextBlock.Visibility = Visibility.Visible;
 
             var timer = new DispatcherTimer
             {
@@ -197,6 +244,7 @@ namespace Windows_Programming.View
             timer.Tick += (s, e) =>
             {
                 NotificationLogin_TextBlock.Opacity = 0;
+                NotificationLogin_TextBlock.Visibility = Visibility.Collapsed;
                 timer.Stop(); // 
             };
             timer.Start(); //
@@ -242,6 +290,6 @@ namespace Windows_Programming.View
 
             return Encoding.UTF8.GetString(passwordInBytes);
         }
-
+        
     }
 }
