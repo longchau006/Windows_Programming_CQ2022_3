@@ -19,6 +19,7 @@ using Windows.Storage;
 using System.Diagnostics;
 using Windows_Programming.ViewModel;
 using Windows_Programming.Model;
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,6 +32,8 @@ namespace Windows_Programming.View
     public sealed partial class AddTripPage : Page
     {
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
+
+        private string selectedImagePath;
         public AddTripPage()
         {
             this.InitializeComponent();
@@ -38,41 +41,28 @@ namespace Windows_Programming.View
 
         private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
         {
-            try
+            var openPicker = new FileOpenPicker();
+            Window w = new();
+            var hWnd = WindowNative.GetWindowHandle(w);
+            InitializeWithWindow.Initialize(openPicker, hWnd);
+            openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+            openPicker.FileTypeFilter.Add("*");
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            w.Close();
+
+            if (file != null)
             {
-                FileOpenPicker picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-
-                picker.FileTypeFilter.Add(".jpg");
-                picker.FileTypeFilter.Add(".jpeg");
-                picker.FileTypeFilter.Add(".png");
-
-
-                var app = (App)Application.Current;
-                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(app.LoginWindow); // Use App.Window if LoginWindow is not the main window
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-
-                StorageFile file = await picker.PickSingleFileAsync();
-                if (file != null)
+                selectedImagePath = file.Path;
+                // Sử dụng BitmapImage để tạo nguồn cho Image
+                var bitmapImage = new BitmapImage();
+                using (var stream = await file.OpenAsync(FileAccessMode.Read))
                 {
-                    using (IRandomAccessStream
-         stream = await file.OpenAsync(FileAccessMode.Read))
-                    {
-                        BitmapImage bitmapImage = new BitmapImage();
-                        await bitmapImage.SetSourceAsync(stream);
-
-                        Trip_Image.Source = bitmapImage; // Update image source
-                    }
+                    await bitmapImage.SetSourceAsync(stream);
                 }
-            }
-            catch (Exception ex)
-            {
-                // Handle potential errors like file access, decoding, etc.
-                // Show a user-friendly error message
-                Debug.WriteLine("Error selecting image: " + ex.Message);
+                Trip_Image.Source = bitmapImage;
             }
         }
+
 
         // Xóa các thông tin nhập khi nhấn Cancel
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
@@ -81,7 +71,10 @@ namespace Windows_Programming.View
             StartLocation_TextBox.Text = string.Empty;
             EndLocation_TextBox.Text = string.Empty;
             Start_DatePicker.SelectedDate = null;
-            End_DatePicker.SelectedDate = null;
+            End_DatePicker.SelectedDate = null; 
+            var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
+            Trip_Image.Source = image;
+            selectedImagePath = null;
         }
 
         // Lấy thông tin khi nhấn Save
@@ -132,7 +125,7 @@ namespace Windows_Programming.View
             Plan newPlan = new Plan
             {
                 Name = tripName,
-                PlanImage = "/Assets/danang.jpg",
+                PlanImage = selectedImagePath,
                 StartLocation = startLocation,
                 EndLocation = endLocation,
                 StartDate = startDate.Value, // Vì đã kiểm tra null, nên có thể dùng Value
