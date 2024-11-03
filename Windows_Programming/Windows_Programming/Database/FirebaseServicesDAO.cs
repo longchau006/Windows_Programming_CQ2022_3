@@ -209,5 +209,10 @@ namespace Windows_Programming.Database
         {
             throw new NotImplementedException();
         }
+
+        public void addBlog(Blog blog)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

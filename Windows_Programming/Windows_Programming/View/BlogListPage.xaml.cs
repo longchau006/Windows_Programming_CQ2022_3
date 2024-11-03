@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Windows_Programming.ViewModel;
 using Windows_Programming.Model;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Devices.PointOfService;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -35,15 +36,7 @@ namespace Windows_Programming.View
 
             var viewModel2 = new BlogViewModel();
             viewModel2.ViewLastestBlog();
-            List<Blog> lastestBlog = viewModel2.lastestBlog;
-            
-            FlipView_Image1.Source = new BitmapImage(new Uri(lastestBlog[0].Image));
-            FlipView_Image2.Source = new BitmapImage(new Uri(lastestBlog[1].Image));
-            FlipView_Image3.Source = new BitmapImage(new Uri(lastestBlog[2].Image));
-
-            FlipView_TextBlock1.Text = lastestBlog[0].Title;
-            FlipView_TextBlock2.Text = lastestBlog[1].Title;
-            FlipView_TextBlock3.Text = lastestBlog[2].Title;
+            BlogFlipView.DataContext = viewModel2;
         }
 
         private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
@@ -52,8 +45,23 @@ namespace Windows_Programming.View
             {
                 // Navigate to BlogDetailPage with the selected blog's ID
                 Frame.Navigate(typeof(BlogPage), blog.Id);
-                
+
             }
+        }
+
+        private void FlipView_Tag(object sender, TappedRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is Blog blog)
+            {
+                // Navigate to BlogDetailPage with the selected blog's ID
+                Frame.Navigate(typeof(BlogPage), blog.Id);
+            }
+
+        }
+
+        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(CreateBlogPage));
         }
     }
 }

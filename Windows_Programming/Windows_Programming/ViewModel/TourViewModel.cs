@@ -18,10 +18,11 @@ namespace Windows_Programming.ViewModel
             allTour = dao.GetAllTour();
         }
 
-        public Tour GetTourById(int id)
+        public Tour Tour { get; set; }
+        public void GetTourById(int id)
         {
             IDao dao = new MockDao();
-            return dao.GetTourById(id);
+            Tour =  dao.GetTourById(id);
         }
     }
 }

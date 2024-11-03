@@ -29,5 +29,11 @@ namespace Windows_Programming.ViewModel
             IDao dao = new MockDao();
             return dao.GetBlogById(id);
         }
+
+        public void AddBlog(Blog blog)
+        {
+            IDao dao = new MockDao();
+            dao.addBlog(blog);
+        }
     }
 }

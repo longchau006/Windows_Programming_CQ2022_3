@@ -20,7 +20,7 @@
     <None Remove="View\AccountPage.xaml" />
     <None Remove="View\AddActivitiesTripPage.xaml" />
     <None Remove="View\AddTripPage.xaml" />
-    <None Remove="View\EditTripPage.xaml" />
+    <None Remove="View\CreateBlogPage.xaml" />
     <None Remove="View\HomePage.xaml" />
     <None Remove="View\BlogListPage.xaml" />
     <None Remove="View\LoginPage.xaml" />
@@ -137,10 +137,7 @@
     <None Update="Configs\Private.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="View\AddActivitiesTripPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="View\EditTripPage.xaml">
+    <Page Update="View\CreateBlogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

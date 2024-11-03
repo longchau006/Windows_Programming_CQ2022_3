@@ -16,8 +16,8 @@
             <StackPanel Padding="20" >
                 <TextBlock FontSize="36" HorizontalAlignment="Center" FontWeight="Bold" Foreground="DarkSlateGray" Text="Tour du lịch" Margin="0,0,0,20"/>
                 <ListView x:Name="TourListView"
-                 Height="400"
-                 MinWidth="550"
+                 MaxHeight="500"
+                 Width="750"
                  BorderThickness="1"
                  BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}"
                  ItemsSource="{Binding allTour}">
