@@ -19,6 +19,7 @@ using Windows.Storage.Streams;
 using Windows.Storage;
 using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,6 +33,8 @@ namespace Windows_Programming.View
     {
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public Plan PlanTripViewModel { get; set; }
+
+        private string selectedImagePath;
         public EditTripPage()
         {
             this.InitializeComponent();
@@ -47,10 +50,31 @@ namespace Windows_Programming.View
             {
                 this.DataContext = PlanTripViewModel;
             }
+
         }
-            private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
+        private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
         {
-            
+            var openPicker = new FileOpenPicker();
+            Window w = new();
+            var hWnd = WindowNative.GetWindowHandle(w);
+            InitializeWithWindow.Initialize(openPicker, hWnd);
+            openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+            openPicker.FileTypeFilter.Add("*");
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            w.Close();
+
+            if (file != null)
+            {
+                selectedImagePath = file.Path;
+                System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
+                // Sử dụng BitmapImage để tạo nguồn cho Image
+                var bitmapImage = new BitmapImage();
+                using (var stream = await file.OpenAsync(FileAccessMode.Read))
+                {
+                    await bitmapImage.SetSourceAsync(stream);
+                }
+                Trip_Image.Source = bitmapImage;
+            }
         }
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
@@ -59,7 +83,20 @@ namespace Windows_Programming.View
             EndLocation_TextBox.Text = PlanTripViewModel.EndLocation.ToString();
             Start_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.StartDate);
             End_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.EndDate);
-
+            selectedImagePath = null;
+            if (!string.IsNullOrEmpty(PlanTripViewModel.PlanImage))
+            {
+                try
+                {
+                    var image = new BitmapImage(new Uri(PlanTripViewModel.PlanImage, UriKind.Absolute));
+                    Trip_Image.Source = image;
+                }
+                catch (Exception ex)
+                {
+                    Trip_Image.Source = null;
+                }
+            }
+            System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
         }
         private void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
@@ -69,21 +106,21 @@ namespace Windows_Programming.View
             string endLocation = EndLocation_TextBox.Text;
             DateTime? startDate = Start_DatePicker.SelectedDate?.DateTime;
             DateTime? endDate = End_DatePicker.SelectedDate?.DateTime;
-            
 
             // Danh sách chứa các thông báo lỗi
             List<string> errorMessages = new List<string>();
-            //Kiểm tra có thay đổi không
-            if (tripName == PlanTripViewModel.Name.ToString() &&
-                startLocation == PlanTripViewModel.StartLocation.ToString() &&
-                endLocation == PlanTripViewModel.EndLocation.ToString() &&
-                startDate.HasValue &&
-                startDate.Value == PlanTripViewModel.StartDate &&
-                endDate.HasValue &&
-                endDate.Value == PlanTripViewModel.EndDate)
+
+            // Kiểm tra có thay đổi không
+            if ((tripName == PlanTripViewModel.Name) &&
+                (startLocation == PlanTripViewModel.StartLocation) &&
+                (endLocation == PlanTripViewModel.EndLocation) &&
+                (startDate.HasValue && startDate.Value == PlanTripViewModel.StartDate) &&
+                (endDate.HasValue && endDate.Value == PlanTripViewModel.EndDate) &&
+                (selectedImagePath == null))
             {
                 errorMessages.Add("No edits");
             }
+
             // Kiểm tra các trường có bị trống hay không
             if (string.IsNullOrWhiteSpace(tripName))
                 errorMessages.Add("Trip Name is required.");
@@ -106,29 +143,29 @@ namespace Windows_Programming.View
                 ContentDialog dialog = new ContentDialog
                 {
                     Title = "Incomplete or Invalid Information",
-                    Content = string.Join("\n", errorMessages), // Nối các thông báo lỗi thành chuỗi
+                    Content = string.Join("\n", errorMessages),
                     CloseButtonText = "OK",
                     XamlRoot = this.XamlRoot
                 };
-                _ = dialog.ShowAsync(); // Dùng _ để bỏ qua warning về await
-
+                _ = dialog.ShowAsync();
                 return;
             }
 
+            // Tạo đối tượng Plan từ các thông tin đã nhập
             Plan newPlan = new Plan
             {
                 Name = tripName,
-                PlanImage = "/Assets/danang.jpg",
+                PlanImage = selectedImagePath,
                 StartLocation = startLocation,
                 EndLocation = endLocation,
-                StartDate = startDate.Value, // Vì đã kiểm tra null, nên có thể dùng Value
+                StartDate = startDate.Value,
                 EndDate = endDate.Value
             };
 
             // Sửa plan trong danh sách kế hoạch trong ViewModel
             MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
 
-            // Có thể hiển thị thông báo thành công hoặc điều hướng đến trang khác
+            // Hiển thị thông báo thành công hoặc điều hướng đến trang khác
             ContentDialog successDialog = new ContentDialog
             {
                 Title = "Trip Edited Successfully",
@@ -138,8 +175,12 @@ namespace Windows_Programming.View
             };
             _ = successDialog.ShowAsync();
 
-            Frame.GoBack();
-
+            // Điều hướng quay lại nếu Frame tồn tại và có thể quay lại
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
         }
+
     }
 }
