@@ -49,7 +49,6 @@ namespace Windows_Programming.ViewModel
             PlansInHome.Add(plan);
             OnPropertyChanged(nameof(PlansInHome)); // Thông báo rằng PlansInHome đã thay đổi
         }
-
         public void RemovePlanInHome(Plan plan)
         {
             if (PlansInHome.Contains(plan))

@@ -142,6 +142,10 @@ namespace Windows_Programming.View
         }
         private void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         { 
+            if (PlanTripViewModel.Activities == null)
+            {
+                PlanTripViewModel.Activities = new List<Activity>();
+            }
             if (flag == 1)
             {
                 string nameDiscover = NameDiscover_TextBox.Text;
