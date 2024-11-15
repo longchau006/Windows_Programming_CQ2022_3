@@ -34,7 +34,7 @@ namespace Windows_Programming.View
             Schedule_Panel.Visibility = Visibility.Collapsed;
             NoSchedule_Panel.Visibility = Visibility.Visible;
 
-            if (MyPlansHomeViewModel != null)
+            if (MyPlansHomeViewModel.PlansInHome.Any())
             {
                 Schedule_Panel.Visibility = Visibility.Visible;
                 NoSchedule_Panel.Visibility = Visibility.Collapsed;
@@ -43,21 +43,20 @@ namespace Windows_Programming.View
         private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
         {
 
-            UpcomingTrips_Button.Style = (Style)Resources["ButtonStyle"];
-            PastTrips_Button.Style = (Style)Resources["ButtonStyle"];
+            UpcomingTrips_Button.Style = (Style)Resources["FilterButtonStyle"];
+            PastTrips_Button.Style = (Style)Resources["FilterButtonStyle"];
 
             Button clickedButton = sender as Button;
-            clickedButton.Style = (Style)Resources["SelectedButtonStyle"];
+            clickedButton.Style = (Style)Resources["SelectedFilterButtonStyle"];
 
-            // Kiểm tra nút nào đã được nhấn và thay đổi nội dung TextBlock tuong ung
-            if (clickedButton == UpcomingTrips_Button)
+            /*if (clickedButton == UpcomingTrips_Button)
             {
-                NoSchedule_TextBlock.Text = "No Upcoming Trips";
+               
             }
             else if (clickedButton == PastTrips_Button)
             {
-                NoSchedule_TextBlock.Text = "No Past Trips";
-            }
+                
+            }*/
         }
 
         private void OnNavigationFilterButtonClick(object sender, RoutedEventArgs e)

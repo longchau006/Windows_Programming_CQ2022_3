@@ -33,7 +33,7 @@ namespace Windows_Programming.View
     {
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
 
-        private string selectedImagePath;
+        private string selectedImagePath = "/Assets/danang.jpg";
         public AddTripPage()
         {
             this.InitializeComponent();
@@ -74,7 +74,7 @@ namespace Windows_Programming.View
             End_DatePicker.SelectedDate = null; 
             var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
             Trip_Image.Source = image;
-            selectedImagePath = null;
+            selectedImagePath = "/Assets/danang.jpg";
         }
 
         // Lấy thông tin khi nhấn Save
@@ -144,6 +144,11 @@ namespace Windows_Programming.View
                 XamlRoot = this.XamlRoot
             };
             _ = successDialog.ShowAsync();
+
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
         }
 
     }

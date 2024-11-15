@@ -78,5 +78,27 @@ namespace Windows_Programming.ViewModel
                 OnPropertyChanged(nameof(PlansInHome)); // Thông báo rằng PlansInHome đã thay đổi
             }
         }
+        public void AddActivitiesForPlan(Plan specificPlan, Activity activity)
+        {
+            if (PlansInHome.Contains(specificPlan))
+            {
+                specificPlan.Activities.Add(activity);
+                OnPropertyChanged(nameof(PlansInHome));
+            }
+        }
+        public void SortActivitiesByStartDate(Plan specificPlan)
+        {
+            if (PlansInHome.Contains(specificPlan))
+            {
+                var sortedActivities = specificPlan.Activities.OrderBy(activity => activity.StartDate).ToList();
+                specificPlan.Activities.Clear();
+                foreach (var activity in sortedActivities)
+                {
+                    specificPlan.Activities.Add(activity);
+                }
+
+                OnPropertyChanged(nameof(PlansInHome)); // Thông báo rằng PlansInHome đã thay đổi
+            }
+        }
     }
 }

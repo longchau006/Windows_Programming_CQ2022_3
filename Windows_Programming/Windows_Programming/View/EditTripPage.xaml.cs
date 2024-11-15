@@ -49,6 +49,7 @@ namespace Windows_Programming.View
             if (PlanTripViewModel != null)
             {
                 this.DataContext = PlanTripViewModel;
+                selectedImagePath = PlanTripViewModel.PlanImage;
             }
 
         }
@@ -83,7 +84,7 @@ namespace Windows_Programming.View
             EndLocation_TextBox.Text = PlanTripViewModel.EndLocation.ToString();
             Start_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.StartDate);
             End_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.EndDate);
-            selectedImagePath = null;
+            selectedImagePath = PlanTripViewModel.PlanImage;
             if (!string.IsNullOrEmpty(PlanTripViewModel.PlanImage))
             {
                 try
@@ -116,7 +117,7 @@ namespace Windows_Programming.View
                 (endLocation == PlanTripViewModel.EndLocation) &&
                 (startDate.HasValue && startDate.Value == PlanTripViewModel.StartDate) &&
                 (endDate.HasValue && endDate.Value == PlanTripViewModel.EndDate) &&
-                (selectedImagePath == null))
+                (selectedImagePath == PlanTripViewModel.PlanImage))
             {
                 errorMessages.Add("No edits");
             }

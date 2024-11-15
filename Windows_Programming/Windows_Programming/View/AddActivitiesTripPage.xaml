@@ -20,11 +20,12 @@
             <Setter Property="BorderBrush" Value="Blue"/>
         </Style>
     </Page.Resources>
-        
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row = "0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
@@ -36,11 +37,11 @@
                 </StackPanel>
             </Button>
 
-            <!-- Vehicle Button -->
-            <Button x:Name="Vehicle_Button" Width="100" Height="100" Style="{StaticResource ButtonStyle}" Margin ="30,0,30,0" Click="OnNavigationButtonClick">
+            <!-- Transport Button -->
+            <Button x:Name="Transport_Button" Width="100" Height="100" Style="{StaticResource ButtonStyle}" Margin ="30,0,30,0" Click="OnNavigationButtonClick">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">
                     <SymbolIcon Symbol="Street" Foreground= "#32C8D4"/>
-                    <TextBlock Text="Vehicle" FontSize="14" Foreground="Blue" HorizontalAlignment="Center" />
+                    <TextBlock Text="Transport" FontSize="14" Foreground="Blue" HorizontalAlignment="Center" />
                 </StackPanel>
             </Button>
 
@@ -51,52 +52,150 @@
                     <TextBlock Text="Lodging" FontSize="14" Foreground="Blue" HorizontalAlignment="Center" />
                 </StackPanel>
             </Button>
+
+            <!-- Extend Button -->
+            <Button x:Name="Extend_Button" Width="100" Height="100" Style="{StaticResource ButtonStyle}" Click="OnNavigationButtonClick">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">
+                    <SymbolIcon Symbol= "More" Foreground= "#32C8D4"/>
+                </StackPanel>
+            </Button>
         </StackPanel>
-        
+
         <!-- Discover Panel -->
         <StackPanel x:Name="Discover_Panel" Grid.Row="1" Orientation="Vertical" >
             <TextBlock Text="Discover" FontSize="24" FontWeight="Bold" />
-            
-            <TextBlock Text="Event Name" Grid.ColumnSpan="2" />
-            <TextBox x:Name ="NameDiscover_TextBox" PlaceholderText="Enter Event Name" BorderBrush="Black" BorderThickness="1" />
 
-            <TextBlock Text="Description" Grid.ColumnSpan="2" />
-            <TextBox x:Name ="DescriptionDiscover_TextBox" PlaceholderText="Enter Description" BorderBrush="Black" BorderThickness="1" />
+            <TextBlock Text="Event Name" Margin="0,5,0,0" />
+            <TextBox x:Name ="NameDiscover_TextBox" PlaceholderText="Enter event name" BorderBrush="Black" BorderThickness="1" />
 
-            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
-                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
+            <TextBlock Text="Venue" Margin="0,5,0,0" />
+            <TextBox x:Name ="VenueDiscover_TextBox" PlaceholderText="Enter venue" BorderBrush="Black" BorderThickness="1" />
+
+            <TextBlock Text="Address" Margin="0,5,0,0" />
+            <TextBox x:Name ="AddressDiscover_TextBox" PlaceholderText="Enter address" BorderBrush="Black" BorderThickness="1" />
+
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="Start Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="StartDiscover_DatePicker" />
+                <TextBlock Text="Start Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="StartDiscover_TimePicker" ClockIdentifier="12HourClock" />
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="End Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="EndDiscover_DatePicker"/>
+                <TextBlock Text="End Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="EndDiscover_TimePicker" ClockIdentifier="12HourClock" />
+            </StackPanel>
+
+            <TextBlock Text="Description" Margin="0,5,0,0"/>
+            <TextBox x:Name ="DescriptionDiscover_TextBox" PlaceholderText="Enter description" BorderBrush="Black" BorderThickness="1" />
+
         </StackPanel>
-        <!-- Vehicle Panel-->
-        <StackPanel x:Name="Vehicle_Panel" Grid.Row="1" Orientation="Vertical" >
-            <TextBlock Text="Vehicle" FontSize="24" FontWeight="Bold" />
+        <!-- Transport Panel-->
+        <StackPanel x:Name="Transport_Panel" Grid.Row="1" Orientation="Vertical" >
+            <TextBlock Text="Transport" FontSize="24" FontWeight="Bold" />
 
-            <TextBlock Text="Event Name" Grid.ColumnSpan="2" />
-            <TextBox x:Name ="NameVehicle_TextBox" PlaceholderText="Enter Event Name" BorderBrush="Black" BorderThickness="1" />
+            <TextBlock Text="Event Name" Margin="0,10,0,0"  />
+            <TextBox x:Name ="NameTransport_TextBox" PlaceholderText="Enter event name" BorderBrush="Black" BorderThickness="1" />
 
-            <TextBlock Text="Description" Grid.ColumnSpan="2" />
-            <TextBox x:Name ="DescriptionVehicle_TextBox" PlaceholderText="Enter Description" BorderBrush="Black" BorderThickness="1" />
+            <TextBlock Text="Vehicle" Margin="0,10,0,0"  />
+            <TextBox x:Name ="VehicleTransport_TextBox" PlaceholderText="Enter vehicle" BorderBrush="Black" BorderThickness="1" />
 
-            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
-                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Start Location" Margin="0,0,5,0"/>
+                <TextBox x:Name ="StartLocationTransport_TextBox" PlaceholderText="Enter start location" BorderBrush="Black" BorderThickness="1"/>
+                <TextBlock Text="End Location" Margin="20,0,5,0"/>
+                <TextBox x:Name ="EndLocationTransport_TextBox" PlaceholderText="Enter end location" BorderBrush="Black" BorderThickness="1"/>
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Start Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="StartTransport_DatePicker" />
+                <TextBlock Text="Start Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="StartTransport_TimePicker" ClockIdentifier="12HourClock" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="End Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="EndTransport_DatePicker"/>
+                <TextBlock Text="End Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="EndTransport_TimePicker" ClockIdentifier="12HourClock" />
+            </StackPanel>
+
+            <TextBlock Text="Description"  Margin="0,10,0,0"  />
+            <TextBox x:Name ="DescriptionTransport_TextBox" PlaceholderText="Enter description" BorderBrush="Black" BorderThickness="1" />
         </StackPanel>
         <!-- Lodging Panel -->
         <StackPanel x:Name="Lodging_Panel" Grid.Row="1" Orientation="Vertical" >
             <TextBlock Text="Lodging" FontSize="24" FontWeight="Bold" />
 
-            <TextBlock Text="Event Name" Grid.ColumnSpan="2" />
-            <TextBox x:Name ="NameLodging_TextBox" PlaceholderText="Enter Event Name" BorderBrush="Black" BorderThickness="1" />
+            <TextBlock Text="Event Name" Margin="0,5,0,0" />
+            <TextBox x:Name ="NameLodging_TextBox" PlaceholderText="Enter event name" BorderBrush="Black" BorderThickness="1" />
 
-            <TextBlock Text="Description" Grid.ColumnSpan="2" />
-            <TextBox x:Name ="DescriptionLodging_TextBox" PlaceholderText="Enter Description" BorderBrush="Black" BorderThickness="1" />
+            <TextBlock Text="Room Info" Margin="0,5,0,0" />
+            <TextBox x:Name ="RoomInfoLodging_TextBox" PlaceholderText="Enter room info" BorderBrush="Black" BorderThickness="1" />
+            
+            <TextBlock Text="Address" Margin="0,5,0,0" />
+            <TextBox x:Name ="AddressLodging_TextBox" PlaceholderText="Enter address" BorderBrush="Black" BorderThickness="1" />
 
-            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
-                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="Start Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="StartLodging_DatePicker" />
+                <TextBlock Text="Start Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="StartLodging_TimePicker" ClockIdentifier="12HourClock" />
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="End Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="EndLodging_DatePicker"/>
+                <TextBlock Text="End Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="EndLodging_TimePicker" ClockIdentifier="12HourClock" />
+            </StackPanel>
+
+            <TextBlock Text="Description" Margin="0,5,0,0"/>
+            <TextBox x:Name ="DescriptionLodging_TextBox" PlaceholderText="Enter description" BorderBrush="Black" BorderThickness="1" />
+
+        </StackPanel>
+        <!-- Extend Panel -->
+        <StackPanel x:Name="Extend_Panel" Grid.Row="1" Orientation="Vertical" >
+            <TextBlock Text="Extend Activity" FontSize="24" FontWeight="Bold" />
+
+            <TextBlock Text="Activity"/>
+            <TextBox x:Name ="ActivityExtend_TextBox" PlaceholderText="Enter activity" BorderBrush="Black" BorderThickness="1" />
+            
+            <TextBlock Text="Event Name"/>
+            <TextBox x:Name ="NameExtend_TextBox" PlaceholderText="Enter event name" BorderBrush="Black" BorderThickness="1" />
+
+            <TextBlock Text="Venue"/>
+            <TextBox x:Name ="VenueExtend_TextBox" PlaceholderText="Enter venue" BorderBrush="Black" BorderThickness="1" />
+
+            <TextBlock Text="Address"/>
+            <TextBox x:Name ="AddressExtend_TextBox" PlaceholderText="Enter address" BorderBrush="Black" BorderThickness="1" />
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Start Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="StartExtend_DatePicker" />
+                <TextBlock Text="Start Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="StartExtend_TimePicker" ClockIdentifier="12HourClock" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="End Date" Margin="0,0,5,0"/>
+                <DatePicker x:Name="EndExtend_DatePicker"/>
+                <TextBlock Text="End Time" Margin="20,0,5,0" />
+                <TimePicker x:Name="EndExtend_TimePicker" ClockIdentifier="12HourClock" />
+            </StackPanel>
+
+            <TextBlock Text="Description" />
+            <TextBox x:Name ="DescriptionExtend_TextBox" PlaceholderText="Enter description" BorderBrush="Black" BorderThickness="1" />
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="20" Margin="0,20,0,20" HorizontalAlignment="Center">
+            <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
+            <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
         </StackPanel>
     </Grid>
 </Page>
+
