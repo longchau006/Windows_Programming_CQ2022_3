@@ -8,6 +8,8 @@ namespace Windows_Programming.Model
 {
     public class Activity
     {
+        public int Id { get; set; }
+        public int Type { get; set; }
         public string Name { get; set; }
         public virtual string Venue { get; set; }
         public virtual string Address { get; set; }

@@ -11,6 +11,7 @@ using Google.Cloud.Storage.V1;
 using Windows_Programming.Model;
 using Windows_Programming.Configs;
 using Windows_Programming.Helpers;
+using System.Diagnostics;
 
 
 
@@ -103,6 +104,88 @@ namespace Windows_Programming.Database
             return null;
         }
 
+
+        public async Task CreatePlanInFirestore(int accountId, Plan plan)
+        {
+            var planRef = firestoreDb.Collection("accounts")
+                                     .Document(accountId.ToString())
+                                     .Collection("plans")
+                                     .Document(plan.Id.ToString());
+
+            var planData = Helps.PlanToFirestoreDocument(plan);
+
+     
+            await planRef.SetAsync(planData);
+            
+            var activitiesRef = planRef.Collection("activities");
+            await activitiesRef.Document("__placeholder").SetAsync(new Dictionary<string, object>());
+
+        }
+        public async Task UpdatePlanInFirestore(int accountId, int planId, Plan plan)
+        {
+            var planRef = firestoreDb.Collection("accounts")
+                                     .Document(accountId.ToString())
+                                     .Collection("plans")
+                                     .Document(planId.ToString());
+
+            var planData = Helps.UpdatePlanToFirestoreDocument(plan);
+
+            await planRef.UpdateAsync(planData);
+
+        }
+        public async Task UpdateWhenDeletePlanInFirestore(int accountId, int planId, Plan plan)
+        {
+            var planRef = firestoreDb.Collection("accounts")
+                                     .Document(accountId.ToString())
+                                     .Collection("plans")
+                                     .Document(planId.ToString());
+
+            var planData = new Dictionary<string, object>
+            {
+                { "deleteddate", plan.DeletedDate.HasValue ? plan.DeletedDate.Value.ToString("o") : null}
+            };
+            await planRef.UpdateAsync(planData);
+
+        }
+
+        public async Task CreateActivityInFirestore(int accountId, int planId, Windows_Programming.Model.Activity activity)
+        {
+                var activityRef = firestoreDb.Collection("accounts")
+                                             .Document(accountId.ToString())
+                                             .Collection("plans")
+                                             .Document(planId.ToString())
+                                             .Collection("activities")
+                                             .Document(activity.Id.ToString());
+            
+                var activityData = Helps.ActivityToFirestoreDocument(activity);
+
+                await activityRef.SetAsync(activityData);
+           
+        }
+        public async Task DeleteActivityInFirestore(int accountId, int planId, int activityId)
+        {
+   
+            var activityRef = firestoreDb.Collection("accounts")
+                                         .Document(accountId.ToString())
+                                         .Collection("plans")
+                                         .Document(planId.ToString())
+                                         .Collection("activities")
+                                         .Document(activityId.ToString());
+
+            await activityRef.DeleteAsync();      
+        }
+        public async Task UpdateActivityInFirestore(int accountId, int planId, int activityId, Windows_Programming.Model.Activity activity)
+        {
+            var activityRef = firestoreDb.Collection("accounts")
+                                         .Document(accountId.ToString())
+                                         .Collection("plans")
+                                         .Document(planId.ToString())
+                                         .Collection("activities")
+                                         .Document(activityId.ToString());
+            var activityData = Helps.ActivityToFirestoreDocument(activity);
+
+            await activityRef.UpdateAsync(activityData);
+        }
 
 
 

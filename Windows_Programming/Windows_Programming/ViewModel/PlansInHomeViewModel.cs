@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
@@ -69,15 +70,11 @@ namespace Windows_Programming.ViewModel
                 existingPlan.Description = updatedPlan.Description;
                 existingPlan.StartLocation = updatedPlan.StartLocation;
                 existingPlan.EndLocation = updatedPlan.EndLocation;
-                existingPlan.Type = updatedPlan.Type;
-                existingPlan.DeletedDate = updatedPlan.DeletedDate;
-                existingPlan.Activities = updatedPlan.Activities;
-
                 // Gọi OnPropertyChanged nếu cần thiết
                 OnPropertyChanged(nameof(PlansInHome)); // Thông báo rằng PlansInHome đã thay đổi
             }
         }
-        public void AddActivitiesForPlan(Plan specificPlan, Activity activity)
+        public void AddActivitiesForPlan(Plan specificPlan, Model.Activity activity)
         {
             if (PlansInHome.Contains(specificPlan))
             {
@@ -85,6 +82,54 @@ namespace Windows_Programming.ViewModel
                 OnPropertyChanged(nameof(PlansInHome));
             }
         }
+        public void DeleteActivityForPlan(Plan specificPlan, Model.Activity activity)
+        {
+            if (PlansInHome.Contains(specificPlan))
+            {
+                if (specificPlan.Activities.Contains(activity))
+                {
+                    specificPlan.Activities.Remove(activity);
+                    OnPropertyChanged(nameof(specificPlan.Activities));
+                }
+                OnPropertyChanged(nameof(PlansInHome));
+            }
+        }
+        public void UpdateActivityForPlan<T>(Plan specificPlan, T existingActivity, T updatedActivity) where T : Model.Activity
+        {
+            if (PlansInHome.Contains(specificPlan))
+            {
+                if (specificPlan.Activities.Contains(existingActivity))
+                {
+                    // Copy các thuộc tính chung
+                    existingActivity.Name = updatedActivity.Name;
+                    existingActivity.Venue = updatedActivity.Venue;
+                    existingActivity.Address = updatedActivity.Address;
+                    existingActivity.StartDate = updatedActivity.StartDate;
+                    existingActivity.EndDate = updatedActivity.EndDate;
+                    existingActivity.Description = updatedActivity.Description;
+
+                    
+                    if (existingActivity is Transport transport && updatedActivity is Transport updatedTransport)
+                    {
+                        transport.Vehicle = updatedTransport.Vehicle;
+                        transport.StartLocation = updatedTransport.StartLocation;
+                        transport.EndLocation = updatedTransport.EndLocation;
+                    }
+                    else if (existingActivity is Lodging lodging && updatedActivity is Lodging updatedLodging)
+                    {
+                        lodging.RoomInfo = updatedLodging.RoomInfo;
+                    }
+                    else if (existingActivity is Extend extend && updatedActivity is Extend updatedExtend)
+                    {
+                        extend.NameMore = updatedExtend.NameMore;
+                    }
+
+                    OnPropertyChanged(nameof(specificPlan.Activities));
+                }
+                OnPropertyChanged(nameof(PlansInHome));
+            }
+        }
+
         public void SortActivitiesByStartDate(Plan specificPlan)
         {
             if (PlansInHome.Contains(specificPlan))

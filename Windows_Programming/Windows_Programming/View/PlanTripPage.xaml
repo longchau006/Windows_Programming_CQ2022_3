@@ -13,58 +13,109 @@
 
     <Page.Resources>
         <DataTemplate x:Key="DiscoverFormat" x:DataType="myPath:Activity">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Border BorderBrush="Black" BorderThickness="1" Height=" 120" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock x:Name="NameActivity_TextBlock" Text="{x:Bind Name}" FontSize="18" />
-                </StackPanel>
-                <StackPanel Grid.Column="1" Margin="20,0,0,0">
-                    <TextBlock x:Name="TimeActivity_TextBlock" FontSize="18">
+                    <StackPanel Grid.Row="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="NameActivity_TextBlock" Text="{x:Bind Name}" FontSize="20" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <Button x:Name="ActivityMoreOptions_Button" BorderBrush ="White" Foreground="Blue">
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="More" />
+                                        <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                    </StackPanel>
+                                    <Button.Flyout >
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem x:Name="DeleteActivity_MenuFlyoutItem" Text="Delete " Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteActivityClick"/>
+                                            <MenuFlyoutItem x:Name="EditActivity_MenuFlyoutItem" Text="Update" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationUpdateActivityClick"/>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Row ="1">
+                        <TextBlock x:Name="TimeActivity_TextBlock" FontSize="18">
                             <Run Text="{x:Bind StartDate}"/>
                             <Run Text="-" />
                             <Run Text="{x:Bind EndDate}" />
-                    </TextBlock>
-                </StackPanel>
-                <StackPanel Grid.Column="2" Margin="20,0,0,0">
-                    <TextBlock x:Name="ContentActivity_TextBlock" FontSize="18">
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2">
+                        <TextBlock x:Name="ContentActivity_TextBlock" FontSize="18">
                             <Run Text="Discover"/>
                             <Run Text="{x:Bind Venue}"/>
                             <Run Text="-"/>
                             <Run Text="{x:Bind Address}"/>
-                    </TextBlock>
-                </StackPanel>
-                <StackPanel Grid.Column="3" Margin="20,0,0,0">
-                    <TextBlock x:Name="DescriptionActivity_TextBlock" Text="{x:Bind Description}" FontSize="18"/>
-                </StackPanel>
-            </Grid>
+                        </TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Margin="20,0,0,0">
+                        <TextBlock x:Name="DescriptionActivity_TextBlock" Text="{x:Bind Description}" FontSize="18"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="TransportFormat" x:DataType="myPath:Transport">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Border BorderBrush="Black" BorderThickness="1" Padding="10"  Height=" 120">
+                <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock x:Name="NameTransport_TextBlock" Text="{x:Bind Name}" FontSize="18" />
-                </StackPanel>
-                <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                <StackPanel Grid.Row="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock x:Name="NameTransport_TextBlock" Text="{x:Bind Name}" FontSize="20" />
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1">
+                                <Button x:Name="TransportMoreOptions_Button" BorderBrush ="White" Foreground="Blue">
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="More" />
+                                        <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                    </StackPanel>
+                                    <Button.Flyout >
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem x:Name="DeleteTransport_MenuFlyoutItem" Text="Delete " Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteActivityClick"/>
+                                            <MenuFlyoutItem x:Name="EditTransport_MenuFlyoutItem" Text="Update" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationUpdateActivityClick"/>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                        </StackPanel>
+                    </Grid>
+                 </StackPanel>
+                <StackPanel Grid.Row="1" >
                     <TextBlock x:Name="TimeTransport_TextBlock" FontSize="18">
                         <Run Text="{x:Bind StartDate}"/>
                         <Run Text="-" />
                         <Run Text="{x:Bind EndDate}" />
                     </TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                <StackPanel Grid.Row="2" >
                     <TextBlock x:Name="ContentTransport_TextBlock" FontSize="18">
                         <Run Text="Travel by"/>
                         <Run Text="{x:Bind Vehicle}"/>
@@ -74,32 +125,58 @@
                         <Run Text="{x:Bind EndLocation}" />
                     </TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="3" Margin="20,0,0,0">
+                <StackPanel Grid.Row="3" >
                     <TextBlock x:Name="DescriptionTransport_TextBlock" Text="{x:Bind Description}" FontSize="18"/>
                 </StackPanel>
             </Grid>
+            </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="LodgingFormat" x:DataType="myPath:Lodging">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Border BorderBrush="Black" BorderThickness="1" Height=" 120" Padding="10">
+                <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock x:Name="NameLodging_TextBlock" Text="{x:Bind Name}" FontSize="18" />
-                </StackPanel>
-                <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                    <StackPanel Grid.Row="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="NameLodging_TextBlock" Text="{x:Bind Name}" FontSize="20" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <Button x:Name="LodgingMoreOptions_Button" BorderBrush ="White" Foreground="Blue">
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="More" />
+                                        <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                    </StackPanel>
+                                    <Button.Flyout >
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem x:Name="DeleteLodging_MenuFlyoutItem" Text="Delete " Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteActivityClick"/>
+                                            <MenuFlyoutItem x:Name="EditLodging_MenuFlyoutItem" Text="Update" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationUpdateActivityClick"/>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" >
                     <TextBlock x:Name="TimeLodging_TextBlock" FontSize="18">
                         <Run Text="{x:Bind StartDate}"/>
                         <Run Text="-" />
                         <Run Text="{x:Bind EndDate}" />
                     </TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                <StackPanel Grid.Row="2" >
                     <TextBlock x:Name="ContentLodging_TextBlock" FontSize="18">
                         <Run Text="Stay"/>
                         <Run Text="{x:Bind RoomInfo}"/>   
@@ -107,32 +184,58 @@
                         <Run Text="{x:Bind Address}"/>
                     </TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="3" Margin="20,0,0,0">
+                <StackPanel Grid.Row="3" >
                     <TextBlock x:Name="DescriptionLodging_TextBlock" Text="{x:Bind Description}" FontSize="18"/>
                 </StackPanel>
             </Grid>
+            </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ExtendFormat" x:DataType="myPath:Extend">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Border BorderBrush="Black" BorderThickness="1" Height=" 120" Padding="10">
+                <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock x:Name="NameExtend_TextBlock" Text="{x:Bind Name}" FontSize="18" />
+                <StackPanel Grid.Row="0">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <TextBlock x:Name="NameExtend_TextBlock" Text="{x:Bind Name}" FontSize="20" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1">
+                 <Button x:Name="ExtendMoreOptions_Button" BorderBrush ="White" Foreground="Blue">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="More" />
+                    <TextBlock Text="More_Options" Margin="10,0,0,5"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                <Button.Flyout >
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem x:Name="DeleteExtend_MenuFlyoutItem" Text="Delete " Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteActivityClick"/>
+                        <MenuFlyoutItem x:Name="EditExtend_MenuFlyoutItem" Text="Update" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationUpdateActivityClick"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+    </Grid>
+</StackPanel>
+                <StackPanel Grid.Row="1" >
                     <TextBlock x:Name="TimeExtend_TextBlock" FontSize="18">
                     <Run Text="{x:Bind StartDate}"/>
                     <Run Text="-" />
                     <Run Text="{x:Bind EndDate}" />
                     </TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                <StackPanel Grid.Row="2">
                     <TextBlock x:Name="ContentExtend_TextBlock" FontSize="18">
                     <Run Text="{x:Bind NameMore}"/>
                     <Run Text="{x:Bind Venue}"/>
@@ -140,10 +243,11 @@
                     <Run Text="{x:Bind Address}"/>
                     </TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="3" Margin="20,0,0,0">
+                <StackPanel Grid.Row="3" >
                     <TextBlock x:Name="DescriptionExtend_TextBlock" Text="{x:Bind Description}" FontSize="18"/>
                 </StackPanel>
             </Grid>
+            </Border>
         </DataTemplate>
 
         <helper:ActivityTemplateSelector x:Key="ActivityTemplateSelector"
@@ -227,7 +331,7 @@
         </StackPanel>
         <!-- Schedule -->
         <StackPanel x:Name="Schedule_Panel" Grid.Row="2">
-            <ListView  Name="Schedule_ListView" Width="800" Height="600" 
+            <ListView  Name="Schedule_ListView" Width="800" Height="230" 
                ItemsSource="{x:Bind PlanTripViewModel.Activities, Mode=OneWay}"
                ItemTemplateSelector="{StaticResource ActivityTemplateSelector}">
             </ListView>

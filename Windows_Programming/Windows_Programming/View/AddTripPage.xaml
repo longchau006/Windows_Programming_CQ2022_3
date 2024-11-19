@@ -12,7 +12,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- Form Fields -->
@@ -21,8 +21,11 @@
             <TextBlock Text="Add a trip manually below and we'll create the trip for you." TextWrapping="WrapWholeWords" Margin="0,0,0,20"/>
 
             <!-- Trip Name -->
-            <TextBlock Text="Trip Name" />
-            <TextBox x:Name ="TripName_TextBox" PlaceholderText="Enter trip name" BorderBrush="Black" BorderThickness="1"/>
+            <StackPanel>
+                <TextBlock Text="Trip Name" />
+                <TextBox x:Name ="TripName_TextBox" PlaceholderText="Enter trip name" BorderBrush="Black" BorderThickness="1"/>
+            </StackPanel>
+
             <!-- Start and End Location -->
             <StackPanel Orientation="Vertical" Spacing="20">
                 <StackPanel>
@@ -48,7 +51,11 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- Buttons -->
+            <StackPanel>
+                <TextBlock Text="Description"/>
+                <TextBox x:Name ="Description_TextBox" PlaceholderText="Enter description" BorderBrush="Black" BorderThickness="1" />
+            </StackPanel>
+                    <!-- Buttons -->
             <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0">
                 <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
                 <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>

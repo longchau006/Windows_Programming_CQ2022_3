@@ -1,22 +1,22 @@
-﻿using Microsoft.UI.Xaml;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Cryptography.X509Certificates;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
+using System.Diagnostics;
+using Windows.ApplicationModel.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,79 +26,88 @@ namespace Windows_Programming.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AddActivitiesTripPage : Page
+    public sealed partial class EditActivityPage : Page
     {
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
-        public Plan PlanTripViewModel { get; set;}
-        int flag = 0;
-        public AddActivitiesTripPage()
+        public Plan PlanTripViewModel { get; set; }
+
+        public Model.Activity ActivityViewModel { get; set; }
+        public Transport TransportViewModel { get; set; }
+        public Lodging LodgingViewModel { get; set; }
+        public Extend ExtendViewModel { get; set; }
+
+        public EditActivityPage()
         {
             this.InitializeComponent();
-            Discover_Panel.Visibility = Visibility.Collapsed;
-            Transport_Panel.Visibility = Visibility.Collapsed;
-            Lodging_Panel.Visibility = Visibility.Collapsed;
-            Extend_Panel.Visibility = Visibility.Collapsed;
 
             firebaseServices = FirebaseServicesDAO.Instance;
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            PlanTripViewModel = e.Parameter as Plan;
-
-            if (PlanTripViewModel != null)
+            if (e.Parameter is Tuple<Model.Plan, Model.Activity> parameters)
             {
-                this.DataContext = PlanTripViewModel;
+                PlanTripViewModel = parameters.Item1;
+                ActivityViewModel = parameters.Item2 ;
+
+                if (ActivityViewModel != null)
+                {
+                    if (ActivityViewModel.Type == 1)
+                    {
+                        this.DataContext = ActivityViewModel;
+                    }
+                    else if (ActivityViewModel.Type == 2) 
+                    {
+                        TransportViewModel = parameters.Item2 as Transport;
+                        this.DataContext = TransportViewModel;
+                    }
+                    else if (ActivityViewModel.Type == 3)
+                    {
+                        LodgingViewModel = parameters.Item2 as Lodging;
+                        this.DataContext = LodgingViewModel;
+                    }
+                    else if (ActivityViewModel.Type == 4)
+                    {
+                        ExtendViewModel = parameters.Item2 as Extend;
+                        this.DataContext = ExtendViewModel;
+                    }
+
+                    if (ActivityViewModel.Type == 1)
+                    {
+                        Discover_Panel.Visibility = Visibility.Visible;
+                        Transport_Panel.Visibility = Visibility.Collapsed;
+                        Lodging_Panel.Visibility = Visibility.Collapsed;
+                        Extend_Panel.Visibility = Visibility.Collapsed;
+                    }
+                    else if (ActivityViewModel.Type == 2)
+                    {
+                        Transport_Panel.Visibility = Visibility.Visible;
+                        Discover_Panel.Visibility = Visibility.Collapsed;
+                        Lodging_Panel.Visibility = Visibility.Collapsed;
+                        Extend_Panel.Visibility = Visibility.Collapsed;
+                    }
+                    else if (ActivityViewModel.Type == 3)
+                    {
+                        Lodging_Panel.Visibility = Visibility.Visible;
+                        Transport_Panel.Visibility = Visibility.Collapsed;
+                        Discover_Panel.Visibility = Visibility.Collapsed;
+                        Extend_Panel.Visibility = Visibility.Collapsed;
+                    }
+                    else if (ActivityViewModel.Type == 4)
+                    {
+                        Extend_Panel.Visibility = Visibility.Visible;
+                        Discover_Panel.Visibility = Visibility.Collapsed;
+                        Transport_Panel.Visibility = Visibility.Collapsed;
+                        Lodging_Panel.Visibility = Visibility.Collapsed;
+                    }
+
+                }
             }
         }
-        private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
-        {
-            Discover_Button.Style = (Style)Resources["ButtonStyle"];
-            Transport_Button.Style = (Style)Resources["ButtonStyle"];
-            Lodging_Button.Style = (Style)Resources["ButtonStyle"];
-            Extend_Button.Style = (Style)Resources["ButtonStyle"];
-
-            Button clickedButton = sender as Button;
-            clickedButton.Style = (Style)Resources["SelectedButtonStyle"];
-
-            if (clickedButton == Discover_Button)
-            {
-                flag = 1;
-                Discover_Panel.Visibility = Visibility.Visible;
-                Transport_Panel.Visibility = Visibility.Collapsed;
-                Lodging_Panel.Visibility = Visibility.Collapsed;
-                Extend_Panel.Visibility = Visibility.Collapsed;
-            }
-            else if (clickedButton == Transport_Button)
-            {
-                flag = 2;
-                Transport_Panel.Visibility = Visibility.Visible;
-                Discover_Panel.Visibility = Visibility.Collapsed;
-                Lodging_Panel.Visibility = Visibility.Collapsed;
-                Extend_Panel.Visibility = Visibility.Collapsed;
-            }
-            else if (clickedButton == Lodging_Button)
-            {
-                flag = 3;
-                Lodging_Panel.Visibility = Visibility.Visible;
-                Transport_Panel.Visibility = Visibility.Collapsed;
-                Discover_Panel.Visibility = Visibility.Collapsed;
-                Extend_Panel.Visibility = Visibility.Collapsed;
-            }
-            else if (clickedButton == Extend_Button)
-            {
-                flag = 4;
-                Extend_Panel.Visibility = Visibility.Visible;
-                Discover_Panel.Visibility = Visibility.Collapsed;
-                Transport_Panel.Visibility = Visibility.Collapsed;
-                Lodging_Panel.Visibility = Visibility.Collapsed;
-            }
-         }
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            if (flag == 1)
+            if (ActivityViewModel.Type == 1)
             {
                 NameDiscover_TextBox.Text = string.Empty;
                 VenueDiscover_TextBox.Text = string.Empty;
@@ -109,7 +118,7 @@ namespace Windows_Programming.View
                 EndDiscover_TimePicker.SelectedTime = null;
                 DescriptionDiscover_TextBox.Text = string.Empty;
             }
-            else if (flag == 2)
+            else if (ActivityViewModel.Type == 2)
             {
                 NameTransport_TextBox.Text = string.Empty;
                 VehicleTransport_TextBox.Text = string.Empty;
@@ -121,7 +130,7 @@ namespace Windows_Programming.View
                 EndTransport_TimePicker.SelectedTime = null;
                 DescriptionTransport_TextBox.Text = string.Empty;
             }
-            else if (flag == 3)
+            else if (ActivityViewModel.Type == 3)
             {
                 NameLodging_TextBox.Text = string.Empty;
                 RoomInfoLodging_TextBox.Text = string.Empty;
@@ -132,7 +141,7 @@ namespace Windows_Programming.View
                 EndLodging_TimePicker.SelectedTime = null;
                 DescriptionLodging_TextBox.Text = string.Empty;
             }
-            else if (flag == 4)
+            else if (ActivityViewModel.Type == 4)
             {
                 ActivityExtend_TextBox.Text = string.Empty;
                 NameExtend_TextBox.Text = string.Empty;
@@ -146,13 +155,9 @@ namespace Windows_Programming.View
             }
         }
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
-        { 
-            if (PlanTripViewModel.Activities == null)
-            {
-                PlanTripViewModel.Activities = new List<Windows_Programming.Model.Activity>();
-            }
-            Windows_Programming.Model.Activity newActivity = null;
-            if (flag == 1)
+        {
+            Windows_Programming.Model.Activity updateActivity = null;
+            if (ActivityViewModel.Type == 1)
             {
                 string nameDiscover = NameDiscover_TextBox.Text;
                 string venueDiscover = VenueDiscover_TextBox.Text;
@@ -164,7 +169,12 @@ namespace Windows_Programming.View
                 string descriptionDiscover = DescriptionDiscover_TextBox.Text;
 
                 List<string> errorMessages = new List<string>();
-
+                if (nameDiscover == ActivityViewModel.Name &&
+                    venueDiscover == ActivityViewModel.Venue &&
+                    descriptionDiscover == ActivityViewModel.Description)
+                {
+                    errorMessages.Add("No edit");
+                }    
                 if (string.IsNullOrWhiteSpace(nameDiscover))
                     errorMessages.Add("Name is required.");
                 if (string.IsNullOrWhiteSpace(venueDiscover))
@@ -188,7 +198,7 @@ namespace Windows_Programming.View
                     ContentDialog dialog = new ContentDialog
                     {
                         Title = "Incomplete or Invalid Information",
-                        Content = string.Join("\n", errorMessages), 
+                        Content = string.Join("\n", errorMessages),
                         CloseButtonText = "OK",
                         XamlRoot = this.XamlRoot
                     };
@@ -223,10 +233,10 @@ namespace Windows_Programming.View
                     );
                 }
 
-                newActivity = new Windows_Programming.Model.Activity
+                updateActivity = new Windows_Programming.Model.Activity
                 {
-                    Id = PlanTripViewModel.Activities.Any()? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1):0,
-                    Type = flag,
+                    Id = ActivityViewModel.Id,
+                    Type = ActivityViewModel.Type,
                     Name = nameDiscover,
                     Venue = venueDiscover,
                     Address = addressDiscover,
@@ -235,7 +245,7 @@ namespace Windows_Programming.View
                     Description = descriptionDiscover
                 };
             }
-            else if (flag == 2)
+            else if (ActivityViewModel.Type == 2)
             {
                 string nameTransport = NameTransport_TextBox.Text;
                 string vehicleTransport = VehicleTransport_TextBox.Text;
@@ -309,10 +319,10 @@ namespace Windows_Programming.View
                     );
                 }
 
-                newActivity = new Transport
+                updateActivity = new Transport
                 {
-                    Id = PlanTripViewModel.Activities.Any() ? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1) : 0,
-                    Type = flag,
+                    Id = ActivityViewModel.Id,
+                    Type = ActivityViewModel.Type,
                     Name = nameTransport,
                     Vehicle = vehicleTransport,
                     StartLocation = startLocation,
@@ -323,7 +333,7 @@ namespace Windows_Programming.View
                 };
 
             }
-            else if (flag == 3)
+            else if (ActivityViewModel.Type == 3)
             {
                 string nameLodging = NameLodging_TextBox.Text;
                 string roomLodging = RoomInfoLodging_TextBox.Text;
@@ -394,10 +404,10 @@ namespace Windows_Programming.View
                     );
                 }
 
-                newActivity = new Lodging
+                updateActivity = new Lodging
                 {
-                    Id = PlanTripViewModel.Activities.Any() ? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1) : 0,
-                    Type = flag,
+                    Id = ActivityViewModel.Id,
+                    Type = ActivityViewModel.Type,
                     Name = nameLodging,
                     RoomInfo = roomLodging,
                     Address = addressLodging,
@@ -406,7 +416,7 @@ namespace Windows_Programming.View
                     Description = descriptionLodging,
                 };
             }
-            else if (flag == 4)
+            else if (ActivityViewModel.Type == 4)
             {
                 string activityExtend = ActivityExtend_TextBox.Text;
                 string nameExtend = NameExtend_TextBox.Text;
@@ -480,10 +490,10 @@ namespace Windows_Programming.View
                     );
                 }
 
-                newActivity = new Extend
+                updateActivity = new Extend
                 {
-                    Id = PlanTripViewModel.Activities.Any() ? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1) : 0,
-                    Type = flag,
+                    Id = ActivityViewModel.Id,
+                    Type = ActivityViewModel.Type,
                     NameMore = activityExtend,
                     Name = nameExtend,
                     Venue = venueExtend,
@@ -494,21 +504,20 @@ namespace Windows_Programming.View
                 };
             }
 
-            MyPlansHomeViewModel.AddActivitiesForPlan(PlanTripViewModel, newActivity);
+            MyPlansHomeViewModel.UpdateActivityForPlan(PlanTripViewModel, ActivityViewModel, updateActivity);
 
-           
             try
             {
-                await firebaseServices.CreateActivityInFirestore(26, PlanTripViewModel.Id, newActivity);
+                await firebaseServices.UpdateActivityInFirestore(26, PlanTripViewModel.Id, ActivityViewModel.Id, updateActivity);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
+                Debug.WriteLine($"Failed to update to Firestore: {ex.Message}");
 
                 ContentDialog errorDialog = new ContentDialog
                 {
                     Title = "Error",
-                    Content = "Failed to save the activity to Firestore.",
+                    Content = "Failed to update the activity to Firestore.",
                     CloseButtonText = "OK",
                     XamlRoot = this.XamlRoot
                 };
@@ -518,7 +527,7 @@ namespace Windows_Programming.View
 
             ContentDialog successDialog = new ContentDialog
             {
-                Title = "Activity Added Successfully",
+                Title = "Activity Update Successfully",
                 Content = "Your activity has been saved.",
                 CloseButtonText = "OK",
                 XamlRoot = this.XamlRoot
@@ -530,6 +539,5 @@ namespace Windows_Programming.View
                 Frame.GoBack();
             }
         }
-
     }
 }
