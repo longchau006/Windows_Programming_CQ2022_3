@@ -12,7 +12,7 @@ namespace Windows_Programming.Database
 {
     public class MockDao : IDao
     {
-        public List<Plan> GetAllPlanInHome()
+        public List<Plan> GetAllPlanInHome() { return new List<Plan> { };}/*
         {
 
             var result = new List<Plan>
@@ -104,7 +104,7 @@ namespace Windows_Programming.Database
             }
         };
             return result;
-        }
+        }*/
         public List<Plan> GetAllPlanInTrashCan()
         {
             var result = new List<Plan>

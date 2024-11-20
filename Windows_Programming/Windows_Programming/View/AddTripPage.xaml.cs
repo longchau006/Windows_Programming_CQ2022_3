@@ -20,6 +20,8 @@ using System.Diagnostics;
 using Windows_Programming.ViewModel;
 using Windows_Programming.Model;
 using WinRT.Interop;
+using Windows_Programming.Database;
+using static System.Net.Mime.MediaTypeNames;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,12 +33,15 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class AddTripPage : Page
     {
+        private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
 
-        private string selectedImagePath;
+        private string selectedImagePath = "/Assets/danang.jpg";
         public AddTripPage()
         {
             this.InitializeComponent();
+
+            firebaseServices = FirebaseServicesDAO.Instance;
         }
 
         private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
@@ -74,11 +79,12 @@ namespace Windows_Programming.View
             End_DatePicker.SelectedDate = null; 
             var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
             Trip_Image.Source = image;
-            selectedImagePath = null;
+            selectedImagePath = "/Assets/danang.jpg";
+            Description_TextBox.Text = string.Empty;
         }
 
         // Lấy thông tin khi nhấn Save
-        private void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
+        private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
             // Lấy thông tin từ các trường
             string tripName = TripName_TextBox.Text;
@@ -86,7 +92,7 @@ namespace Windows_Programming.View
             string endLocation = EndLocation_TextBox.Text;
             DateTime? startDate = Start_DatePicker.SelectedDate?.DateTime;
             DateTime? endDate = End_DatePicker.SelectedDate?.DateTime;
-
+            string description = Description_TextBox.Text;
             // Danh sách chứa các thông báo lỗi
             List<string> errorMessages = new List<string>();
 
@@ -112,30 +118,51 @@ namespace Windows_Programming.View
                 ContentDialog dialog = new ContentDialog
                 {
                     Title = "Incomplete or Invalid Information",
-                    Content = string.Join("\n", errorMessages), // Nối các thông báo lỗi thành chuỗi
+                    Content = string.Join("\n", errorMessages),
                     CloseButtonText = "OK",
                     XamlRoot = this.XamlRoot
                 };
-                _ = dialog.ShowAsync(); // Dùng _ để bỏ qua warning về await
-
+                _ = dialog.ShowAsync();
                 return;
             }
 
             // Tạo đối tượng Plan từ các thông tin đã nhập
             Plan newPlan = new Plan
             {
+                Id = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id) + 1) : 0,
                 Name = tripName,
                 PlanImage = selectedImagePath,
                 StartLocation = startLocation,
                 EndLocation = endLocation,
-                StartDate = startDate.Value, // Vì đã kiểm tra null, nên có thể dùng Value
-                EndDate = endDate.Value
+                StartDate = startDate.Value,
+                EndDate = endDate.Value,
+                Description = description
             };
 
             // Thêm đối tượng mới vào danh sách kế hoạch trong ViewModel
             MyPlansHomeViewModel.AddPlanInHome(newPlan);
 
-            // Có thể hiển thị thông báo thành công hoặc điều hướng đến trang khác
+            // Ghi đối tượng lên Firestore
+            try
+            {
+                await firebaseServices.CreatePlanInFirestore(26, newPlan); 
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
+
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "Failed to save the trip to Firestore.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                _ = errorDialog.ShowAsync();
+                return;
+            }
+
+            // Hiển thị thông báo thành công
             ContentDialog successDialog = new ContentDialog
             {
                 Title = "Trip Added Successfully",
@@ -144,7 +171,14 @@ namespace Windows_Programming.View
                 XamlRoot = this.XamlRoot
             };
             _ = successDialog.ShowAsync();
+
+            // Điều hướng về trang trước
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
         }
+
 
     }
 }
