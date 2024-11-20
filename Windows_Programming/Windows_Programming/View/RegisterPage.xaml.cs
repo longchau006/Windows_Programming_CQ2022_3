@@ -67,7 +67,7 @@ namespace Windows_Programming.View
                 return;
             }
             if (CheckInput.CheckFormatPassword(passwordInput) == false){
-                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.");
+                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character: @ $ ! % * ? &");
                 return;
             }
             if (passwordInput!=confirmPasswordInput)
@@ -155,6 +155,12 @@ namespace Windows_Programming.View
         //}
         private void CreateLoadingDialog()
         {
+            if (loadingDialog != null)
+            {
+                loadingDialog.Hide();
+                loadingDialog = null;
+            }
+
             StackPanel dialogContent = new StackPanel
             {
                 Spacing = 10,
@@ -182,59 +188,67 @@ namespace Windows_Programming.View
                 Content = dialogContent,
                 IsPrimaryButtonEnabled = false,
                 IsSecondaryButtonEnabled = false,
-                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+                XamlRoot = this.XamlRoot
             };
         }
-
         private async Task WriteToDatabase(string emailInput, string passwordInput)
         {
             CreateLoadingDialog();
-            var dialogTask = loadingDialog.ShowAsync(); // Store the task
+            var dialogTask = loadingDialog.ShowAsync();
 
             try
             {
                 var userCredential = await firebaseServices.CreateAccountInFireBase(emailInput, passwordInput);
-
-                var user = userCredential.User;
-                tokenLocal = await user.GetIdTokenAsync();
-
-                if (RememberMeRegister_CheckBox.IsChecked == true)
+                if (userCredential != null)
                 {
-                    WriteToLocal(tokenLocal);
+                    var user = userCredential.User;
+                    tokenLocal = await user.GetIdTokenAsync();
+
+                    if (RememberMeRegister_CheckBox.IsChecked == true)
+                    {
+                        WriteToLocal(tokenLocal);
+                    }
+                    else
+                    {
+                        DeleteFromLocal();
+                    }
+
+                    var screen = new MainWindow();
+                    screen.Activate();
+                    loginWindow?.Close();
+
+                    int numberCurrentAccounts = await firebaseServices.GetAccountsCount();
+                    var newAccount = new Account
+                    {
+                        Id = numberCurrentAccounts,
+                        Username = emailInput,
+                        Email = emailInput,
+                        Fullname = emailInput,
+                        Address = ""
+                    };
+
+                    await firebaseServices.CreateAccountInFirestore(newAccount);
                 }
-                else
-                {
-                    DeleteFromLocal();
-                }
 
-                var screen = new MainWindow();
-                screen.Activate();
-                loginWindow?.Close();
-
-                int numberCurrentAccounts = await firebaseServices.GetAccountsCount();
-
-                var newAccount = new Account
-                {
-                    Id = numberCurrentAccounts,
-                    Username = emailInput,
-                    Email = emailInput,
-                    Fullname = emailInput,
-                    Address = ""
-                };
-
-                await firebaseServices.CreateAccountInFirestore(newAccount);
-
-                // Close the dialog by completing the task
+                // Complete the dialog task
                 await dialogTask;
             }
             catch (Exception ex)
             {
-                ShowDialog(ex.Message);
-                // Close the dialog in case of error
-                await dialogTask;
+                if (loadingDialog != null)
+                {
+                    loadingDialog.Hide();
+                }
+                ShowDialog("abc" + ex.Message);
+            }
+            finally
+            {
+                if (loadingDialog != null)
+                {
+                    loadingDialog.Hide();
+                }
             }
         }
-
 
         //Hien dialog
 

@@ -91,7 +91,7 @@ namespace Windows_Programming.View
                 return;
             }
             if (CheckInput.CheckFormatPassword(passwordInput) == false){
-                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character.");
+                ShowDialog("Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character: @ $ ! % * ? &");
                 return;
             }
             await ReadFromDatabase(emailInput,passwordInput);
@@ -151,6 +151,7 @@ namespace Windows_Programming.View
             catch (Exception ex)
             {
                 ShowDialog($"{ex.Message}");
+                loadingDialog.Hide();
             }
             finally
             {
