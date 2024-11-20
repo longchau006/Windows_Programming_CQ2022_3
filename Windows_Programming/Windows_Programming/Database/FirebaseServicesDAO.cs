@@ -187,7 +187,56 @@ namespace Windows_Programming.Database
             await activityRef.UpdateAsync(activityData);
         }
 
+        public async Task<List<Plan>> GetAllPlan(int id)
+        {
+            var plansSubcollection = firestoreDb.Collection("accounts")
+                                           .Document(id.ToString())
+                                           .Collection("plans");
+            var plansSnapshot = await plansSubcollection.GetSnapshotAsync();
 
+            List<Plan> plans = new List<Plan>();
+            foreach (var planDoc in plansSnapshot.Documents)
+            {
+                var planData = planDoc.ToDictionary();
+                var plan = Helps.PlanFromFirestoreDocument(planData);
+
+                var activitiesSubcollection = plansSubcollection.Document(plan.Id.ToString())
+                                                                .Collection("activities");
+                var activitiesSnapshot = await activitiesSubcollection.GetSnapshotAsync();
+                foreach (var activityDoc in activitiesSnapshot.Documents)
+                {
+                    var activityData = activityDoc.ToDictionary();
+                    try
+                    {
+                        int type = Convert.ToInt32(activityData["type"]);  
+                        switch (type)
+                        {
+                            case 1:
+                                System.Diagnostics.Debug.WriteLine("111111");
+                                var activity1 = Helps.ActivityFromFirestoreDocument(activityData);
+                                plan.Activities.Add(activity1);
+                                break;
+                            case 2:
+                                var activity2 = Helps.TransportFromFirestoreDocument(activityData);
+                                plan.Activities.Add(activity2);
+                                break;
+                            case 3:
+                                var activity3 = Helps.LodgingFromFirestoreDocument(activityData);
+                                plan.Activities.Add(activity3);
+                                break;
+                            case 4:
+                                var activity4 = Helps.ExtendFromFirestoreDocument(activityData);
+                                plan.Activities.Add(activity4);
+                                break;
+                        }
+                    }
+                    catch (Exception ex) { }  
+                }
+                plans.Add(plan);
+            }
+
+            return plans;
+        }
 
 
         //From IDAO

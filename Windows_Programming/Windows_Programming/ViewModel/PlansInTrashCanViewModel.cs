@@ -12,6 +12,7 @@ namespace Windows_Programming.ViewModel
 {
     public class PlansInTrashCanViewModel : INotifyPropertyChanged
     {
+        private FirebaseServicesDAO firebaseServices = FirebaseServicesDAO.Instance;
         private ObservableCollection<Plan> _plansInTrashCan = new ObservableCollection<Plan>();
 
         public ObservableCollection<Plan> PlansInTrashCan
@@ -31,16 +32,20 @@ namespace Windows_Programming.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public void Init()
+        public async void Init()
         {
-            IDao dao = new MockDao();
-            var plans = dao.GetAllPlanInTrashCan();
+
+            var plans = await firebaseServices.GetAllPlan(26);
 
             PlansInTrashCan.Clear();
             foreach (var plan in plans)
             {
-                PlansInTrashCan.Add(plan);
+                if (plan.DeletedDate != null)
+                {
+                    PlansInTrashCan.Add(plan);
+                }
             }
+            OnPropertyChanged(nameof(PlansInTrashCan));
         }
         public void AddPlanInTrashCan(Plan plan)
         {
