@@ -1,27 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.Storage;
-using System.Diagnostics;
-using Windows_Programming.ViewModel;
 using Windows_Programming.Model;
+using Windows_Programming.ViewModel;
 using WinRT.Interop;
 using Windows_Programming.Database;
-using static System.Net.Mime.MediaTypeNames;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,19 +30,33 @@ namespace Windows_Programming.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AddTripPage : Page
+    public sealed partial class EditTripPage : Page
     {
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
+        public Plan PlanTripViewModel { get; set; }
 
-        private string selectedImagePath = "/Assets/danang.jpg";
-        public AddTripPage()
+        private string selectedImagePath;
+        public EditTripPage()
         {
             this.InitializeComponent();
 
             firebaseServices = FirebaseServicesDAO.Instance;
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            PlanTripViewModel = e.Parameter as Plan;
+
+            if (PlanTripViewModel != null)
+            {
+                this.DataContext = PlanTripViewModel;
+                selectedImagePath = PlanTripViewModel.PlanImage;
+            }
+
+        }
         private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
         {
             var openPicker = new FileOpenPicker();
@@ -58,6 +71,7 @@ namespace Windows_Programming.View
             if (file != null)
             {
                 selectedImagePath = file.Path;
+                System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
                 // Sử dụng BitmapImage để tạo nguồn cho Image
                 var bitmapImage = new BitmapImage();
                 using (var stream = await file.OpenAsync(FileAccessMode.Read))
@@ -67,23 +81,29 @@ namespace Windows_Programming.View
                 Trip_Image.Source = bitmapImage;
             }
         }
-
-
-        // Xóa các thông tin nhập khi nhấn Cancel
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            TripName_TextBox.Text = string.Empty;
-            StartLocation_TextBox.Text = string.Empty;
-            EndLocation_TextBox.Text = string.Empty;
-            Start_DatePicker.SelectedDate = null;
-            End_DatePicker.SelectedDate = null; 
-            var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
-            Trip_Image.Source = image;
-            selectedImagePath = "/Assets/danang.jpg";
-            Description_TextBox.Text = string.Empty;
+            TripName_TextBox.Text = PlanTripViewModel.Name.ToString();
+            StartLocation_TextBox.Text = PlanTripViewModel.StartLocation.ToString();
+            EndLocation_TextBox.Text = PlanTripViewModel.EndLocation.ToString();
+            Start_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.StartDate);
+            End_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.EndDate);
+            Description_TextBox.Text = PlanTripViewModel.Description.ToString();
+            selectedImagePath = PlanTripViewModel.PlanImage;
+            if (!string.IsNullOrEmpty(PlanTripViewModel.PlanImage))
+            {
+                try
+                {
+                    var image = new BitmapImage(new Uri(PlanTripViewModel.PlanImage, UriKind.Absolute));
+                    Trip_Image.Source = image;
+                }
+                catch (Exception ex)
+                {
+                    Trip_Image.Source = null;
+                }
+            }
+            System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
         }
-
-        // Lấy thông tin khi nhấn Save
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
             // Lấy thông tin từ các trường
@@ -93,8 +113,21 @@ namespace Windows_Programming.View
             DateTime? startDate = Start_DatePicker.SelectedDate?.DateTime;
             DateTime? endDate = End_DatePicker.SelectedDate?.DateTime;
             string description = Description_TextBox.Text;
+
             // Danh sách chứa các thông báo lỗi
             List<string> errorMessages = new List<string>();
+
+            // Kiểm tra có thay đổi không
+            if ((tripName == PlanTripViewModel.Name) &&
+                (startLocation == PlanTripViewModel.StartLocation) &&
+                (endLocation == PlanTripViewModel.EndLocation) &&
+                (startDate.HasValue && startDate.Value == PlanTripViewModel.StartDate) &&
+                (endDate.HasValue && endDate.Value == PlanTripViewModel.EndDate) &&
+                (description == PlanTripViewModel.Description) &&
+                (selectedImagePath == PlanTripViewModel.PlanImage))
+            {
+                errorMessages.Add("No edits");
+            }
 
             // Kiểm tra các trường có bị trống hay không
             if (string.IsNullOrWhiteSpace(tripName))
@@ -129,7 +162,6 @@ namespace Windows_Programming.View
             // Tạo đối tượng Plan từ các thông tin đã nhập
             Plan newPlan = new Plan
             {
-                Id = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id) + 1) : 0,
                 Name = tripName,
                 PlanImage = selectedImagePath,
                 StartLocation = startLocation,
@@ -139,13 +171,13 @@ namespace Windows_Programming.View
                 Description = description
             };
 
-            // Thêm đối tượng mới vào danh sách kế hoạch trong ViewModel
-            MyPlansHomeViewModel.AddPlanInHome(newPlan);
+            // Sửa plan trong danh sách kế hoạch trong ViewModel
+            MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
 
             // Ghi đối tượng lên Firestore
             try
             {
-                await firebaseServices.CreatePlanInFirestore(26, newPlan); 
+                await firebaseServices.UpdatePlanInFirestore(26, PlanTripViewModel.Id, newPlan);
             }
             catch (Exception ex)
             {
@@ -154,7 +186,7 @@ namespace Windows_Programming.View
                 ContentDialog errorDialog = new ContentDialog
                 {
                     Title = "Error",
-                    Content = "Failed to save the trip to Firestore.",
+                    Content = "Failed to update the trip to Firestore.",
                     CloseButtonText = "OK",
                     XamlRoot = this.XamlRoot
                 };
@@ -162,23 +194,22 @@ namespace Windows_Programming.View
                 return;
             }
 
-            // Hiển thị thông báo thành công
+            // Hiển thị thông báo thành công hoặc điều hướng đến trang khác
             ContentDialog successDialog = new ContentDialog
             {
-                Title = "Trip Added Successfully",
-                Content = "Your trip has been saved.",
+                Title = "Trip Edited Successfully",
+                Content = "Your trip has been fixed.",
                 CloseButtonText = "OK",
                 XamlRoot = this.XamlRoot
             };
             _ = successDialog.ShowAsync();
 
-            // Điều hướng về trang trước
+            // Điều hướng quay lại nếu Frame tồn tại và có thể quay lại
             if (Frame != null && Frame.CanGoBack)
             {
                 Frame.GoBack();
             }
         }
-
 
     }
 }

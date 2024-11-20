@@ -7,11 +7,13 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows_Programming.Database;
 using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
 
@@ -25,7 +27,9 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class HomePage : Page
     {
-        public PlansInHomeViewModel MyPlansHomeViewModel { get; set; }
+        private FirebaseServicesDAO firebaseServices;
+        public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
+        public PlansInTrashCanViewModel MyPlansInTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
         public HomePage()
         {
             this.InitializeComponent();
@@ -33,32 +37,31 @@ namespace Windows_Programming.View
             Schedule_Panel.Visibility = Visibility.Collapsed;
             NoSchedule_Panel.Visibility = Visibility.Visible;
 
-            MyPlansHomeViewModel = new PlansInHomeViewModel();
-            MyPlansHomeViewModel.Init();
-            if (MyPlansHomeViewModel != null)
+            if (MyPlansHomeViewModel.PlansInHome.Any())
             {
                 Schedule_Panel.Visibility = Visibility.Visible;
                 NoSchedule_Panel.Visibility = Visibility.Collapsed;
             }
+
+            firebaseServices = FirebaseServicesDAO.Instance;
         }
         private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
         {
 
-            UpcomingTrips_Button.Style = (Style)Resources["ButtonStyle"];
-            PastTrips_Button.Style = (Style)Resources["ButtonStyle"];
+            UpcomingTrips_Button.Style = (Style)Resources["FilterButtonStyle"];
+            PastTrips_Button.Style = (Style)Resources["FilterButtonStyle"];
 
             Button clickedButton = sender as Button;
-            clickedButton.Style = (Style)Resources["SelectedButtonStyle"];
+            clickedButton.Style = (Style)Resources["SelectedFilterButtonStyle"];
 
-            // Ki?m tra nút nào ?ã ???c nh?n và thay ??i n?i dung TextBlock t??ng ?ng
-            if (clickedButton == UpcomingTrips_Button)
+            /*if (clickedButton == UpcomingTrips_Button)
             {
-                NoSchedule_TextBlock.Text = "No Upcoming Trips";
+               
             }
             else if (clickedButton == PastTrips_Button)
             {
-                NoSchedule_TextBlock.Text = "No Past Trips";
-            }
+                
+            }*/
         }
 
         private void OnNavigationFilterButtonClick(object sender, RoutedEventArgs e)
@@ -100,6 +103,45 @@ namespace Windows_Programming.View
                 Frame.Navigate(typeof(PlanTripPage), selectedPlan);
             }
 
+        }
+        private void OnNavigationEditTripInfoForTripClick(object sender, RoutedEventArgs e)
+        {
+            var selectedPlan = (sender as Button).DataContext as Plan;
+            if (selectedPlan != null)
+            {
+                Frame.Navigate(typeof(EditTripPage), selectedPlan);
+            }
+        }
+        private async void OnNavigationDeleteTripClick(object sender, RoutedEventArgs e)
+        {
+            var selectedPlan = (sender as MenuFlyoutItem).CommandParameter as Plan;
+            if (selectedPlan != null)
+            {
+                // Gọi phương thức xóa kế hoạch từ PlansInHomeViewModel
+                selectedPlan.DeletedDate = DateTime.Now;
+                MyPlansInTrashCanViewModel.AddPlanInTrashCan(selectedPlan);
+                MyPlansHomeViewModel.RemovePlanInHome(selectedPlan);
+
+                // Ghi đối tượng lên Firestore
+                try
+                {
+                    await firebaseServices.UpdateWhenDeletePlanInFirestore(26, selectedPlan.Id, selectedPlan);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
+
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to delete the trip in home to Firestore.",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    _ = errorDialog.ShowAsync();
+                    return;
+                }
+            }
         }
     }
 }
