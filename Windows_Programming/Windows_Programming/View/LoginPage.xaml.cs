@@ -8,6 +8,7 @@ using System.Text;
 using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Windows_Programming.Helpers;
+using Windows_Programming.Model;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -130,23 +131,26 @@ namespace Windows_Programming.View
                 string tokenResponse = await userCredential.User.GetIdTokenAsync();
                 
 
-                // Get user info
-                var user = userCredential.User;
-                var email = user.Info.Email;
-                var uid = user.Uid;
-
-                if (RememberMeLogin_CheckBox.IsChecked == true)
+                // Get account from Firestore
+                var currentAccount = await firebaseServices.GetAccountByEmail(emailInput.Trim());
+                WriteUserToLocal(currentAccount);
+                if (currentAccount != null)
                 {
-                    WriteToLocal(tokenResponse);
-                }
-                else
-                {
-                    DeleteFromLocal();
-                }
+                    if (RememberMeLogin_CheckBox.IsChecked == true)
+                    {
+                        WriteToLocal(tokenResponse);
 
-                var screen = new MainWindow();
-                screen.Activate();
-                loginWindow?.Close();
+
+                    }
+                    else
+                    {
+                        DeleteFromLocal();
+                    }
+
+                    var screen = new MainWindow();
+                    screen.Activate();
+                    loginWindow?.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -219,6 +223,13 @@ namespace Windows_Programming.View
             //chua luu
             string encryptedPasswordBase64 = EncryptPassword(userToken);// da luu entropy trong nay
             localSettings.Values["UserToken"] = encryptedPasswordBase64;
+        }
+        void WriteUserToLocal(Account account){
+            localSettings.Values["Id"] = account.Id;
+            localSettings.Values["Username"] = account.Username;
+            localSettings.Values["Email"] = account.Email;
+            localSettings.Values["Fullname"] = account.Fullname;
+            localSettings.Values["Address"] = account.Address;
         }
         void DeleteFromLocal()
         {

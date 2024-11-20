@@ -145,7 +145,7 @@
     <Page Update="View\AddActivitiesTripPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="View\EditTripPage.xaml">
+    <Page Update="View\EditTripPage.xaml"/>
     <Page Update="View\CreateBlogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
