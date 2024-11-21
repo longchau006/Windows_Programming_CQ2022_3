@@ -31,6 +31,8 @@ namespace Windows_Programming.View
         public Plan PlanTripViewModel { get; set; }
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public PlansInTrashCanViewModel MyPlansInTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
+
+        int accountId = MainWindow.MyAccount.Id;
         public PlanTripPage()
         {
             this.InitializeComponent();
@@ -59,7 +61,7 @@ namespace Windows_Programming.View
                 // Ghi đối tượng lên Firestore
                 try
                 {
-                    await firebaseServices.UpdateWhenDeletePlanInFirestore(26, PlanTripViewModel.Id, PlanTripViewModel);
+                    await firebaseServices.UpdateWhenDeletePlanInFirestore(accountId, PlanTripViewModel.Id, PlanTripViewModel);
                 }
                 catch (Exception ex)
                 {
@@ -102,7 +104,7 @@ namespace Windows_Programming.View
                 // Xóa đối tượng trên Firestore
                 try
                 {
-                    await firebaseServices.DeleteActivityInFirestore(26, PlanTripViewModel.Id, selectedActivity.Id);
+                    await firebaseServices.DeleteActivityInFirestore(accountId, PlanTripViewModel.Id, selectedActivity.Id);
                 }
                 catch (Exception ex)
                 {

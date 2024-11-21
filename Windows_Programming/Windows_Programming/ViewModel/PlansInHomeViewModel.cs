@@ -6,11 +6,14 @@ using System.Diagnostics;
 using System.Linq;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
+using Windows_Programming.View;
 
 namespace Windows_Programming.ViewModel
 {
     public class PlansInHomeViewModel : INotifyPropertyChanged
     {
+        private FirebaseServicesDAO firebaseServices = FirebaseServicesDAO.Instance;
+
         private ObservableCollection<Plan> _plansInHome = new ObservableCollection<Plan>();
         public ObservableCollection<Plan> PlansInHome
         {
@@ -32,17 +35,20 @@ namespace Windows_Programming.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void Init()
+        public async void Init()
         {
-            IDao dao = new MockDao();
-            var plans = dao.GetAllPlanInHome(); // đây là List<Plan>
 
-            // Thay vì gán trực tiếp, ta dùng AddRange để thêm từng phần tử
+            var plans = await firebaseServices.GetAllPlan(MainWindow.MyAccount.Id);
+
             PlansInHome.Clear();
             foreach (var plan in plans)
             {
-                PlansInHome.Add(plan);
+                if (plan.DeletedDate == null)
+                {
+                    PlansInHome.Add(plan);
+                }
             }
+            OnPropertyChanged(nameof(PlansInHome));
         }
 
         public void AddPlanInHome(Plan plan)

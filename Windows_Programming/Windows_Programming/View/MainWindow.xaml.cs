@@ -37,6 +37,7 @@ namespace Windows_Programming.View
     {
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
+        private static Account myAccount=null;
         public MainWindow()
         {
             this.InitializeComponent();
@@ -45,7 +46,7 @@ namespace Windows_Programming.View
 
             //Test
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            Account currentAccount=new Account
+            myAccount=new Account
                     {
                         Id = -1,
                         Email = "Xamxaml",
@@ -58,23 +59,23 @@ namespace Windows_Programming.View
             if (localSettings.Values.ContainsKey("Id"))
             {
                 // Chuyển giá trị của "Id" thành int
-                currentAccount.Id = int.TryParse(localSettings.Values["Id"]?.ToString(), out int id) ? id : 0;
+                myAccount.Id = int.TryParse(localSettings.Values["Id"]?.ToString(), out int id) ? id : 0;
             }
 
             // Kiểm tra và lấy các giá trị khác
             if (localSettings.Values.ContainsKey("Username"))
-                currentAccount.Username = localSettings.Values["Username"]?.ToString();
+                myAccount.Username = localSettings.Values["Username"]?.ToString();
 
 
             if (localSettings.Values.ContainsKey("Email"))
-                currentAccount.Email = localSettings.Values["Email"]?.ToString();
+                myAccount.Email = localSettings.Values["Email"]?.ToString();
 
             if (localSettings.Values.ContainsKey("Fullname"))
-                currentAccount.Fullname = localSettings.Values["Fullname"]?.ToString();
+                myAccount.Fullname = localSettings.Values["Fullname"]?.ToString();
 
             if (localSettings.Values.ContainsKey("Address"))
-                currentAccount.Address = localSettings.Values["Address"]?.ToString();
-            currentAccount.PrintAccountInfo();
+                myAccount.Address = localSettings.Values["Address"]?.ToString();
+            myAccount.PrintAccountInfo();
 
 
         }
@@ -152,6 +153,13 @@ namespace Windows_Programming.View
                     _myPlansInTrashCanViewModel.Init();
                 }
                 return _myPlansInTrashCanViewModel;
+            }
+        }
+        public static Account MyAccount
+        {
+            get
+            {
+                return myAccount;
             }
         }
     }

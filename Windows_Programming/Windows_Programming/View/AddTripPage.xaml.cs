@@ -37,6 +37,8 @@ namespace Windows_Programming.View
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
 
         private string selectedImagePath = "/Assets/danang.jpg";
+
+        int accountId = MainWindow.MyAccount.Id;
         public AddTripPage()
         {
             this.InitializeComponent();
@@ -145,7 +147,7 @@ namespace Windows_Programming.View
             // Ghi đối tượng lên Firestore
             try
             {
-                await firebaseServices.CreatePlanInFirestore(26, newPlan); 
+                await firebaseServices.CreatePlanInFirestore(accountId, newPlan); 
             }
             catch (Exception ex)
             {
