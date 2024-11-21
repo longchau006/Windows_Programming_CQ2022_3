@@ -30,21 +30,27 @@ namespace Windows_Programming.View
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public PlansInTrashCanViewModel MyPlansInTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
+
+        int accountId = MainWindow.MyAccount.Id;
         public HomePage()
         {
             this.InitializeComponent();
-
-            Schedule_Panel.Visibility = Visibility.Collapsed;
-            NoSchedule_Panel.Visibility = Visibility.Visible;
-
-            if (MyPlansHomeViewModel.PlansInHome.Any())
-            {
-                Schedule_Panel.Visibility = Visibility.Visible;
-                NoSchedule_Panel.Visibility = Visibility.Collapsed;
-            }
-
             firebaseServices = FirebaseServicesDAO.Instance;
+            OnNoNoSchedulePanel();
+
         }
+        public async void OnNoNoSchedulePanel()
+        {
+            Schedule_Panel.Visibility = Visibility.Visible;
+            NoSchedule_Panel.Visibility = Visibility.Collapsed;
+            var numPlan = await firebaseServices.GetNumAllPlanInHome(accountId);
+            if (numPlan == 0)
+            {
+                NoSchedule_Panel.Visibility = Visibility.Visible;
+                Schedule_Panel.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
         {
 
@@ -125,7 +131,7 @@ namespace Windows_Programming.View
                 // Ghi đối tượng lên Firestore
                 try
                 {
-                    await firebaseServices.UpdateWhenDeletePlanInFirestore(26, selectedPlan.Id, selectedPlan);
+                    await firebaseServices.UpdateWhenDeletePlanInFirestore(accountId, selectedPlan.Id, selectedPlan);
                 }
                 catch (Exception ex)
                 {

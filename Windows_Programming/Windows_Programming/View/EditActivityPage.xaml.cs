@@ -37,6 +37,7 @@ namespace Windows_Programming.View
         public Lodging LodgingViewModel { get; set; }
         public Extend ExtendViewModel { get; set; }
 
+        int accountId = MainWindow.MyAccount.Id;
         public EditActivityPage()
         {
             this.InitializeComponent();
@@ -508,7 +509,7 @@ namespace Windows_Programming.View
 
             try
             {
-                await firebaseServices.UpdateActivityInFirestore(26, PlanTripViewModel.Id, ActivityViewModel.Id, updateActivity);
+                await firebaseServices.UpdateActivityInFirestore(accountId, PlanTripViewModel.Id, ActivityViewModel.Id, updateActivity);
             }
             catch (Exception ex)
             {
