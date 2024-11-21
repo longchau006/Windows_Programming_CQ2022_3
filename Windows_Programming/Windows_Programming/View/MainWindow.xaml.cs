@@ -44,7 +44,7 @@ namespace Windows_Programming.View
             contentNavigation.Navigate(typeof(HomePage));
             Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
 
-            //Test
+            //Khoi tao user after go tu dang nhap hoac dang ki
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             myAccount=new Account
                     {
