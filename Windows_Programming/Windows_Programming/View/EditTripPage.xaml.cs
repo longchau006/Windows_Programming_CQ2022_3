@@ -37,6 +37,8 @@ namespace Windows_Programming.View
         public Plan PlanTripViewModel { get; set; }
 
         private string selectedImagePath;
+
+        int accountId = 29;
         public EditTripPage()
         {
             this.InitializeComponent();
@@ -177,7 +179,7 @@ namespace Windows_Programming.View
             // Ghi đối tượng lên Firestore
             try
             {
-                await firebaseServices.UpdatePlanInFirestore(26, PlanTripViewModel.Id, newPlan);
+                await firebaseServices.UpdatePlanInFirestore(accountId, PlanTripViewModel.Id, newPlan);
             }
             catch (Exception ex)
             {

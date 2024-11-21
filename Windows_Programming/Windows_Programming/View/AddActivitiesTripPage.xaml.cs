@@ -32,6 +32,7 @@ namespace Windows_Programming.View
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public Plan PlanTripViewModel { get; set;}
         int flag = 0;
+        int accountId = 29;
         public AddActivitiesTripPage()
         {
             this.InitializeComponent();
@@ -499,7 +500,7 @@ namespace Windows_Programming.View
            
             try
             {
-                await firebaseServices.CreateActivityInFirestore(26, PlanTripViewModel.Id, newActivity);
+                await firebaseServices.CreateActivityInFirestore(accountId, PlanTripViewModel.Id, newActivity);
             }
             catch (Exception ex)
             {

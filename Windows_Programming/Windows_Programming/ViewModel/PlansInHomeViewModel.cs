@@ -37,7 +37,7 @@ namespace Windows_Programming.ViewModel
         public async void Init()
         {
 
-            var plans = await firebaseServices.GetAllPlan(26);
+            var plans = await firebaseServices.GetAllPlan(29);
 
             PlansInHome.Clear();
             foreach (var plan in plans)
