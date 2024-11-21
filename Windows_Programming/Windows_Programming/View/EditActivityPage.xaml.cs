@@ -37,7 +37,7 @@ namespace Windows_Programming.View
         public Lodging LodgingViewModel { get; set; }
         public Extend ExtendViewModel { get; set; }
 
-        int accountId = 29;
+        int accountId = MainWindow.MyAccount.Id;
         public EditActivityPage()
         {
             this.InitializeComponent();

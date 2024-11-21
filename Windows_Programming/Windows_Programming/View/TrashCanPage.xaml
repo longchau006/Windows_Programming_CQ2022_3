@@ -63,9 +63,35 @@
 
     <StackPanel>
         <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="34" FontWeight="Bold" Margin="30,0,6,0"/>
-        <ListView  Name="PlansInTrashCan_ListView" Width="800" Height="500" 
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
+            <Button x:Name="FindATrip_Button" Background="White" BorderBrush="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox PlaceholderText="Trip Information!" 
+                    Width="400" 
+                    HorizontalAlignment="Left" 
+                    Margin="0,0,0,0" 
+                    VerticalAlignment="Center" 
+                    Height="40"
+                    BorderBrush="Blue"
+                    BorderThickness="2"
+                    CornerRadius="5"/>
+                    <SymbolIcon Symbol="Find" Foreground="Blue"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Filter_Button" Background="White" BorderBrush="White" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Filter" Foreground="Blue"/>
+                    <TextBlock Text="Filter" Margin="10,0,0,0" Foreground="Blue"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <ListView  Name="PlansInTrashCan_ListView" Width="800" Height="500" 
                   ItemsSource="{x:Bind MyPlansTrashCanViewModel.PlansInTrashCan}"
                   ItemTemplate="{StaticResource VerticalFormat}">
-        </ListView>
+            </ListView>
+        </StackPanel>
+
     </StackPanel>
 </Page>

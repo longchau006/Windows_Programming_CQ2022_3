@@ -38,7 +38,7 @@ namespace Windows_Programming.View
 
         private string selectedImagePath = "/Assets/danang.jpg";
 
-        int accountId = 29;
+        int accountId = MainWindow.MyAccount.Id;
         public AddTripPage()
         {
             this.InitializeComponent();

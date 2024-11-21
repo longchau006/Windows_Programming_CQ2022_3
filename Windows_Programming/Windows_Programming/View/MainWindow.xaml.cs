@@ -13,6 +13,17 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows_Programming.ViewModel;
+using Windows_Programming.Model;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System.Security.Cryptography;
+using Windows.Storage;
+using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Text;
+using Windows_Programming.Database;
+using System.Threading.Tasks;
+using Windows_Programming.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,11 +37,47 @@ namespace Windows_Programming.View
     {
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
+        private static Account myAccount=null;
         public MainWindow()
         {
             this.InitializeComponent();
             contentNavigation.Navigate(typeof(HomePage));
             Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
+
+            //Khoi tao user after go tu dang nhap hoac dang ki
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            myAccount=new Account
+                    {
+                        Id = -1,
+                        Email = "Xamxaml",
+                        Username = "Xamxaml",
+                        Address = "Xamxaml",
+                        Fullname = "Xamxaml",
+                    };
+
+            // Kiểm tra "Id" có tồn tại trong localSettings không
+            if (localSettings.Values.ContainsKey("Id"))
+            {
+                // Chuyển giá trị của "Id" thành int
+                myAccount.Id = int.TryParse(localSettings.Values["Id"]?.ToString(), out int id) ? id : 0;
+            }
+
+            // Kiểm tra và lấy các giá trị khác
+            if (localSettings.Values.ContainsKey("Username"))
+                myAccount.Username = localSettings.Values["Username"]?.ToString();
+
+
+            if (localSettings.Values.ContainsKey("Email"))
+                myAccount.Email = localSettings.Values["Email"]?.ToString();
+
+            if (localSettings.Values.ContainsKey("Fullname"))
+                myAccount.Fullname = localSettings.Values["Fullname"]?.ToString();
+
+            if (localSettings.Values.ContainsKey("Address"))
+                myAccount.Address = localSettings.Values["Address"]?.ToString();
+            myAccount.PrintAccountInfo();
+
+
         }
 
         private void HomeNagigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -106,6 +153,13 @@ namespace Windows_Programming.View
                     _myPlansInTrashCanViewModel.Init();
                 }
                 return _myPlansInTrashCanViewModel;
+            }
+        }
+        public static Account MyAccount
+        {
+            get
+            {
+                return myAccount;
             }
         }
     }

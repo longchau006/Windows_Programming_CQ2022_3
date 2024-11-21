@@ -59,15 +59,77 @@ namespace Windows_Programming.Database
         }
 
         //Function of Authentication
+        //public async Task<FirebaseUserCredential> SignInWithEmailAndPasswordInFireBase(string email, string password)
+        //{
+        //    return await authClient.SignInWithEmailAndPasswordAsync(email, password);
+        //}
+
         public async Task<FirebaseUserCredential> SignInWithEmailAndPasswordInFireBase(string email, string password)
         {
-            return await authClient.SignInWithEmailAndPasswordAsync(email, password);
+            try
+            {
+                var credential = await authClient.SignInWithEmailAndPasswordAsync(email, password);
+                if (credential?.User != null)
+                {
+                    string token = await credential.User.GetIdTokenAsync();
+                    return credential;
+                }
+                throw new Exception("Authentication failed");
+            }
+            catch (FirebaseAuthException authEx)
+            {
+                throw new Exception(ParseFirebaseError(authEx.Message));
+            }
+        }
+        private string ParseFirebaseError(string responseData)
+        {
+            System.Diagnostics.Debug.WriteLine("bbbbb");
+            System.Diagnostics.Debug.WriteLine(responseData);
+            System.Diagnostics.Debug.WriteLine("eeee");
+            if (responseData.Contains("INVALID_LOGIN_CREDENTIALS"))
+                return "Invalid email or password";
+            if (responseData.Contains("EMAIL_NOT_FOUND"))
+                return "Account does not exist";
+            if (responseData.Contains("INVALID_PASSWORD"))
+                return "Incorrect password";
+            if (responseData.Contains("USER_DISABLED"))
+                return "This account has been disabled";
+            if (responseData.Contains("TOO_MANY_ATTEMPTS_TRY_LATER"))
+                return "Too many attempts. Please try again later";
+
+            return "An error occurred during login";
         }
 
+
+        //public async Task<FirebaseUserCredential> CreateAccountInFireBase(string email, string password)
+        //{
+        //    return await authClient.CreateUserWithEmailAndPasswordAsync(email, password);
+        //}
         public async Task<FirebaseUserCredential> CreateAccountInFireBase(string email, string password)
         {
-            return await authClient.CreateUserWithEmailAndPasswordAsync(email, password);
+            try
+            {
+                var credential = await authClient.CreateUserWithEmailAndPasswordAsync(email, password);
+                if (credential?.User != null)
+                {
+                    string token = await credential.User.GetIdTokenAsync();
+                    return credential;
+                }
+                throw new Exception("Account creation failed");
+            }
+            catch (FirebaseAuthException authEx)
+            {
+                if (authEx.Message.Contains("EMAIL_EXISTS"))
+                    throw new Exception("This email is already registered");
+                if (authEx.Message.Contains("WEAK_PASSWORD"))
+                    throw new Exception("Password should be at least 6 characters");
+                if (authEx.Message.Contains("INVALID_EMAIL"))
+                    throw new Exception("Please enter a valid email address");
+
+                throw new Exception("Failed to create account: " + authEx.Message);
+            }
         }
+
 
         //FirestoreDB
 
@@ -105,6 +167,35 @@ namespace Windows_Programming.Database
             }
             
             return null;
+        }
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+            try
+            {
+                var accountsRef = firestoreDb.Collection("accounts");
+                var query = accountsRef.WhereEqualTo("email", email);
+                var querySnapshot = await query.GetSnapshotAsync();
+
+                if (querySnapshot.Count > 0)
+                {
+                    var document = querySnapshot.Documents[0];
+                    var accountData = document.ToDictionary();
+                    
+                    return new Account
+                    {
+                        Id = int.Parse(document.Id),
+                        Email = accountData["email"].ToString(),
+                        Username = accountData["username"].ToString(),
+                        Address = accountData["address"].ToString(),
+                        Fullname = accountData["fullname"].ToString(),
+                    };
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving account: {ex.Message}");
+            }
         }
 
         public async Task CreatePlanInFirestore(int accountId, Plan plan)
@@ -299,6 +390,11 @@ namespace Windows_Programming.Database
         }
 
         public Tour GetTourById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void addBlog(Blog blog)
         {
             throw new NotImplementedException();
         }

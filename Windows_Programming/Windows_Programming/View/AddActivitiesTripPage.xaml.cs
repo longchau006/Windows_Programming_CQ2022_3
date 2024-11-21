@@ -32,7 +32,7 @@ namespace Windows_Programming.View
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public Plan PlanTripViewModel { get; set;}
         int flag = 0;
-        int accountId = 29;
+        int accountId = MainWindow.MyAccount.Id;
         public AddActivitiesTripPage()
         {
             this.InitializeComponent();

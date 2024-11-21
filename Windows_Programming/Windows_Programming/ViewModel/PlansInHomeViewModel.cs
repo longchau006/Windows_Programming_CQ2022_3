@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
+using Windows_Programming.View;
 
 namespace Windows_Programming.ViewModel
 {
@@ -37,7 +38,7 @@ namespace Windows_Programming.ViewModel
         public async void Init()
         {
 
-            var plans = await firebaseServices.GetAllPlan(29);
+            var plans = await firebaseServices.GetAllPlan(MainWindow.MyAccount.Id);
 
             PlansInHome.Clear();
             foreach (var plan in plans)

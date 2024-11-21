@@ -11,9 +11,13 @@
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Padding="20">
-            <TextBlock x:Name="BlogTitle" FontSize="24" FontWeight="Bold" Margin="0,10,0,5" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="BlogTitle" FontSize="24" FontWeight="Bold" Margin="0,10,0,5" HorizontalAlignment="Center" TextWrapping="Wrap"/>
             <Image x:Name="BlogImage" Width="400" Height="300" Stretch="Uniform"/>
-            <TextBlock x:Name="BlogContent" TextWrapping="Wrap" FontSize="16"/>
+            <StackPanel Orientation="Horizontal" Spacing="10" Padding="20">
+                <TextBlock x:Name="BlogAuthor" TextWrapping="Wrap" FontFamily="16" FontStyle="Italic" FontWeight="Bold"/>
+                <TextBlock x:Name="BlogPublishDate" FontStyle="Italic"/>
+            </StackPanel>
+            <TextBlock x:Name="BlogContent" TextWrapping="Wrap" FontSize="16" Margin="10,0,10,0" TextAlignment="Justify"/>
         </StackPanel>
     </ScrollViewer>
 </Page>
