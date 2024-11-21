@@ -102,6 +102,13 @@ namespace Windows_Programming.View
             string encryptedPasswordBase64 = EncryptPassword(userToken);// da luu entropy trong nay
             localSettings.Values["UserToken"] = encryptedPasswordBase64;
         }
+        void WriteUserToLocal(Account account){
+            localSettings.Values["Id"] = account.Id;
+            localSettings.Values["Username"] = account.Username;
+            localSettings.Values["Email"] = account.Email;
+            localSettings.Values["Fullname"] = account.Fullname;
+            localSettings.Values["Address"] = account.Address;
+        }
         void DeleteFromLocal()
         {
 
@@ -109,6 +116,22 @@ namespace Windows_Programming.View
             {
                 localSettings.Values.Remove("UserToken");
             }
+            //if (localSettings.Values.ContainsKey("Username"))
+            //{
+            //    localSettings.Values.Remove("Username");
+            //}
+            //if (localSettings.Values.ContainsKey("Email"))
+            //{
+            //    localSettings.Values.Remove("Email");
+            //}
+            //if (localSettings.Values.ContainsKey("Fullname"))
+            //{
+            //    localSettings.Values.Remove("Fullname");
+            //}
+            //if (localSettings.Values.ContainsKey("Address"))
+            //{
+            //    localSettings.Values.Remove("Address");
+            //}
         }
 
         //Write to Database
@@ -204,18 +227,6 @@ namespace Windows_Programming.View
                     var user = userCredential.User;
                     tokenLocal = await user.GetIdTokenAsync();
 
-                    if (RememberMeRegister_CheckBox.IsChecked == true)
-                    {
-                        WriteToLocal(tokenLocal);
-                    }
-                    else
-                    {
-                        DeleteFromLocal();
-                    }
-
-                    var screen = new MainWindow();
-                    screen.Activate();
-                    loginWindow?.Close();
 
                     int numberCurrentAccounts = await firebaseServices.GetAccountsCount();
                     var newAccount = new Account
@@ -226,8 +237,24 @@ namespace Windows_Programming.View
                         Fullname = emailInput,
                         Address = ""
                     };
+                    WriteUserToLocal(newAccount);
 
                     await firebaseServices.CreateAccountInFirestore(newAccount);
+
+                    if (RememberMeRegister_CheckBox.IsChecked == true)
+                    {
+                        WriteToLocal(tokenLocal); 
+                    }
+                    else
+                    {
+                        DeleteFromLocal();
+                    }
+                    
+
+
+                    var screen = new MainWindow();
+                    screen.Activate();
+                    loginWindow?.Close();
                 }
 
                 // Complete the dialog task
@@ -239,7 +266,7 @@ namespace Windows_Programming.View
                 {
                     loadingDialog.Hide();
                 }
-                ShowDialog("abc" + ex.Message);
+                ShowDialog(ex.Message);
             }
             finally
             {
@@ -249,6 +276,8 @@ namespace Windows_Programming.View
                 }
             }
         }
+
+
 
         //Hien dialog
 
@@ -310,26 +339,6 @@ namespace Windows_Programming.View
                 DataProtectionScope.CurrentUser);
 
             return Encoding.UTF8.GetString(passwordInBytes);
-        }
-        // May ham ho tro
-        private bool CheckFormatEmail(string email)
-        {
-            return true;
-        }
-
-        private bool CheckUsedEmail(string email)
-        {
-            return true;
-        }
-
-        private bool CheckFormatPassword(string password)
-        {
-            return true;
-        }
-
-        private bool CheckPasswordAndConfirmPassword(string password, string confirmPassword)
-        {
-            return true;
         }
     }
 }

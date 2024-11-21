@@ -166,6 +166,37 @@ namespace Windows_Programming.Database
             return null;
         }
 
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+            try
+            {
+                var accountsRef = firestoreDb.Collection("accounts");
+                var query = accountsRef.WhereEqualTo("email", email);
+                var querySnapshot = await query.GetSnapshotAsync();
+
+                if (querySnapshot.Count > 0)
+                {
+                    var document = querySnapshot.Documents[0];
+                    var accountData = document.ToDictionary();
+                    
+                    return new Account
+                    {
+                        Id = int.Parse(document.Id),
+                        Email = accountData["email"].ToString(),
+                        Username = accountData["username"].ToString(),
+                        Address = accountData["address"].ToString(),
+                        Fullname = accountData["fullname"].ToString(),
+                    };
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving account: {ex.Message}");
+            }
+        }
+
+
 
         public async Task CreatePlanInFirestore(int accountId, Plan plan)
         {

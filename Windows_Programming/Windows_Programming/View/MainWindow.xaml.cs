@@ -13,6 +13,17 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows_Programming.ViewModel;
+using Windows_Programming.Model;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System.Security.Cryptography;
+using Windows.Storage;
+using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Text;
+using Windows_Programming.Database;
+using System.Threading.Tasks;
+using Windows_Programming.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,6 +42,41 @@ namespace Windows_Programming.View
             this.InitializeComponent();
             contentNavigation.Navigate(typeof(HomePage));
             Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
+
+            //Test
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            Account currentAccount=new Account
+                    {
+                        Id = -1,
+                        Email = "Xamxaml",
+                        Username = "Xamxaml",
+                        Address = "Xamxaml",
+                        Fullname = "Xamxaml",
+                    };
+
+            // Kiểm tra "Id" có tồn tại trong localSettings không
+            if (localSettings.Values.ContainsKey("Id"))
+            {
+                // Chuyển giá trị của "Id" thành int
+                currentAccount.Id = int.TryParse(localSettings.Values["Id"]?.ToString(), out int id) ? id : 0;
+            }
+
+            // Kiểm tra và lấy các giá trị khác
+            if (localSettings.Values.ContainsKey("Username"))
+                currentAccount.Username = localSettings.Values["Username"]?.ToString();
+
+
+            if (localSettings.Values.ContainsKey("Email"))
+                currentAccount.Email = localSettings.Values["Email"]?.ToString();
+
+            if (localSettings.Values.ContainsKey("Fullname"))
+                currentAccount.Fullname = localSettings.Values["Fullname"]?.ToString();
+
+            if (localSettings.Values.ContainsKey("Address"))
+                currentAccount.Address = localSettings.Values["Address"]?.ToString();
+            currentAccount.PrintAccountInfo();
+
+
         }
 
         private void HomeNagigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
