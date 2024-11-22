@@ -34,10 +34,15 @@ namespace Windows_Programming.View
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         int accountId=MainWindow.MyAccount.Id;
         private List<Plan> selectedPlans = new List<Plan>();
+        //Mode to display restore, delete, choose all plan
         private bool isMultiSelectMode = false;
+
+        //Dang ki su kien de an hien button choose khi khong co ke hoach
         public static readonly DependencyProperty ChooseButtonVisibilityProperty =
         DependencyProperty.Register(nameof(ChooseButtonVisibility), typeof(Visibility), typeof(TrashCanPage), new PropertyMetadata(Visibility.Collapsed));
 
+
+        //han che hoat dong cua button checkall
         private bool isUpdatingCheckAll = false;
         public Visibility ChooseButtonVisibility
         {
@@ -51,13 +56,40 @@ namespace Windows_Programming.View
             // Subscribe to collection changes
             MyPlansTrashCanViewModel.PlansInTrashCan.CollectionChanged += PlansInTrashCan_CollectionChanged;
 
+
             // Initial check
+            UpdateChooseButtonVisibility();
+            UpdateEmptyImageVisibility();
+        }
+        
+        //reset all when naviagtor from others
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            
+            isMultiSelectMode = false;
+            selectedPlans.Clear();
+            Choose_Button.Visibility = Visibility.Visible;
+            MultiSelectButtons.Visibility = Visibility.Collapsed;
+            MultiSelectContainer.Visibility = Visibility.Collapsed;
+            CheckAllPlan_CheckBox.Visibility = Visibility.Collapsed;
+
+            
+            foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+            {
+                plan.IsSelected = false;
+            }
+
+            ShowCheckboxes(false);
             UpdateChooseButtonVisibility();
         }
 
+        //update su kien hien thi va an button choose
         private void PlansInTrashCan_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateChooseButtonVisibility();
+            UpdateEmptyImageVisibility();
         }
 
         private void UpdateChooseButtonVisibility()
@@ -66,6 +98,14 @@ namespace Windows_Programming.View
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
+
+        private void UpdateEmptyImageVisibility()
+        {
+            EmptyTrashImage.Visibility = MyPlansTrashCanViewModel.PlansInTrashCan.Any()
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
+        //Restore 1 plan
         private async void OnNavigationRestoreClick(object sender, RoutedEventArgs e)
         {
             //for (int i = 0; i < MyPlansTrashCanViewModel.PlansInTrashCan.Count; i++)
@@ -131,6 +171,7 @@ namespace Windows_Programming.View
             }
         }
 
+        //delete 1 plan
         private async void OnNavigationDeleteClick(object sender, RoutedEventArgs e)
         {
             var selectedPlan = (sender as Button).DataContext as Plan;
@@ -186,29 +227,33 @@ namespace Windows_Programming.View
 
 
 
-
+        //show checkbox trong datatemplate khi button choose duoc chon
         private void ShowCheckboxes(bool show)
         {
             var items = PlansInTrashCan_ListView.Items;
-            foreach (Plan plan in items)
+            if (items != null)
             {
-                var container = PlansInTrashCan_ListView.ContainerFromItem(plan) as ListViewItem;
-                if (container != null)
+                foreach (Plan plan in items)
                 {
-                    var checkbox = FindDescendant<CheckBox>(container, "PlanCheckBox");
-                    if (checkbox != null)
+                    var container = PlansInTrashCan_ListView.ContainerFromItem(plan) as ListViewItem;
+                    if (container != null)
                     {
-                        checkbox.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-                        if (!show)
+                        var checkbox = FindDescendant<CheckBox>(container, "PlanCheckBox");
+                        if (checkbox != null)
                         {
-                            checkbox.IsChecked = false;
+                            checkbox.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                            if (!show)
+                            {
+                                checkbox.IsChecked = false;
+                            }
                         }
                     }
                 }
+
             }
         }
 
-        // Helper method to find descendant control by name
+        // Ho tro tim checkbox theo ten de hien thi giao dien
         private T FindDescendant<T>(DependencyObject parent, string name) where T : DependencyObject
         {
             var count = VisualTreeHelper.GetChildrenCount(parent);
@@ -227,7 +272,7 @@ namespace Windows_Programming.View
         }
 
 
-
+        //Su kien button choose dc chon
         private void OnChooseClick(object sender, RoutedEventArgs e)
         {
             isMultiSelectMode = true;
@@ -238,20 +283,26 @@ namespace Windows_Programming.View
             ShowCheckboxes(true);
         }
 
+        //Click vao check 1 ke hoach
         private void OnPlanChecked(object sender, RoutedEventArgs e)
         {
             var checkbox = sender as CheckBox;
             var plan = checkbox.DataContext as Plan;
-            plan.IsSelected = true;
+            
             //System.Diagnostics.Debug.WriteLine($"------------------------");
             //System.Diagnostics.Debug.WriteLine($"Khi check sau {plan.Id}");
             //for (int i = 0; i < selectedPlans.Count; i++)
             //{
             //    System.Diagnostics.Debug.WriteLine($"Khi check trc {selectedPlans[i].Id} {selectedPlans[i].DeletedDate}");
             //}
-            if (plan != null && !selectedPlans.Contains(plan))
+            if (plan != null)
             {
-                selectedPlans.Add(plan);
+                plan.IsSelected = true;
+                if (!selectedPlans.Contains(plan))
+                {
+                    selectedPlans.Add(plan);
+                }
+                
             }
             //for (int i = 0; i < selectedPlans.Count; i++)
             //{
@@ -261,11 +312,12 @@ namespace Windows_Programming.View
             UpdateCheckAllState();
         }
 
+        //Click uncheck 1 ke hoach
         private void OnPlanUnchecked(object sender, RoutedEventArgs e)
         {
             var checkbox = sender as CheckBox;
             var plan = checkbox.DataContext as Plan;
-            plan.IsSelected = false;
+            
             //System.Diagnostics.Debug.WriteLine($"------------------------");
             //System.Diagnostics.Debug.WriteLine($"Khi uncheck sau {plan.Id}");
             //for (int i = 0; i < selectedPlans.Count; i++)
@@ -274,6 +326,7 @@ namespace Windows_Programming.View
             //}
             if (plan != null)
             {
+                plan.IsSelected = false;
                 selectedPlans.Remove(plan);
             }
             //for (int i = 0; i < selectedPlans.Count; i++)
@@ -284,6 +337,8 @@ namespace Windows_Programming.View
             UpdateCheckAllState();
         }
 
+
+        //Update xem neu co it nhat 1 ke hoach dc chon thi hien thi 2 nut restore va delete
         private void UpdateMultiSelectButtonsState()
         {
             bool hasSelection = selectedPlans.Count > 0;
@@ -296,6 +351,8 @@ namespace Windows_Programming.View
             ((TextBlock)MultiRestore_Button.Content).Foreground = new SolidColorBrush(restoreColor);
             ((TextBlock)MultiDelete_Button.Content).Foreground = new SolidColorBrush(deleteColor);
         }
+
+        //Restore nhieu ke hoach dc chon
         private async void OnMultiRestoreClick(object sender, RoutedEventArgs e)
         {
             var messageText = selectedPlans.Count == 1
@@ -351,6 +408,8 @@ namespace Windows_Programming.View
             }
         }
 
+
+        //xoa nhieu ke hoach dc chon
         private async void OnMultiDeleteClick(object sender, RoutedEventArgs e)
         {
             var messageText = selectedPlans.Count == 1
@@ -370,10 +429,10 @@ namespace Windows_Programming.View
             confirmDialog.SecondaryButtonStyle = new Style(typeof(Button))
             {
                 Setters =
-        {
-            new Setter(Button.BackgroundProperty, new SolidColorBrush(Colors.Red)),
-            new Setter(Button.ForegroundProperty, new SolidColorBrush(Colors.White))
-        }
+                {
+                    new Setter(Button.BackgroundProperty, new SolidColorBrush(Colors.Red)),
+                    new Setter(Button.ForegroundProperty, new SolidColorBrush(Colors.White))
+                }
             };
 
             var result = await confirmDialog.ShowAsync();
@@ -405,6 +464,7 @@ namespace Windows_Programming.View
             }
         }
 
+        //An nut huy tra ve trang thai binh thuong
         private void OnCancelMultiSelectClick(object sender, RoutedEventArgs e)
         {
             foreach (var plan in selectedPlans.ToList())
@@ -415,6 +475,7 @@ namespace Windows_Programming.View
         }
 
 
+        //Khi thoat khoi trang thai chon thi reset 
         private void ExitMultiSelectMode()
         {
             isMultiSelectMode = false;
@@ -428,6 +489,8 @@ namespace Windows_Programming.View
             UpdateChooseButtonVisibility();
         }
 
+
+        //Chon tat ca hoat dong
         private void OnButtonAllPlansCheck(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("Vao Check all");
@@ -458,6 +521,7 @@ namespace Windows_Programming.View
             
         }
 
+        //Bo chon tat ca hoat dong
         private void OnButtonAllPlansUnCheck(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("Vao Uncheck all");
@@ -483,6 +547,8 @@ namespace Windows_Programming.View
             
    
         }
+
+        //Update trang thai cua tatcahoatdong khi ma tung hoat dong dc click
         private void UpdateCheckAllState()
         {
             var items = PlansInTrashCan_ListView.Items;
@@ -506,10 +572,6 @@ namespace Windows_Programming.View
             CheckAllPlan_CheckBox.IsChecked = allChecked;
             isUpdatingCheckAll = false;
         }
-
-
-
-
 
     }
 }

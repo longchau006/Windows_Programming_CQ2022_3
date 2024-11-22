@@ -18,7 +18,7 @@
                         <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-
+                        
                         <CheckBox x:Name="PlanCheckBox" 
                             Grid.Column="0"
                                   Margin ="20,0,-75, 0"
@@ -39,7 +39,7 @@
                         </TextBlock>
 
 
-                        <!-- Sử dụng Run để tránh lỗi -->
+                        <!-- mgay bat dau va ket thuc -->
                         <TextBlock FontSize="15" Foreground="Gray">
                             <Run Text="{x:Bind StartDate}" />
                             <Run Text=" - " />
@@ -100,7 +100,7 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <!-- Options-->
+        <!-- Options to select all plan .....-->
         <Button x:Name="Choose_Button" 
                 Background="White" 
                 BorderBrush="Black"
@@ -156,6 +156,16 @@
                 </Button>
             </StackPanel>
         </Grid>
+
+
+        <Image x:Name="EmptyTrashImage" 
+           Source="/Assets/empty_trashcan.png"
+           Width="200" 
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center"
+               Margin="0,150,0,0"
+           Height="200"
+           Visibility="Collapsed"/>
 
         <!-- ListTrashCan-->
         <StackPanel Orientation="Vertical">
