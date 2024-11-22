@@ -125,16 +125,20 @@ namespace Windows_Programming.View
             {
                 // Gọi phương thức xóa kế hoạch từ PlansInHomeViewModel
                 selectedPlan.DeletedDate = DateTime.Now;
-                MyPlansInTrashCanViewModel.AddPlanInTrashCan(selectedPlan);
-                MyPlansHomeViewModel.RemovePlanInHome(selectedPlan);
+
 
                 // Ghi đối tượng lên Firestore
                 try
                 {
                     await firebaseServices.UpdateWhenDeletePlanInFirestore(accountId, selectedPlan.Id, selectedPlan);
+
+                    MyPlansInTrashCanViewModel.AddPlanInTrashCan(selectedPlan);
+                    MyPlansHomeViewModel.RemovePlanInHome(selectedPlan);
                 }
                 catch (Exception ex)
                 {
+                    selectedPlan.DeletedDate = null;
+
                     Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
 
                     ContentDialog errorDialog = new ContentDialog

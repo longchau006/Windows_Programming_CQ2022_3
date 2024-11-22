@@ -232,7 +232,7 @@ namespace Windows_Programming.Database
                                      .Document(accountId.ToString())
                                      .Collection("plans")
                                      .Document(planId.ToString());
-
+            System.Diagnostics.Debug.WriteLine($"AAAAAAAAA:  {plan.DeletedDate}");
             var planData = new Dictionary<string, object>
             {
                 { "deleteddate", plan.DeletedDate.HasValue ? plan.DeletedDate.Value.ToString("o") : null}
@@ -240,6 +240,18 @@ namespace Windows_Programming.Database
             await planRef.UpdateAsync(planData);
 
         }
+        
+        public async Task DeleteImediatelyPlanInFirestore(int accountId, Plan plan)
+        {
+
+            var planRef = firestoreDb.Collection("accounts")
+                                         .Document(accountId.ToString())
+                                         .Collection("plans")
+                                         .Document(plan.Id.ToString());
+
+            await planRef.DeleteAsync();
+        }
+        
         public async Task CreateActivityInFirestore(int accountId, int planId, Windows_Programming.Model.Activity activity)
         {
                 var activityRef = firestoreDb.Collection("accounts")

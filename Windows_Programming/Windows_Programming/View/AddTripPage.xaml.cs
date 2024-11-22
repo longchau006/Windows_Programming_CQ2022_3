@@ -35,6 +35,7 @@ namespace Windows_Programming.View
     {
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
+        public PlansInTrashCanViewModel MyPlansTrashCanViewModel=> MainWindow.MyPlansTrashCanViewModel;
 
         private string selectedImagePath = "/Assets/danang.jpg";
 
@@ -127,11 +128,17 @@ namespace Windows_Programming.View
                 _ = dialog.ShowAsync();
                 return;
             }
+            int newId = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id))+1 : 0;
+            if (MyPlansTrashCanViewModel.PlansInTrashCan.Count>0 && (MyPlansTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id)+1)>newId)
+            {
+                newId = MyPlansTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id)+1;
+            }
+
 
             // Tạo đối tượng Plan từ các thông tin đã nhập
             Plan newPlan = new Plan
             {
-                Id = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id) + 1) : 0,
+                Id = newId,
                 Name = tripName,
                 PlanImage = selectedImagePath,
                 StartLocation = startLocation,

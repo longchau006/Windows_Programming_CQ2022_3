@@ -41,19 +41,16 @@ namespace Windows_Programming.View
         public MainWindow()
         {
             this.InitializeComponent();
-            contentNavigation.Navigate(typeof(HomePage));
-            Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
-
             //Khoi tao user after go tu dang nhap hoac dang ki
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-            myAccount=new Account
-                    {
-                        Id = -1,
-                        Email = "Xamxaml",
-                        Username = "Xamxaml",
-                        Address = "Xamxaml",
-                        Fullname = "Xamxaml",
-                    };
+            myAccount = new Account
+            {
+                Id = -1,
+                Email = "Xamxaml",
+                Username = "Xamxaml",
+                Address = "Xamxaml",
+                Fullname = "Xamxaml",
+            };
 
             // Kiểm tra "Id" có tồn tại trong localSettings không
             if (localSettings.Values.ContainsKey("Id"))
@@ -77,6 +74,10 @@ namespace Windows_Programming.View
                 myAccount.Address = localSettings.Values["Address"]?.ToString();
             myAccount.PrintAccountInfo();
 
+            //contentNavigation.Navigate(typeof(HomePage));
+            Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
+
+           
 
         }
 
