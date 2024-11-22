@@ -21,6 +21,7 @@
 
                         <CheckBox x:Name="PlanCheckBox" 
                             Grid.Column="0"
+                                  Margin ="20,0,-75, 0"
                           VerticalAlignment="Center"
                           HorizontalAlignment="Center"
                           Visibility="Collapsed"
@@ -75,7 +76,7 @@
 
     <StackPanel>
         <!-- Title-->
-            <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="34" FontWeight="Bold" Margin="30,0,6,0"/>
+        <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="34" FontWeight="Bold" Margin="30,0,6,0"/>
         <!-- Search bar and filter bar-->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
             <Button x:Name="FindATrip_Button" Background="White" BorderBrush="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
@@ -100,7 +101,7 @@
             </Button>
         </StackPanel>
         <!-- Options-->
-                <Button x:Name="Choose_Button" 
+        <Button x:Name="Choose_Button" 
                 Background="White" 
                 BorderBrush="Black"
                 HorizontalAlignment="Right"
@@ -110,27 +111,51 @@
                     <TextBlock Text="Choose" Foreground="Blue"/>
                 </Button>
 
-                <StackPanel x:Name="MultiSelectButtons" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Right"
-                    Visibility="Collapsed" 
-                    Margin="0,0,20,0">
-                    <Button x:Name="MultiRestore_Button" 
-                    IsEnabled="False"
-                    Click="OnMultiRestoreClick">
-                        <TextBlock Text="Restore" Foreground="Gray"/>
-                    </Button>
-                    <Button x:Name="MultiDelete_Button" 
-                    IsEnabled="False"
-                    Margin="10,0"
-                    Click="OnMultiDeleteClick">
-                        <TextBlock Text="Delete" Foreground="Gray"/>
-                    </Button>
-                    <Button x:Name="Cancel_Button" 
-                            Click="OnCancelMultiSelectClick">
-                        <TextBlock Text="Cancel"/>
-                    </Button>   
-                 </StackPanel>
+        <Grid x:Name="MultiSelectContainer" 
+      Visibility="Collapsed" 
+      Margin="20,0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left side -->
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="130,0,0,0">
+                <CheckBox x:Name="CheckAllPlan_CheckBox" 
+                 VerticalAlignment="Center"
+                 Visibility="Collapsed"
+                 Checked="OnButtonAllPlansCheck"
+                 Unchecked="OnButtonAllPlansUnCheck"/>
+                <TextBlock Text="All" Margin="-80,6,0,0"/>
+            </StackPanel>
+            
+
+            <!-- Right side -->
+            <StackPanel x:Name="MultiSelectButtons" 
+                Grid.Column="1"
+                Orientation="Horizontal" 
+                HorizontalAlignment="Right">
+
+                <Button x:Name="MultiRestore_Button" 
+                IsEnabled="False"
+                Click="OnMultiRestoreClick">
+                    <TextBlock Text="Restore" Foreground="Gray"/>
+                </Button>
+
+                <Button x:Name="MultiDelete_Button" 
+                IsEnabled="False"
+                Margin="10,0"
+                Click="OnMultiDeleteClick">
+                    <TextBlock Text="Delete" Foreground="Gray"/>
+                </Button>
+
+                <Button x:Name="Cancel_Button" 
+                Click="OnCancelMultiSelectClick">
+                    <TextBlock Text="Cancel"/>
+                </Button>
+            </StackPanel>
+        </Grid>
 
         <!-- ListTrashCan-->
         <StackPanel Orientation="Vertical">

@@ -313,7 +313,6 @@ namespace Windows_Programming.Database
                     {
 
                         var activityData = activityDoc.ToDictionary();
-
                         if (activityData.TryGetValue("type", out var typeObj) && int.TryParse(typeObj.ToString(), out int type))
                         {
                             System.Diagnostics.Debug.WriteLine($"{type}");

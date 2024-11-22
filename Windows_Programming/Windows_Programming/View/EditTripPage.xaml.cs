@@ -173,13 +173,12 @@ namespace Windows_Programming.View
                 Description = description
             };
 
-            // Sửa plan trong danh sách kế hoạch trong ViewModel
-            MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
-
             // Ghi đối tượng lên Firestore
             try
             {
                 await firebaseServices.UpdatePlanInFirestore(accountId, PlanTripViewModel.Id, newPlan);
+
+                MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
             }
             catch (Exception ex)
             {
