@@ -38,7 +38,7 @@ namespace Windows_Programming.View
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         private static Account myAccount=null;
-        public MainWindow()
+        public MainWindow() 
         {
             this.InitializeComponent();
             //Khoi tao user after go tu dang nhap hoac dang ki
@@ -74,10 +74,15 @@ namespace Windows_Programming.View
                 myAccount.Address = localSettings.Values["Address"]?.ToString();
             myAccount.PrintAccountInfo();
 
+            _myPlansHomeViewModel = new PlansInHomeViewModel();
+            _myPlansHomeViewModel.Init();
+
+            _myPlansInTrashCanViewModel = new PlansInTrashCanViewModel();
+            _myPlansInTrashCanViewModel.Init();
+
+
             //contentNavigation.Navigate(typeof(HomePage));
             Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
-
-           
 
         }
 
@@ -133,28 +138,12 @@ namespace Windows_Programming.View
 
         public static PlansInHomeViewModel MyPlansHomeViewModel
         {
-            get
-            {
-                if (_myPlansHomeViewModel == null)
-                {
-                    _myPlansHomeViewModel = new PlansInHomeViewModel();
-                    _myPlansHomeViewModel.Init();
-                }
-                return _myPlansHomeViewModel;
-            }
+            get { return _myPlansHomeViewModel; }
         }
 
         public static PlansInTrashCanViewModel MyPlansTrashCanViewModel
         {
-            get
-            {
-                if (_myPlansInTrashCanViewModel == null)
-                {
-                    _myPlansInTrashCanViewModel = new PlansInTrashCanViewModel();
-                    _myPlansInTrashCanViewModel.Init();
-                }
-                return _myPlansInTrashCanViewModel;
-            }
+            get { return _myPlansInTrashCanViewModel; }
         }
         public static Account MyAccount
         {
