@@ -36,9 +36,13 @@ namespace Windows_Programming.ViewModel
         public async void Init()
         {
 
+
             var plans = await firebaseServices.GetAllPlan(MainWindow.MyAccount.Id);
 
             PlansInTrashCan.Clear();
+
+            
+
             foreach (var plan in plans)
             {
                 if (plan.DeletedDate != null)

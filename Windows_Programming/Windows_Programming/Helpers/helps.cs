@@ -116,7 +116,7 @@ namespace Windows_Programming.Helpers
             var plan = new Plan();
 
             // Mapping các trường
-            if (documentData.TryGetValue("id", out var idValue) && idValue is int id)
+            if (documentData.TryGetValue("id", out var idValue) && idValue is long id)
                 plan.Id = (int)id;
 
             if (documentData.TryGetValue("name", out var nameValue) && nameValue is string name)
@@ -159,7 +159,7 @@ namespace Windows_Programming.Helpers
             }
 
             var activity = new Model.Activity();
-            if (documentData.TryGetValue("id", out var idValue) && idValue is int id)
+            if (documentData.TryGetValue("id", out var idValue) && idValue is long id)
                 activity.Id = (int)id;
             if (documentData.TryGetValue("type", out var typeValue) && typeValue is int type)
                 activity.Type = type;
@@ -187,7 +187,7 @@ namespace Windows_Programming.Helpers
             }
 
             var activity2 = new Transport();
-            if (documentData.TryGetValue("id", out var idValue) && idValue is int id)
+            if (documentData.TryGetValue("id", out var idValue) && idValue is long id)
                 activity2.Id = (int)id;
             if (documentData.TryGetValue("type", out var typeValue) && typeValue is int type)
                 activity2.Type = type;
@@ -215,7 +215,7 @@ namespace Windows_Programming.Helpers
             }
 
             var activity3 = new Lodging();
-            if (documentData.TryGetValue("id", out var idValue) && idValue is int id)
+            if (documentData.TryGetValue("id", out var idValue) && idValue is long id)
                 activity3.Id = (int)id;
             if (documentData.TryGetValue("type", out var typeValue) && typeValue is int type)
                 activity3.Type = type;
@@ -241,7 +241,7 @@ namespace Windows_Programming.Helpers
             }
 
             var activity4 = new Extend();
-            if (documentData.TryGetValue("id", out var idValue) && idValue is int id)
+            if (documentData.TryGetValue("id", out var idValue) && idValue is long id)
                 activity4.Id = (int)id;
             if (documentData.TryGetValue("type", out var typeValue) && typeValue is int type)
                 activity4.Type = type;

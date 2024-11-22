@@ -21,6 +21,7 @@ namespace Windows_Programming.Model
         public DateTime? DeletedDate { get; set; }
 
         public List<Activity>? Activities { get; set; }
+        public bool IsSelected { get; set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

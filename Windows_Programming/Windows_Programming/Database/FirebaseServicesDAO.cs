@@ -232,7 +232,7 @@ namespace Windows_Programming.Database
                                      .Document(accountId.ToString())
                                      .Collection("plans")
                                      .Document(planId.ToString());
-            System.Diagnostics.Debug.WriteLine($"AAAAAAAAA:  {plan.DeletedDate}");
+            System.Diagnostics.Debug.WriteLine($"Trc khi xoa o firebase:  {plan.Id} va bien {planId}");
             var planData = new Dictionary<string, object>
             {
                 { "deleteddate", plan.DeletedDate.HasValue ? plan.DeletedDate.Value.ToString("o") : null}
@@ -341,8 +341,16 @@ namespace Windows_Programming.Database
                     plans.Add(plan);
                 }    
             }
+            /*for (int i = 0; i < plans.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine($"Read o db {plans[i].Id}");
+            }*/
+            foreach (var plan in plans)
+            {
+                System.Diagnostics.Debug.WriteLine($"Read o db {plan.Id}");
+            }
 
-            return plans;
+                return plans;
         }
         public async Task<int> GetNumAllPlanInHome(int id)
         {

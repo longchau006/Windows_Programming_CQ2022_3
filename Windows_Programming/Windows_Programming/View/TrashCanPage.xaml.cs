@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -32,15 +33,47 @@ namespace Windows_Programming.View
         public PlansInTrashCanViewModel MyPlansTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         int accountId=MainWindow.MyAccount.Id;
+        private List<Plan> selectedPlans = new List<Plan>();
+        private bool isMultiSelectMode = false;
+        public static readonly DependencyProperty ChooseButtonVisibilityProperty =
+        DependencyProperty.Register(nameof(ChooseButtonVisibility), typeof(Visibility), typeof(TrashCanPage), new PropertyMetadata(Visibility.Collapsed));
+
+        public Visibility ChooseButtonVisibility
+        {
+            get => (Visibility)GetValue(ChooseButtonVisibilityProperty);
+            set => SetValue(ChooseButtonVisibilityProperty, value);
+        }
         public TrashCanPage()
         {
             this.InitializeComponent();
             firebaseServices = FirebaseServicesDAO.Instance;
+            // Subscribe to collection changes
+            MyPlansTrashCanViewModel.PlansInTrashCan.CollectionChanged += PlansInTrashCan_CollectionChanged;
+
+            // Initial check
+            UpdateChooseButtonVisibility();
+        }
+
+        private void PlansInTrashCan_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateChooseButtonVisibility();
+        }
+
+        private void UpdateChooseButtonVisibility()
+        {
+            ChooseButtonVisibility = MyPlansTrashCanViewModel.PlansInTrashCan.Any()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
         private async void OnNavigationRestoreClick(object sender, RoutedEventArgs e)
         {
+            //for (int i = 0; i < MyPlansTrashCanViewModel.PlansInTrashCan.Count; i++)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"K {MyPlansTrashCanViewModel.PlansInTrashCan[i].Id}");
+            //}
             var selectedPlan = (sender as Button).DataContext as Plan;
 
+            //System.Diagnostics.Debug.WriteLine($"kdskdkskskdskd:  {selectedPlan.Id} ");
             if (selectedPlan != null)
             {
                 ContentDialog confirmDialog = new ContentDialog
@@ -53,7 +86,7 @@ namespace Windows_Programming.View
                     XamlRoot = this.XamlRoot
                 };
 
-               
+
                 var secondaryButtonStyle = new Style(typeof(Button));
                 secondaryButtonStyle.Setters.Add(new Setter(Button.BackgroundProperty, new SolidColorBrush(Microsoft.UI.Colors.Blue)));
                 secondaryButtonStyle.Setters.Add(new Setter(Button.ForegroundProperty, new SolidColorBrush(Microsoft.UI.Colors.White)));
@@ -61,14 +94,14 @@ namespace Windows_Programming.View
                 secondaryButtonStyle.Setters.Add(new Setter(Button.CornerRadiusProperty, new CornerRadius(5)));
                 confirmDialog.SecondaryButtonStyle = secondaryButtonStyle;
 
-                
+
 
                 var result = await confirmDialog.ShowAsync();
 
                 if (result == ContentDialogResult.Secondary)
                 {
                     var temp = selectedPlan.DeletedDate;
-                    System.Diagnostics.Debug.WriteLine($"ATYTTTTT:  {selectedPlan.DeletedDate}");
+                    
                     selectedPlan.DeletedDate = null;
 
                     try
@@ -149,5 +182,182 @@ namespace Windows_Programming.View
             }
         }
 
+
+
+
+
+        private void ShowCheckboxes(bool show)
+        {
+            var items = PlansInTrashCan_ListView.Items;
+            foreach (Plan plan in items)
+            {
+                var container = PlansInTrashCan_ListView.ContainerFromItem(plan) as ListViewItem;
+                if (container != null)
+                {
+                    var checkbox = FindDescendant<CheckBox>(container, "PlanCheckBox");
+                    if (checkbox != null)
+                    {
+                        checkbox.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                        if (!show)
+                        {
+                            checkbox.IsChecked = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Helper method to find descendant control by name
+        private T FindDescendant<T>(DependencyObject parent, string name) where T : DependencyObject
+        {
+            var count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T && child is FrameworkElement fe && fe.Name == name)
+                    return (T)child;
+
+                var result = FindDescendant<T>(child, name);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+
+
+        private void OnChooseClick(object sender, RoutedEventArgs e)
+        {
+            isMultiSelectMode = true;
+            Choose_Button.Visibility = Visibility.Collapsed;
+            MultiSelectButtons.Visibility = Visibility.Visible;
+            ShowCheckboxes(true);
+        }
+
+        private void OnPlanChecked(object sender, RoutedEventArgs e)
+        {
+            var checkbox = sender as CheckBox;
+            var plan = checkbox.DataContext as Plan;
+           plan.IsSelected = true;
+            //System.Diagnostics.Debug.WriteLine($"------------------------");
+            //System.Diagnostics.Debug.WriteLine($"Khi check sau {plan.Id}");
+            //for (int i = 0; i < selectedPlans.Count; i++)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Khi check trc {selectedPlans[i].Id} {selectedPlans[i].DeletedDate}");
+            //}
+            if (plan != null && !selectedPlans.Contains(plan))
+            {
+                selectedPlans.Add(plan);
+            }
+            //for (int i = 0; i < selectedPlans.Count; i++)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Khi check sau {selectedPlans[i].Id} {selectedPlans[i].DeletedDate}");
+            //}
+            UpdateMultiSelectButtonsState();
+        }
+
+        private void OnPlanUnchecked(object sender, RoutedEventArgs e)
+        {
+            var checkbox = sender as CheckBox;
+            var plan = checkbox.DataContext as Plan;
+            plan.IsSelected = false;
+            //System.Diagnostics.Debug.WriteLine($"------------------------");
+            //System.Diagnostics.Debug.WriteLine($"Khi uncheck sau {plan.Id}");
+            //for (int i = 0; i < selectedPlans.Count; i++)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Khi Uncheck trc {selectedPlans[i].Id} {selectedPlans[i].DeletedDate}");
+            //}
+            if (plan != null)
+            {
+                selectedPlans.Remove(plan);
+            }
+            for (int i = 0; i < selectedPlans.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine($"Khi Uncheck sau {selectedPlans[i].Id} {selectedPlans[i].DeletedDate}");
+            }
+            UpdateMultiSelectButtonsState();
+        }
+
+        private void UpdateMultiSelectButtonsState()
+        {
+            bool hasSelection = selectedPlans.Count > 0;
+            MultiRestore_Button.IsEnabled = hasSelection;
+            MultiDelete_Button.IsEnabled = hasSelection;
+
+            var restoreColor = hasSelection ? Colors.Blue : Colors.Gray;
+            var deleteColor = hasSelection ? Colors.Red : Colors.Gray;
+
+            ((TextBlock)MultiRestore_Button.Content).Foreground = new SolidColorBrush(restoreColor);
+            ((TextBlock)MultiDelete_Button.Content).Foreground = new SolidColorBrush(deleteColor);
+        }
+
+        private async void OnMultiRestoreClick(object sender, RoutedEventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine($"Khi an restorebutton---->{selectedPlans.Count}");
+            //for (int i = 0; i < selectedPlans.Count; i++)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Khi an restorebutton {selectedPlans[i].Id} {selectedPlans[i].DeletedDate}");
+            //}
+            foreach (var plan in selectedPlans.ToList())
+            {
+                plan.DeletedDate = null;
+                plan.IsSelected=false;
+             
+                //System.Diagnostics.Debug.WriteLine($"Trong selected {plan.Id} {plan.DeletedDate}");
+                //System.Diagnostics.Debug.WriteLine($"Trong MyPlansInTrashCan");
+                //for (int i = 0; i < MyPlansTrashCanViewModel.PlansInTrashCan.Count; i++)
+                //{
+                //    System.Diagnostics.Debug.WriteLine($"Trong MyPlansInTrashcan {MyPlansTrashCanViewModel.PlansInTrashCan[i].Id} {MyPlansTrashCanViewModel.PlansInTrashCan[i].DeletedDate}");
+                //}
+                try
+                {
+                    await firebaseServices.UpdateWhenDeletePlanInFirestore(accountId, plan.Id, plan);
+                    MyPlansHomeViewModel.AddPlanInHome(plan);
+                    MyPlansTrashCanViewModel.RemovePlanInTrashCan(plan);
+                }
+                catch (Exception ex)
+                {
+                    // Handle error
+                }
+            }
+            ExitMultiSelectMode();
+        }
+
+
+        
+        private async void OnMultiDeleteClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var plan in selectedPlans.ToList())
+            {
+                System.Diagnostics.Debug.WriteLine($"AAAAAA {plan.Id} {plan.DeletedDate}");
+                try
+                {
+                    await firebaseServices.DeleteImediatelyPlanInFirestore(accountId, plan);
+                    MyPlansTrashCanViewModel.RemovePlanInTrashCan(plan);
+                }
+                catch (Exception ex)
+                {
+                    // Handle error
+                }
+            }
+            ExitMultiSelectMode();
+        }
+
+        private void OnCancelMultiSelectClick(object sender, RoutedEventArgs e)
+        {
+            ExitMultiSelectMode();
+        }
+
+
+        private void ExitMultiSelectMode()
+        {
+            isMultiSelectMode = false;
+            selectedPlans.Clear();
+            Choose_Button.Visibility = Visibility.Visible;
+            MultiSelectButtons.Visibility = Visibility.Collapsed;
+            ShowCheckboxes(false);
+            UpdateChooseButtonVisibility();
+        }
     }
 }

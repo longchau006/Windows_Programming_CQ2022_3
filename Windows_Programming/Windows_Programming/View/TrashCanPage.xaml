@@ -14,10 +14,22 @@
             <Border BorderBrush="Black" BorderThickness="2" CornerRadius="15" Padding="10" Margin="10">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="4*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10">
+
+                        <CheckBox x:Name="PlanCheckBox" 
+                            Grid.Column="0"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Visibility="Collapsed"
+                          IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                          Checked="OnPlanChecked"
+                          Unchecked="OnPlanUnchecked"/>
+                 
+                    
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0">
                         <TextBlock Text="{x:Bind Name}" Foreground="Black" FontSize="24" FontWeight="Bold"/>
                         <TextBlock FontStyle="Italic">
                             <Run Text="{x:Bind StartLocation}" />
@@ -34,7 +46,7 @@
                         </TextBlock>
 
                         <!-- Action buttons -->
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" >
                             <Button Width="120" Height="40" DataContext="{x:Bind}" Click="OnNavigationRestoreClick">
                                 <StackPanel Orientation="Horizontal">
                                     <SymbolIcon Symbol="Refresh" />
@@ -55,15 +67,16 @@
                     </StackPanel>
 
                     <!-- Plan Image -->
-                    <Image Source="{x:Bind PlanImage}"  Grid.Column="1" Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Image Source="{x:Bind PlanImage}"  Grid.Column="2" Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
         </DataTemplate>
     </Page.Resources>
 
     <StackPanel>
-        <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="34" FontWeight="Bold" Margin="30,0,6,0"/>
-
+        <!-- Title-->
+            <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="34" FontWeight="Bold" Margin="30,0,6,0"/>
+        <!-- Search bar and filter bar-->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
             <Button x:Name="FindATrip_Button" Background="White" BorderBrush="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
                 <StackPanel Orientation="Horizontal">
@@ -86,6 +99,40 @@
                 </StackPanel>
             </Button>
         </StackPanel>
+        <!-- Options-->
+                <Button x:Name="Choose_Button" 
+                Background="White" 
+                BorderBrush="Black"
+                HorizontalAlignment="Right"
+                Click="OnChooseClick"
+                Margin="0,0,20,0"
+                Visibility="{x:Bind ChooseButtonVisibility, Mode=OneWay}">
+                    <TextBlock Text="Choose" Foreground="Blue"/>
+                </Button>
+
+                <StackPanel x:Name="MultiSelectButtons" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Visibility="Collapsed" 
+                    Margin="0,0,20,0">
+                    <Button x:Name="MultiRestore_Button" 
+                    IsEnabled="False"
+                    Click="OnMultiRestoreClick">
+                        <TextBlock Text="Restore" Foreground="Gray"/>
+                    </Button>
+                    <Button x:Name="MultiDelete_Button" 
+                    IsEnabled="False"
+                    Margin="10,0"
+                    Click="OnMultiDeleteClick">
+                        <TextBlock Text="Delete" Foreground="Gray"/>
+                    </Button>
+                    <Button x:Name="Cancel_Button" 
+                            Click="OnCancelMultiSelectClick">
+                        <TextBlock Text="Cancel"/>
+                    </Button>   
+                 </StackPanel>
+
+        <!-- ListTrashCan-->
         <StackPanel Orientation="Vertical">
             <ListView  Name="PlansInTrashCan_ListView" Width="800" Height="500" 
                   ItemsSource="{x:Bind MyPlansTrashCanViewModel.PlansInTrashCan}"

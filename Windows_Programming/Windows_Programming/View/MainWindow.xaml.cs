@@ -84,6 +84,8 @@ namespace Windows_Programming.View
             //contentNavigation.Navigate(typeof(HomePage));
             Home_Nagigation.SelectedItem = Home_Nagigation.MenuItems[0];
 
+    
+
         }
 
         private void HomeNagigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
