@@ -205,6 +205,7 @@ namespace Windows_Programming.View
                     try
                     {
                         await firebaseServices.DeleteImediatelyPlanInFirestore(accountId, selectedPlan);
+                        await firebaseServices.DeleteImageFromStorage(accountId,selectedPlan.Id);
                         MyPlansTrashCanViewModel.RemovePlanInTrashCan(selectedPlan);
                     }
                     catch (Exception ex)
@@ -444,6 +445,7 @@ namespace Windows_Programming.View
                     try
                     {
                         await firebaseServices.DeleteImediatelyPlanInFirestore(accountId, plan);
+                        await firebaseServices.DeleteImageFromStorage(accountId, plan.Id);
                         MyPlansTrashCanViewModel.RemovePlanInTrashCan(plan);
                     }
                     catch (Exception ex)

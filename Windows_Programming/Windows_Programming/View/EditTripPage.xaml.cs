@@ -59,30 +59,82 @@ namespace Windows_Programming.View
             }
 
         }
+
+
         private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
         {
+            // Tạo FileOpenPicker để chọn tệp
             var openPicker = new FileOpenPicker();
-            Window w = new();
-            var hWnd = WindowNative.GetWindowHandle(w);
+            Window tempWindow = new();
+            var hWnd = WindowNative.GetWindowHandle(tempWindow);
             InitializeWithWindow.Initialize(openPicker, hWnd);
             openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            openPicker.FileTypeFilter.Add("*");
+            openPicker.FileTypeFilter.Add(".jpg");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".png");
+            
             StorageFile file = await openPicker.PickSingleFileAsync();
-            w.Close();
+            tempWindow.Close();
 
             if (file != null)
             {
-                selectedImagePath = file.Path;
-                System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
-                // Sử dụng BitmapImage để tạo nguồn cho Image
-                var bitmapImage = new BitmapImage();
-                using (var stream = await file.OpenAsync(FileAccessMode.Read))
+                try
                 {
-                    await bitmapImage.SetSourceAsync(stream);
+                    // Kiểm tra định dạng tệp
+                    string fileExtension = Path.GetExtension(file.Path).ToLower();
+                    if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
+                    {
+                        // Hiển thị thông báo lỗi nếu định dạng không hợp lệ
+                        var dialog = new ContentDialog
+                        {
+                            Title = "Invalid File Format",
+                            Content = "Please select an image file with a valid format (JPG, JPEG, or PNG).",
+                            CloseButtonText = "OK",
+                            XamlRoot = this.XamlRoot
+                        };
+                        await dialog.ShowAsync();
+                        return;
+                    }
+
+                    // Lưu đường dẫn ảnh đã chọn
+                    selectedImagePath = file.Path;
+                    System.Diagnostics.Debug.WriteLine($"Selected Image Path: {selectedImagePath}");
+
+                    // Hiển thị ảnh trong Image control
+                    var bitmapImage = new BitmapImage();
+                    using (var stream = await file.OpenAsync(FileAccessMode.Read))
+                    {
+                        await bitmapImage.SetSourceAsync(stream);
+                    }
+                    Trip_Image.Source = bitmapImage;
                 }
-                Trip_Image.Source = bitmapImage;
+                catch (Exception ex)
+                {
+                    // Hiển thị thông báo lỗi nếu có ngoại lệ xảy ra
+                    var dialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = $"An error occurred while loading the image: {ex.Message}",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await dialog.ShowAsync();
+                }
+            }
+            else
+            {
+                // Người dùng không chọn tệp nào
+                var dialog = new ContentDialog
+                {
+                    Title = "No File Selected",
+                    Content = "No file was selected. Please choose an image file.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
             }
         }
+
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
             TripName_TextBox.Text = PlanTripViewModel.Name.ToString();
@@ -104,7 +156,12 @@ namespace Windows_Programming.View
                     Trip_Image.Source = null;
                 }
             }
-            System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
+            // Điều hướng về trang trước
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+            //System.Diagnostics.Debug.WriteLine($"new: {selectedImagePath}");
         }
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
@@ -161,24 +218,41 @@ namespace Windows_Programming.View
                 return;
             }
 
-            // Tạo đối tượng Plan từ các thông tin đã nhập
-            Plan newPlan = new Plan
-            {
-                Name = tripName,
-                PlanImage = selectedImagePath,
-                StartLocation = startLocation,
-                EndLocation = endLocation,
-                StartDate = startDate.Value,
-                EndDate = endDate.Value,
-                Description = description
-            };
+            
 
             // Ghi đối tượng lên Firestore
             try
             {
+                
+                string imageUrl = null;
+                if (!string.IsNullOrEmpty(selectedImagePath) && selectedImagePath != PlanTripViewModel.PlanImage)
+                {
+                    imageUrl = await firebaseServices.UploadImageToStorage(
+                        selectedImagePath,
+                        accountId,
+                        PlanTripViewModel.Id
+                    );
+                }
+
+                // Tạo đối tượng Plan từ các thông tin đã nhập
+                Plan newPlan = new Plan
+                {
+                    Name = tripName,
+                    PlanImage = selectedImagePath,
+                    StartLocation = startLocation,
+                    EndLocation = endLocation,
+                    StartDate = startDate.Value,
+                    EndDate = endDate.Value,
+                    Description = description
+                };
+                MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
+                //Do cai nay la string nen khi thay doi o home phai gan planImage la selceted trc cho no update o local trc
+                //roi sau do ta se gan lai newplan.image sau de update len db
+                //tuc la cai update planInHome phai viet trc cai updata plan in firestore
+                newPlan.PlanImage = imageUrl;
                 await firebaseServices.UpdatePlanInFirestore(accountId, PlanTripViewModel.Id, newPlan);
 
-                MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
+                
             }
             catch (Exception ex)
             {

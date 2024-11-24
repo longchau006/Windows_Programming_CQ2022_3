@@ -47,7 +47,7 @@ namespace Windows_Programming.Database
 
             authClient = new FirebaseAuthClient(config);
             firestoreDb = GetFirestoreDb();
-            //storageClient = StorageClient.Create();
+            storageClient = StorageClient.Create();
         }
 
         //Init FirestoreDB
@@ -131,7 +131,7 @@ namespace Windows_Programming.Database
         }
 
 
-        //FirestoreDB
+        //---------------------------------------------------FirestoreDB
 
         public async Task<int> GetAccountsCount()
         {
@@ -370,6 +370,49 @@ namespace Windows_Programming.Database
             }
             return num;
         }
+
+
+
+        //----------------------------------------Storage in firebase
+        public async Task<string> UploadImageToStorage(string localImagePath, int accountId, int planId)
+        {
+
+            System.Diagnostics.Debug.WriteLine($"Image vao trong upload len storage {localImagePath}");
+            if (string.IsNullOrEmpty(localImagePath))
+                return null;
+
+            string storagePath = $"plans/{accountId}/plan{planId}";
+            using var stream = File.OpenRead(localImagePath);
+            System.Diagnostics.Debug.WriteLine($"ABC");
+
+            var storageObject = await storageClient.UploadObjectAsync(
+                "tripplandatabase-8fbf9.appspot.com",
+                storagePath,
+                "image/jpeg",
+                stream
+            );
+
+            string encodedPath = Uri.EscapeDataString(storagePath);
+            string publicUrl = $"https://firebasestorage.googleapis.com/v0/b/tripplandatabase-8fbf9.appspot.com/o/{encodedPath}?alt=media";
+
+            return publicUrl;
+        }
+
+        public async Task DeleteImageFromStorage(int accountId, int planId)
+        {
+            string storagePath = $"plans/{accountId}/plan{planId}";
+
+            await storageClient.DeleteObjectAsync(
+                "tripplandatabase-8fbf9.appspot.com",
+                storagePath
+            );
+        }
+
+
+
+
+
+
 
 
         //From IDAO

@@ -37,7 +37,7 @@ namespace Windows_Programming.View
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public PlansInTrashCanViewModel MyPlansTrashCanViewModel=> MainWindow.MyPlansTrashCanViewModel;
 
-        private string selectedImagePath = "/Assets/danang.jpg";
+        private string selectedImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "danang.jpg");
 
         int accountId = MainWindow.MyAccount.Id;
         public AddTripPage()
@@ -49,25 +49,75 @@ namespace Windows_Programming.View
 
         private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
         {
+            // Tạo FileOpenPicker để chọn tệp
             var openPicker = new FileOpenPicker();
-            Window w = new();
-            var hWnd = WindowNative.GetWindowHandle(w);
+            Window tempWindow = new();
+            var hWnd = WindowNative.GetWindowHandle(tempWindow);
             InitializeWithWindow.Initialize(openPicker, hWnd);
             openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            openPicker.FileTypeFilter.Add("*");
+            openPicker.FileTypeFilter.Add(".jpg");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".png");
+
             StorageFile file = await openPicker.PickSingleFileAsync();
-            w.Close();
+            tempWindow.Close();
 
             if (file != null)
             {
-                selectedImagePath = file.Path;
-                // Sử dụng BitmapImage để tạo nguồn cho Image
-                var bitmapImage = new BitmapImage();
-                using (var stream = await file.OpenAsync(FileAccessMode.Read))
+                try
                 {
-                    await bitmapImage.SetSourceAsync(stream);
+                    // Kiểm tra định dạng tệp
+                    string fileExtension = Path.GetExtension(file.Path).ToLower();
+                    if (fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png")
+                    {
+                        // Hiển thị thông báo lỗi nếu định dạng không hợp lệ
+                        var dialog = new ContentDialog
+                        {
+                            Title = "Invalid File Format",
+                            Content = "Please select an image file with a valid format (JPG, JPEG, or PNG).",
+                            CloseButtonText = "OK",
+                            XamlRoot = this.XamlRoot
+                        };
+                        await dialog.ShowAsync();
+                        return;
+                    }
+
+                    // Lưu đường dẫn ảnh đã chọn
+                    selectedImagePath = file.Path;
+                    System.Diagnostics.Debug.WriteLine($"Selected Image Path: {selectedImagePath}");
+
+                    // Hiển thị ảnh trong Image control
+                    var bitmapImage = new BitmapImage();
+                    using (var stream = await file.OpenAsync(FileAccessMode.Read))
+                    {
+                        await bitmapImage.SetSourceAsync(stream);
+                    }
+                    Trip_Image.Source = bitmapImage;
                 }
-                Trip_Image.Source = bitmapImage;
+                catch (Exception ex)
+                {
+                    // Hiển thị thông báo lỗi nếu có ngoại lệ xảy ra
+                    var dialog = new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = $"An error occurred while loading the image: {ex.Message}",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await dialog.ShowAsync();
+                }
+            }
+            else
+            {
+                // Người dùng không chọn tệp nào
+                var dialog = new ContentDialog
+                {
+                    Title = "No File Selected",
+                    Content = "No file was selected. Please choose an image file.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
             }
         }
 
@@ -75,15 +125,23 @@ namespace Windows_Programming.View
         // Xóa các thông tin nhập khi nhấn Cancel
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            TripName_TextBox.Text = string.Empty;
-            StartLocation_TextBox.Text = string.Empty;
-            EndLocation_TextBox.Text = string.Empty;
-            Start_DatePicker.SelectedDate = null;
-            End_DatePicker.SelectedDate = null; 
-            var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
-            Trip_Image.Source = image;
-            selectedImagePath = "/Assets/danang.jpg";
-            Description_TextBox.Text = string.Empty;
+            //TripName_TextBox.Text = string.Empty;
+            //StartLocation_TextBox.Text = string.Empty;
+            //EndLocation_TextBox.Text = string.Empty;
+            //Start_DatePicker.SelectedDate = null;
+            //End_DatePicker.SelectedDate = null; 
+            //var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
+            //Trip_Image.Source = image;
+
+            //selectedImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "danang.jpg");
+            //Description_TextBox.Text = string.Empty;
+
+            // Điều hướng về trang trước
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+
         }
 
         // Lấy thông tin khi nhấn Save
@@ -128,33 +186,56 @@ namespace Windows_Programming.View
                 _ = dialog.ShowAsync();
                 return;
             }
-            int newId = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id))+1 : 0;
-            if (MyPlansTrashCanViewModel.PlansInTrashCan.Count>0 && (MyPlansTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id)+1)>newId)
+
+            int newId = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id)) + 1 : 0;
+            if (MyPlansTrashCanViewModel.PlansInTrashCan.Count>0 && (MyPlansTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id) + 1) > newId)
             {
-                newId = MyPlansTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id)+1;
+                newId = MyPlansTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id) + 1;
             }
 
 
-            // Tạo đối tượng Plan từ các thông tin đã nhập
-            Plan newPlan = new Plan
-            {
-                Id = newId,
-                Name = tripName,
-                PlanImage = selectedImagePath,
-                StartLocation = startLocation,
-                EndLocation = endLocation,
-                StartDate = startDate.Value,
-                EndDate = endDate.Value,
-                Description = description
-            };
+           
 
             // Ghi đối tượng lên Firestore
             try
             {
+                
+
+                // Tạo đối tượng Plan từ các thông tin đã nhập
+                Plan newPlan = new Plan
+                {
+                    Id = newId,
+                    Name = tripName,
+                    PlanImage = selectedImagePath,
+                    StartLocation = startLocation,
+                    EndLocation = endLocation,
+                    StartDate = startDate.Value,
+                    EndDate = endDate.Value,
+                    Description = description
+                };
+                // Phải thêm vào ni trc chứ k nó lỗi khi xóa hết rồi thêm lại cái mới nó sẽ dính ảnh của ảnh cũ
+                MyPlansHomeViewModel.AddPlanInHome(newPlan);
+
+
+                System.Diagnostics.Debug.WriteLine($"aaaaaaaaaaaaaaa Image Path: {newPlan.PlanImage}");
+
+                string imageUrl = null;
+
+                if (!string.IsNullOrEmpty(selectedImagePath))
+                {
+                    
+                    imageUrl = await firebaseServices.UploadImageToStorage(
+                        selectedImagePath,
+                        accountId,
+                        newId
+                    );
+                }
+                System.Diagnostics.Debug.WriteLine($"Image luc add vao va imageUrl {imageUrl}");
+                newPlan.PlanImage = imageUrl;
+                System.Diagnostics.Debug.WriteLine($"bbbbbbbbbbb Image Path: {MyPlansHomeViewModel.PlansInHome[0].PlanImage}");
                 await firebaseServices.CreatePlanInFirestore(accountId, newPlan);
 
-                // Thêm đối tượng mới vào danh sách kế hoạch trong ViewModel
-                MyPlansHomeViewModel.AddPlanInHome(newPlan);
+               
             }
             catch (Exception ex)
             {

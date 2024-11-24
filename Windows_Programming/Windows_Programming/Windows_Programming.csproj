@@ -133,6 +133,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Assets\danang.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Assets\empty_trash.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
