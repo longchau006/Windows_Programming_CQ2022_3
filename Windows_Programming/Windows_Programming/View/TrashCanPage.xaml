@@ -64,7 +64,11 @@
                         </StackPanel>
 
                         <!-- Deletion warning -->
-                        <TextBlock Text="Plan will be deleted completely after 10 days" Foreground="Red" FontSize="14" FontWeight="Bold" />
+                        <TextBlock Foreground="Red" FontSize="14" FontWeight="Bold">
+                            <Run Text="Plan will be deleted completely after "/>
+                            <Run Text="{x:Bind RemainingDays, Mode=OneWay}"/>
+                            <Run Text=" days"/>
+                        </TextBlock>
                     </StackPanel>
 
                     <!-- Plan Image -->
