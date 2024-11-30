@@ -47,7 +47,7 @@ namespace Windows_Programming.Database
 
             authClient = new FirebaseAuthClient(config);
             firestoreDb = GetFirestoreDb();
-            //storageClient = StorageClient.Create();
+            storageClient = StorageClient.Create();
         }
 
         //Init FirestoreDB
@@ -131,7 +131,7 @@ namespace Windows_Programming.Database
         }
 
 
-        //FirestoreDB
+        //---------------------------------------------------FirestoreDB
 
         public async Task<int> GetAccountsCount()
         {
@@ -232,7 +232,7 @@ namespace Windows_Programming.Database
                                      .Document(accountId.ToString())
                                      .Collection("plans")
                                      .Document(planId.ToString());
-            System.Diagnostics.Debug.WriteLine($"AAAAAAAAA:  {plan.DeletedDate}");
+            System.Diagnostics.Debug.WriteLine($"Trc khi xoa o firebase:  {plan.Id} va bien {planId}");
             var planData = new Dictionary<string, object>
             {
                 { "deleteddate", plan.DeletedDate.HasValue ? plan.DeletedDate.Value.ToString("o") : null}
@@ -313,7 +313,6 @@ namespace Windows_Programming.Database
                     {
 
                         var activityData = activityDoc.ToDictionary();
-
                         if (activityData.TryGetValue("type", out var typeObj) && int.TryParse(typeObj.ToString(), out int type))
                         {
                             System.Diagnostics.Debug.WriteLine($"{type}");
@@ -341,8 +340,16 @@ namespace Windows_Programming.Database
                     plans.Add(plan);
                 }    
             }
+            /*for (int i = 0; i < plans.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine($"Read o db {plans[i].Id}");
+            }*/
+            foreach (var plan in plans)
+            {
+                System.Diagnostics.Debug.WriteLine($"Read o db {plan.Id}");
+            }
 
-            return plans;
+                return plans;
         }
         public async Task<int> GetNumAllPlanInHome(int id)
         {
@@ -363,6 +370,49 @@ namespace Windows_Programming.Database
             }
             return num;
         }
+
+
+
+        //----------------------------------------Storage in firebase
+        public async Task<string> UploadImageToStorage(string localImagePath, int accountId, int planId)
+        {
+
+            System.Diagnostics.Debug.WriteLine($"Image vao trong upload len storage {localImagePath}");
+            if (string.IsNullOrEmpty(localImagePath))
+                return null;
+
+            string storagePath = $"plans/{accountId}/plan{planId}";
+            using var stream = File.OpenRead(localImagePath);
+            System.Diagnostics.Debug.WriteLine($"ABC");
+
+            var storageObject = await storageClient.UploadObjectAsync(
+                "tripplandatabase-8fbf9.appspot.com",
+                storagePath,
+                "image/jpeg",
+                stream
+            );
+
+            string encodedPath = Uri.EscapeDataString(storagePath);
+            string publicUrl = $"https://firebasestorage.googleapis.com/v0/b/tripplandatabase-8fbf9.appspot.com/o/{encodedPath}?alt=media";
+
+            return publicUrl;
+        }
+
+        public async Task DeleteImageFromStorage(int accountId, int planId)
+        {
+            string storagePath = $"plans/{accountId}/plan{planId}";
+
+            await storageClient.DeleteObjectAsync(
+                "tripplandatabase-8fbf9.appspot.com",
+                storagePath
+            );
+        }
+
+
+
+
+
+
 
 
         //From IDAO

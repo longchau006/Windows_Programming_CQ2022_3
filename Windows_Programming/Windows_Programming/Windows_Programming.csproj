@@ -133,6 +133,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Assets\danang.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\empty_trash.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\empty_trashcan.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Configs\EnvVariableSample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -145,7 +156,7 @@
     <Page Update="View\AddActivitiesTripPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="View\EditTripPage.xaml"/>
+    <Page Update="View\EditTripPage.xaml" />
     <Page Update="View\CreateBlogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

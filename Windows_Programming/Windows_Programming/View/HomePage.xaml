@@ -80,7 +80,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Image x:Name="Trip_Image" Grid.Column="1" Source="{x:Bind PlanImage}" Width="200" Height="200" Stretch="UniformToFill" Margin="20" />
+                    <Image x:Name="Trip_Image" Grid.Column="1" Source="{x:Bind PlanImage, Mode=OneTime}" Width="200" Height="200" Stretch="UniformToFill" Margin="20" />
                 </Grid>
             </Border>
         </DataTemplate>
