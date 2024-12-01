@@ -43,12 +43,12 @@ namespace Windows_Programming.View
             blog.Image = $"ms-appx://{imagePath}";
             blog.PublishDate = DateTime.Now;
             AccountViewModel accountViewModel = new AccountViewModel();
-            accountViewModel.getInformation();
-            blog.Author = accountViewModel.User.Username;
+            accountViewModel.getInformationAsync();
+            //blog.Author = accountViewModel.User.Username;
             BlogViewModel blogViewModel = new BlogViewModel();
             blogViewModel.ViewBlog();
             blog.Id = blogViewModel.blogInBlogList.Count + 1;
-            blogViewModel.AddBlog(blog);
+            blogViewModel.AddBlog(blog, "ok");
             Frame.Navigate(typeof(BlogListPage));
         }
 

@@ -12,6 +12,11 @@ using Windows_Programming.Model;
 using Windows_Programming.Configs;
 using Windows_Programming.Helpers;
 using System.Diagnostics;
+using Windows_Programming.View;
+using Microsoft.Windows.Storage;
+using Windows.Storage;
+using ApplicationData = Windows.Storage.ApplicationData;
+using ApplicationDataContainer = Windows.Storage.ApplicationDataContainer;
 
 
 
@@ -376,10 +381,6 @@ namespace Windows_Programming.Database
             throw new NotImplementedException();
         }
 
-        public List<Account> GetAllAccount()
-        {
-            throw new NotImplementedException();
-        }
 
         public List<Blog> GetAllBlog()
         {
@@ -406,9 +407,106 @@ namespace Windows_Programming.Database
             throw new NotImplementedException();
         }
 
-        public void addBlog(Blog blog)
+        public async Task addBlog(Blog blog, string imagePath)
         {
-            throw new NotImplementedException();
+            var blogsRef = firestoreDb.Collection("blogs");
+            var docRef = blogsRef.Document();
+            var blogData = new Dictionary<string, object>
+            {
+                { "title", blog.Title },
+                { "content", blog.Content },
+                { "author", blog.Author },
+                { "publishdate", blog.PublishDate.ToString("o") },
+                { "image", blog.Image }
+            };
+            await addImageToClientStorage(imagePath);
+
+            await docRef.SetAsync(blogData);
+        }
+
+        public async Task addImageToClientStorage(string path)
+        {
+            var bucketName = "tripplan-8fbf9.appspot.com";
+            var objectName = Path.GetFileName(path);
+            using (var fileStream = new FileStream(path, FileMode.Open))
+            {
+                await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
+            }
+        }
+
+        public async Task UpdateFullName(string fullName, int id) {
+            var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
+            var snapshot = docRef.GetSnapshotAsync();
+            Dictionary<string, object> updates = new Dictionary<string, object>
+            {
+                { "fullname", fullName }
+            };
+            await docRef.UpdateAsync(updates);
+        }
+        public Task UpdateAddress(string address, int id) { 
+            var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
+            var snapshot = docRef.GetSnapshotAsync();
+            Dictionary<string, object> updates = new Dictionary<string, object>
+            {
+                { "address", address }
+            };
+            return docRef.UpdateAsync(updates);
+        }
+
+        // ...
+
+        public async Task UpdatePassword(string oldPassword, string newPassword)
+        {
+            try
+            {
+                // Re-authenticate the user with the old password
+                FirebaseUserCredential credential;
+                ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+                string email = localSettings.Values["email"].ToString();
+                try
+                {
+                    credential = await authClient.SignInWithEmailAndPasswordAsync(email, oldPassword);
+                    if (credential?.User == null)
+                        throw new Exception("The old password is incorrect");
+                }
+                catch (FirebaseAuthException authEx)
+                {
+                    if (authEx.Message.Contains("INVALID_PASSWORD"))
+                        throw new Exception("The old password is incorrect");
+                    throw new Exception("Failed to re-authenticate user: The old password is incorrect");
+                }
+
+                // Update the password
+                await credential.User.ChangePasswordAsync(newPassword);
+            }
+            catch (FirebaseAuthException authEx)
+            {
+                if (authEx.Message.Contains("WEAK_PASSWORD"))
+                    throw new Exception("Password should be at least 6 characters");
+                if (authEx.Message.Contains("INVALID_PASSWORD"))
+                    throw new Exception("The old password is incorrect");
+
+                throw new Exception("Failed to update password: " + authEx.Message);
+            }
+        }
+
+        public async Task DeleteUser(string email, string password, int id)
+        {
+            try
+            {
+                var credential = await authClient.SignInWithEmailAndPasswordAsync(email, password);
+                var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
+                await docRef.DeleteAsync();
+                await credential.User.DeleteAsync();
+            }
+            catch (FirebaseAuthException)
+            {
+                throw new Exception("Failed to authenticate user: Password is incorrect!" );
+            }
+            catch (Exception)
+            {
+                throw new Exception("An error occurred while deleting the user. Please try again! ");
+            }
         }
     }
 }

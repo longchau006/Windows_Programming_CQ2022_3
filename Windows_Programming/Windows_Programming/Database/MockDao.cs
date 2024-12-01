@@ -200,24 +200,7 @@ namespace Windows_Programming.Database
 
         public List<Account> GetAllAccount()
         {
-            var result = new List<Account>
-                {
-                    new Account
-                    {
-                        Username = "admin",
-                        Email = "abd",
-                        Address ="xit",
-                        Fullname ="haha"
-                    },
-                    new Account
-                    {
-                        Username = "dog",
-                        Email = "bird",
-                        Address ="fish",
-                        Fullname ="mouse"
-                    }
-                };
-            return result;
+            throw new NotImplementedException();
         }
 
 
@@ -310,7 +293,7 @@ namespace Windows_Programming.Database
         public List<Blog> GetAllBlog()
         {
             // tạo 1 danh sách blog hoàn chỉnh 
-            var result = new List<Blog>
+            /*var result = new List<Blog>
                 {
                     new Blog
                     {
@@ -513,7 +496,8 @@ namespace Windows_Programming.Database
                         Image = "ms-appx:///Assets/Blog/blog10.jpg"
                     }
                 };
-            return result;
+            return result;*/
+            throw new NotImplementedException();
         }
         public List<Blog> GetLastestBlog()
         {
@@ -531,11 +515,19 @@ namespace Windows_Programming.Database
             return GetAllBlog().FirstOrDefault(x => x.Id == id);
         }
         
-        public void addBlog(Blog blog)
+        public Task addBlog(Blog blog, string path)
         {
-            GetAllBlog().Add(blog);
+            throw new NotImplementedException();
         }
 
+        public Task addImageToClientStorage(string path)
+        {
+            throw new NotImplementedException();
+        }
 
+        public Task UpdateFullName(string fullName, int id) { throw new NotImplementedException(); }
+        public Task UpdateAddress(string address, int id) { throw new NotImplementedException(); }
+        public Task UpdatePassword(string oldPassword, string newPassword) { throw new NotImplementedException(); }
+        public Task DeleteUser(string email, string password, int id) { throw new NotImplementedException(); }
     }
 }

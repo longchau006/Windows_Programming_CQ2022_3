@@ -30,10 +30,10 @@ namespace Windows_Programming.ViewModel
             return dao.GetBlogById(id);
         }
 
-        public void AddBlog(Blog blog)
+        public void AddBlog(Blog blog, string path)
         {
             IDao dao = new MockDao();
-            dao.addBlog(blog);
+            dao.addBlog(blog, path);
         }
     }
 }

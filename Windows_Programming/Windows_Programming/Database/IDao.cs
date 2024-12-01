@@ -13,12 +13,16 @@ namespace Windows_Programming.Database
     {
         List<Plan> GetAllPlanInHome();
         List<Plan> GetAllPlanInTrashCan();
-        List<Account> GetAllAccount();
         List<Blog> GetAllBlog();
         List<Tour> GetAllTour();
         List<Blog> GetLastestBlog();
         Blog GetBlogById(int id);
         Tour GetTourById(int id);
-        void addBlog(Blog blog);
+        Task addBlog(Blog blog, string path);
+        Task addImageToClientStorage(string path);
+        Task UpdateFullName(string fullName, int id);
+        Task UpdateAddress(string address, int id);
+        Task UpdatePassword(string oldPassword, string newPassword);
+        Task DeleteUser(string email, string password, int id);
     }
 }

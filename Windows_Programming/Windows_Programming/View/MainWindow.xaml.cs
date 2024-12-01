@@ -93,12 +93,14 @@ namespace Windows_Programming.View
             {
                 if (selectedItem == SignOut)
                 {
+                    SignOutUser();
                     Home_Nagigation.SelectedItem = null;
                 }
                 else
                 {
                     string selectedTag = selectedItem.Tag.ToString();
                     Type pageType = null;
+                    Window w = null;
 
                     switch (selectedTag)
                     {
@@ -116,16 +118,33 @@ namespace Windows_Programming.View
                             break;
                         case "AccountPage":
                             pageType = typeof(AccountPage);
+                            w = this;
                             break;
                     }
                     if (pageType != null)
                     {
                         // Điều hướng sang trang mới
-                        contentNavigation.Navigate(pageType);      
+                        contentNavigation.Navigate(pageType, w);
                     }
                 }
             }
 
+        }
+        private void SignOutUser()
+        {
+            // Clear local settings
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values.Remove("UserToken");
+            localSettings.Values.Remove("Id");
+            localSettings.Values.Remove("Username");
+            localSettings.Values.Remove("Email");
+            localSettings.Values.Remove("Fullname");
+            localSettings.Values.Remove("Address");
+
+            // Navigate to LoginPage
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Activate();
+            this.Close();
         }
         private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {

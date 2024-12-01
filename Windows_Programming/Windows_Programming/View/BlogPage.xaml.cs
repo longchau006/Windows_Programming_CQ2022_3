@@ -48,7 +48,7 @@ namespace Windows_Programming.View
                 BlogImage.Source = new BitmapImage(new Uri(blog.Image));
                 BlogTitle.Text = blog.Title;
                 BlogContent.Text = blog.Content;
-                BlogAuthor.Text = blog.Author;
+                BlogAuthor.Text = blog.Author.ToString();
                 BlogPublishDate.Text = blog.PublishDate.ToString();
 
             }
