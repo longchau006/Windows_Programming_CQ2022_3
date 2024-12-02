@@ -659,6 +659,27 @@ namespace Windows_Programming.Database
             {
                 var credential = await authClient.SignInWithEmailAndPasswordAsync(email, password);
                 var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
+                // delete blog that belongs to the user
+                var blogsRef = firestoreDb.Collection("blogs");
+                var blogsSnapshot = await blogsRef.GetSnapshotAsync();
+                foreach (var blogDoc in blogsSnapshot.Documents)
+                {
+                    var blogData = blogDoc.ToDictionary();
+                    if (blogData["author"].ToString() == id.ToString())
+                    {
+                        if (blogData["image_type"] != null)
+                        {
+
+                            var objectName = $"blogs/{blogDoc.Id}{Path.GetExtension(blogData["image_type"].ToString())}";
+                            await storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);
+                        }
+                        await blogDoc.Reference.DeleteAsync();
+                        // delete image that belongs to the blog
+                        
+
+                    }
+                }
+
                 await docRef.DeleteAsync();
                 await credential.User.DeleteAsync();
             }
