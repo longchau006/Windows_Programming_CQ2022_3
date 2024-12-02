@@ -40,15 +40,23 @@ namespace Windows_Programming.View
             Blog blog = new Blog();
             blog.Title = Title_TextBox.Text;
             blog.Content = Content_TextBox.Text;
-            blog.Image = $"ms-appx://{imagePath}";
+            blog.Image = imagePath;
             blog.PublishDate = DateTime.Now;
-            AccountViewModel accountViewModel = new AccountViewModel();
-            accountViewModel.getInformationAsync();
-            //blog.Author = accountViewModel.User.Username;
+            blog.Author = MainWindow.MyAccount.Id;
             BlogViewModel blogViewModel = new BlogViewModel();
-            blogViewModel.ViewBlog();
-            blog.Id = blogViewModel.blogInBlogList.Count + 1;
-            blogViewModel.AddBlog(blog, "ok");
+            try
+            {
+                blogViewModel.AddBlog(blog);
+            }
+            catch (Exception ex)
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = ex.Message,
+                    CloseButtonText = "OK"
+                };
+            }
             Frame.Navigate(typeof(BlogListPage));
         }
 
@@ -59,14 +67,16 @@ namespace Windows_Programming.View
             var hWnd = WindowNative.GetWindowHandle(w);
             InitializeWithWindow.Initialize(openPicker, hWnd);
             openPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            openPicker.FileTypeFilter.Add("*");
+            openPicker.FileTypeFilter.Add(".png");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".jpg");
             StorageFile file = await openPicker.PickSingleFileAsync();
             w.Close();
 
             if (file != null)
             {
                 imagePath = file.Path;
-                Image.Content = imagePath;
+                Image.Content = file.Name;
             }
         }
     }

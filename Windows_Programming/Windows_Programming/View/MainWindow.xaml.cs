@@ -141,9 +141,15 @@ namespace Windows_Programming.View
             localSettings.Values.Remove("Fullname");
             localSettings.Values.Remove("Address");
 
+            // clear all data
+            myAccount = null;
+            _myPlansHomeViewModel = null;
+            _myPlansInTrashCanViewModel = null;
+
             // Navigate to LoginPage
             LoginWindow loginWindow = new LoginWindow();
             loginWindow.Activate();
+            
             this.Close();
         }
         private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

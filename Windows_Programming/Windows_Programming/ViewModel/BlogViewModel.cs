@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,30 +11,36 @@ namespace Windows_Programming.ViewModel
 {
     public class BlogViewModel
     {
-        public List<Blog> blogInBlogList { get; set; }
-
-        public void ViewBlog()
+        public List<Blog> AllBlog { get; set; }
+        public void AddBlog(Blog blog)
         {
-            IDao dao = new MockDao();
-            blogInBlogList = dao.GetAllBlog();
-        }
-        public List<Blog> lastestBlog { get;set; }
-        public void ViewLastestBlog()
-        {
-            IDao dao = new MockDao();
-            lastestBlog = dao.GetLastestBlog();
+            IDao dao = FirebaseServicesDAO.Instance;
+            dao.AddBlog(blog);
         }
 
-        public Blog GetBlogById(int id)
+        public async Task GetAllBlog()
         {
-            IDao dao = new MockDao();
-            return dao.GetBlogById(id);
+            IDao dao = FirebaseServicesDAO.Instance;
+            AllBlog = await dao.GetAllBlogAsync();
         }
 
-        public void AddBlog(Blog blog, string path)
+        public List<Blog> lastestBlog { get; set; }
+        public async Task GetLastestBlog()
         {
-            IDao dao = new MockDao();
-            dao.addBlog(blog, path);
+            IDao dao = FirebaseServicesDAO.Instance;
+            lastestBlog = await dao.GetLastestBlog();
+        }
+
+        public async Task<Blog> GetBlogById(string id)
+        {
+            IDao dao = FirebaseServicesDAO.Instance;
+            return await dao.GetBlogById(id);
+        }
+
+        public async Task<Account> GetAccount(int id)
+        {
+            FirebaseServicesDAO firebaseServices = FirebaseServicesDAO.Instance;
+            return await firebaseServices.GetAccountByID(id);
         }
     }
 }

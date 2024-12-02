@@ -21,7 +21,7 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class RegisterPage : Page
     {   
-        private FirebaseServicesDAO firebaseServices;
+        private FirebaseServicesDAO firebaseServices = null;
 
         private ApplicationDataContainer localSettings;
         private LoginWindow loginWindow;

@@ -7,8 +7,6 @@ namespace Windows_Programming.View
 {
     public sealed partial class TourPage : Page
     {
-        private TourViewModel viewModel = new TourViewModel();
-
         public TourPage()
         {
             this.InitializeComponent();
@@ -17,11 +15,17 @@ namespace Windows_Programming.View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is int tourId)
+            if (e.Parameter is string tourId)
             {
-                viewModel.GetTourById(tourId);
-                TourDetail.DataContext = viewModel; // Set DataContext to the existing viewModel
+                LoadTour(tourId);
             }
+        }
+
+        private async void LoadTour(string tourId)
+        {
+            var viewModel = new TourViewModel();
+            await viewModel.GetTourById(tourId);
+            TourDetail.DataContext = viewModel;
         }
 
         private void AddToPlanClick(object sender, RoutedEventArgs e)

@@ -5,33 +5,36 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Windows_Programming.View"
     xmlns:local1="using:Windows_Programming.Model"
+    xmlns:local2="using:Windows_Programming.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Height="auto"
     Width="auto"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.Resources>
+        <local2:Base64StringToBitmapImageConverter x:Key="MemoryStreamToBitmapImageConverter"/>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!-- ScrollViewer to handle scrolling if content exceeds screen size -->
         <ScrollViewer HorizontalScrollBarVisibility="auto" VerticalScrollBarVisibility="Auto">
             <StackPanel Padding="20" >
-                <TextBlock FontSize="36" HorizontalAlignment="Center" FontWeight="Bold" Foreground="DarkSlateGray" Text="Blog du lịch" Margin="0,0,0,20"/>
+                <TextBlock FontSize="36" HorizontalAlignment="Center" FontWeight="Bold" Foreground="DarkSlateGray" Text="Travel Blog" Margin="0,0,0,20"/>
 
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <StackPanel Spacing="5">
-                        <TextBlock Text="Mới nhất" FontSize="20" Foreground="DarkRed" FontWeight="ExtraBlack" FontStretch="ExtraCondensed" Margin="10,0,0,0"/>
+                        <TextBlock Text="Latest" FontSize="20" Foreground="DarkRed" FontWeight="ExtraBlack" FontStretch="ExtraCondensed" Margin="10,0,0,0"/>
                         <FlipView x:Name="BlogFlipView" ItemsSource="{Binding lastestBlog}" Width="400" Height="400" HorizontalAlignment="Left">
                             <FlipView.ItemTemplate>
                                 <DataTemplate x:DataType="local1:Blog">
                                     <StackPanel Tapped="FlipView_Tag">
-                                        <Image Source="{Binding Image, Mode=TwoWay}" Width="400" Height="300" Stretch="Uniform"/>
+                                        <Image Source="{Binding Image, Mode=TwoWay, Converter={StaticResource MemoryStreamToBitmapImageConverter}}" Width="400" Height="300" Stretch="Uniform"/>
                                         <TextBlock Text="{Binding Title, Mode=TwoWay}" Padding="10" TextWrapping="Wrap" FontSize="20" FontWeight="Bold" />
                                     </StackPanel>
                                 </DataTemplate>
                             </FlipView.ItemTemplate>
                         </FlipView>
-                        <HyperlinkButton Content="Chia sẻ trải nghiệm của bạn" FontSize="20" FontWeight="SemiBold" Click="HyperlinkButton_Click"/>
+                        <HyperlinkButton Content="Share your experience" FontSize="20" FontWeight="SemiBold" Click="HyperlinkButton_Click"/>
                     </StackPanel>
 
                     <ListView x:Name="BlogListView"
@@ -39,7 +42,7 @@
                          MaxWidth="650"
                          BorderThickness="1"
                          BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}"
-                         ItemsSource="{Binding blogInBlogList}">
+                         ItemsSource="{Binding AllBlog}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="local1:Blog">
                                 <Grid Margin="0,12,0,12" AutomationProperties.Name="{Binding Title, Mode=TwoWay}" Tapped="OnBlogTapped">
@@ -47,7 +50,7 @@
                                         <ColumnDefinition Width="150"/>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Image Source="{Binding Image, Mode=TwoWay}" MaxHeight="100" Stretch="Fill"/>
+                                    <Image Source="{Binding Image, Mode=TwoWay, Converter={StaticResource MemoryStreamToBitmapImageConverter}}" MaxHeight="100" Stretch="Fill"/>
 
                                     <StackPanel Margin="12,0,0,0" Grid.Column="1" >
                                         <TextBlock Text="{Binding Title, Mode=TwoWay}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Left" Margin="0,0,0,6" LineHeight="20"/>

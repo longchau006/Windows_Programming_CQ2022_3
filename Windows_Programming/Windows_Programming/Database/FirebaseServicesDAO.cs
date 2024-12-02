@@ -17,7 +17,11 @@ using Microsoft.Windows.Storage;
 using Windows.Storage;
 using ApplicationData = Windows.Storage.ApplicationData;
 using ApplicationDataContainer = Windows.Storage.ApplicationDataContainer;
-
+using Google.Protobuf.WellKnownTypes;
+using System.Threading;
+using Timestamp = Google.Cloud.Firestore.Timestamp;
+using System.Net.Http;
+using System.Buffers.Text;
 
 
 namespace Windows_Programming.Database
@@ -53,6 +57,7 @@ namespace Windows_Programming.Database
             authClient = new FirebaseAuthClient(config);
             firestoreDb = GetFirestoreDb();
             //storageClient = StorageClient.Create();
+            storageClient = GetStorageClient();
         }
 
         //Init FirestoreDB
@@ -61,6 +66,13 @@ namespace Windows_Programming.Database
             string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs", "Private.json");
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", jsonPath);
             return FirestoreDb.Create("tripplandatabase-8fbf9");
+        }
+        // Init storageClient
+        public static StorageClient GetStorageClient()
+        {
+            string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs", "Private.json");
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", jsonPath);
+            return StorageClient.Create();
         }
 
         //Function of Authentication
@@ -148,11 +160,12 @@ namespace Windows_Programming.Database
 
 
 
-        public async Task CreateAccountInFirestore(Account account){
+        public async Task CreateAccountInFirestore(Account account)
+        {
             var accountsRef = firestoreDb.Collection("accounts");
             var docRef = accountsRef.Document(account.Id.ToString());
             //Convert to Dictionary
-            var accountJson=Helps.ToFirestoreDocument(account);
+            var accountJson = Helps.ToFirestoreDocument(account);
 
             await docRef.SetAsync(accountJson);
 
@@ -164,13 +177,13 @@ namespace Windows_Programming.Database
         {
             var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
             var snapshot = await docRef.GetSnapshotAsync();
-            
+
             if (snapshot.Exists)
             {
                 var accountData = snapshot.ToDictionary();
                 return Helps.FromFirestoreDocument(accountData);
             }
-            
+
             return null;
         }
         public async Task<Account> GetAccountByEmail(string email)
@@ -185,7 +198,7 @@ namespace Windows_Programming.Database
                 {
                     var document = querySnapshot.Documents[0];
                     var accountData = document.ToDictionary();
-                    
+
                     return new Account
                     {
                         Id = int.Parse(document.Id),
@@ -212,9 +225,9 @@ namespace Windows_Programming.Database
 
             var planData = Helps.PlanToFirestoreDocument(plan);
 
-     
+
             await planRef.SetAsync(planData);
-            
+
             var activitiesRef = planRef.Collection("activities");
             await activitiesRef.Document("__placeholder").SetAsync(new Dictionary<string, object>());
 
@@ -245,7 +258,7 @@ namespace Windows_Programming.Database
             await planRef.UpdateAsync(planData);
 
         }
-        
+
         public async Task DeleteImediatelyPlanInFirestore(int accountId, Plan plan)
         {
 
@@ -256,24 +269,24 @@ namespace Windows_Programming.Database
 
             await planRef.DeleteAsync();
         }
-        
+
         public async Task CreateActivityInFirestore(int accountId, int planId, Windows_Programming.Model.Activity activity)
         {
-                var activityRef = firestoreDb.Collection("accounts")
-                                             .Document(accountId.ToString())
-                                             .Collection("plans")
-                                             .Document(planId.ToString())
-                                             .Collection("activities")
-                                             .Document(activity.Id.ToString());
-            
-                var activityData = Helps.ActivityToFirestoreDocument(activity);
+            var activityRef = firestoreDb.Collection("accounts")
+                                         .Document(accountId.ToString())
+                                         .Collection("plans")
+                                         .Document(planId.ToString())
+                                         .Collection("activities")
+                                         .Document(activity.Id.ToString());
 
-                await activityRef.SetAsync(activityData);
-           
+            var activityData = Helps.ActivityToFirestoreDocument(activity);
+
+            await activityRef.SetAsync(activityData);
+
         }
         public async Task DeleteActivityInFirestore(int accountId, int planId, int activityId)
         {
-   
+
             var activityRef = firestoreDb.Collection("accounts")
                                          .Document(accountId.ToString())
                                          .Collection("plans")
@@ -281,7 +294,7 @@ namespace Windows_Programming.Database
                                          .Collection("activities")
                                          .Document(activityId.ToString());
 
-            await activityRef.DeleteAsync();      
+            await activityRef.DeleteAsync();
         }
         public async Task UpdateActivityInFirestore(int accountId, int planId, int activityId, Windows_Programming.Model.Activity activity)
         {
@@ -344,7 +357,7 @@ namespace Windows_Programming.Database
                         }
                     }
                     plans.Add(plan);
-                }    
+                }
             }
 
             return plans;
@@ -381,60 +394,211 @@ namespace Windows_Programming.Database
             throw new NotImplementedException();
         }
 
-
-        public List<Blog> GetAllBlog()
+        public async Task<MemoryStream> DownloadImageFromClientStorage(string imageName)
         {
-            throw new NotImplementedException();
+            string objectName = imageName;
+            var downloadUri = storageClient.CreateUrlSigner().Sign("tripplandatabase-8fbf9.appspot.com", objectName, TimeSpan.FromMinutes(5), HttpMethod.Get);
+            var memoryStream = new MemoryStream();
+            await storageClient.DownloadObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName, memoryStream);
+            memoryStream.Position = 0; // Reset the stream position to the beginning
+            return memoryStream;
+        }
+        public async Task<List<Blog>> GetAllBlogAsync()
+        {
+            var docRef = firestoreDb.Collection("blogs");
+            var snapshot = await docRef.GetSnapshotAsync();
+            List<Blog> blogs = new List<Blog>();
+            foreach (var document in snapshot.Documents)
+            {
+                var blogData = document.ToDictionary();
+                Blog blog = new Blog
+                {
+                    Id = document.Id, // Change Id to string type in Blog class
+                    Title = blogData["title"].ToString(),
+                    Content = blogData["content"].ToString(),
+                    Author = int.Parse(blogData["author"].ToString()),
+                    PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
+                };
+                if (blogData["image_type"] != null)
+                {
+                    blog.Image = $"blogs/{document.Id}{blogData["image_type"]}";
+                    MemoryStream dataStream = await DownloadImageFromClientStorage(blog.Image);
+                    blog.Image = Convert.ToBase64String(dataStream.ToArray());
+                }
+                blogs.Add(blog);
+            }
+            return blogs;
         }
 
-        public List<Tour> GetAllTour()
+        public async Task<List<Tour>> GetAllTour()
         {
-            throw new NotImplementedException();
+            List<Tour> tours = new List<Tour>();
+            var docRef = firestoreDb.Collection("tours");
+            var snapshot = await docRef.GetSnapshotAsync();
+
+            foreach (var document in snapshot.Documents)
+            {
+                var blogData = document.ToDictionary();
+                Tour tour = new Tour
+                {
+                    Id = document.Id,
+                    Name = blogData["name"].ToString(),
+                    Places = blogData["places"].ToString(),
+                    Description = blogData["description"].ToString(),
+                    Schedule = blogData["schedule"].ToString(),
+                    Image = $"{document.Id}{blogData["image"]}",
+                    Price = int.Parse(blogData["price"].ToString()),
+                    Rating = int.Parse(blogData["rating"].ToString()),
+                    Link = blogData["link"].ToString()
+                };
+                MemoryStream dataStream = await DownloadImageFromClientStorage($"tours/{tour.Image}");
+                tour.Image = Convert.ToBase64String(dataStream.ToArray());
+                tours.Add(tour);
+            }
+            return tours;
         }
 
-        public List<Blog> GetLastestBlog()
+        public async Task<List<Blog>> GetLastestBlog()
         {
-            throw new NotImplementedException();
+            List<Blog> latestBlog = new List<Blog>();
+            var docRef = firestoreDb.Collection("blogs").OrderByDescending("publishdate").Limit(3);
+            var snapshot = await docRef.GetSnapshotAsync();
+            foreach (var document in snapshot.Documents)
+            {
+                var blogData = document.ToDictionary();
+                Blog blog = new Blog
+                {
+                    Id = document.Id,
+                    Title = blogData["title"].ToString(),
+                    Content = blogData["content"].ToString(),
+                    Author = int.Parse(blogData["author"].ToString()),
+                    PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
+                };
+                if (blogData["image_type"] != null)
+                {
+                    blog.Image = $"{document.Id}{blogData["image_type"]}";
+                    MemoryStream dataStream = await DownloadImageFromClientStorage($"blogs/{blog.Image}");
+                    blog.Image = Convert.ToBase64String(dataStream.ToArray());
+                }
+                latestBlog.Add(blog);
+            }
+            return latestBlog;
         }
 
-        public Blog GetBlogById(int id)
+        public async Task<Blog> GetBlogById(string id)
         {
-            throw new NotImplementedException();
+            var docRef = firestoreDb.Collection("blogs").Document(id);
+            var snapshot = docRef.GetSnapshotAsync();
+            if (snapshot.Result.Exists)
+            {
+                var blogData = snapshot.Result.ToDictionary();
+                Blog blog = new Blog
+                {
+                    Id = snapshot.Result.Id,
+                    Title = blogData["title"].ToString(),
+                    Content = blogData["content"].ToString(),
+                    Author = int.Parse(blogData["author"].ToString()),
+                    PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
+                };
+                if (blogData["image_type"] != null)
+                {
+                    blog.Image = $"{snapshot.Result.Id}{blogData["image_type"]}";
+                    MemoryStream dataStream = await DownloadImageFromClientStorage($"blogs/{blog.Image}");
+                    blog.Image = Convert.ToBase64String(dataStream.ToArray());
+                }
+                return blog;
+            }
+            return null;
         }
 
-        public Tour GetTourById(int id)
+        public async Task<Tour> GetTourById(string id)
         {
-            throw new NotImplementedException();
+            var docRef = firestoreDb.Collection("tours").Document(id);
+            var snapshot = await docRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                var tourData = snapshot.ToDictionary();
+                Tour tour = new Tour
+                {
+                    Id = snapshot.Id,
+                    Name = tourData["name"].ToString(),
+                    Places = tourData["places"].ToString(),
+                    Description = tourData["description"].ToString(),
+                    Schedule = tourData["schedule"].ToString(),
+                    Image = $"{snapshot.Id}{tourData["image"]}",
+                    Price = int.Parse(tourData["price"].ToString()),
+                    Rating = int.Parse(tourData["rating"].ToString()),
+                    Link = tourData["link"].ToString()
+                };
+                MemoryStream dataStream = await DownloadImageFromClientStorage($"tours/{tour.Image}");
+                tour.Image = Convert.ToBase64String(dataStream.ToArray());
+                return tour;
+            }
+            return null;    
         }
 
-        public async Task addBlog(Blog blog, string imagePath)
+        public async Task AddBlog(Blog blog)
         {
             var blogsRef = firestoreDb.Collection("blogs");
             var docRef = blogsRef.Document();
+            string documentId = docRef.Id;
             var blogData = new Dictionary<string, object>
             {
                 { "title", blog.Title },
                 { "content", blog.Content },
                 { "author", blog.Author },
-                { "publishdate", blog.PublishDate.ToString("o") },
-                { "image", blog.Image }
+                { "publishdate", blog.PublishDate.ToUniversalTime() },
+                { "image_type", Path.GetExtension(blog.Image) }
             };
-            await addImageToClientStorage(imagePath);
-
-            await docRef.SetAsync(blogData);
-        }
-
-        public async Task addImageToClientStorage(string path)
-        {
-            var bucketName = "tripplan-8fbf9.appspot.com";
-            var objectName = Path.GetFileName(path);
-            using (var fileStream = new FileStream(path, FileMode.Open))
+            try
             {
-                await storageClient.UploadObjectAsync(bucketName, objectName, null, fileStream);
+                await AddImageToClientStorage(blog.Image, $"blogs/{documentId}");
+                await docRef.SetAsync(blogData);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to add blog: " + ex.Message);
             }
         }
 
-        public async Task UpdateFullName(string fullName, int id) {
+        public string GetContentType(string filePath)
+        {
+            var contentTypes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { ".jpg", "image/jpeg" },
+                { ".jpeg", "image/jpeg" },
+                { ".png", "image/png" },
+            };
+
+            var extension = Path.GetExtension(filePath);
+
+            if (extension != null && contentTypes.TryGetValue(extension, out string contentType))
+            {
+                return contentType;
+            }
+
+            // Default fallback
+            return "application/octet-stream";
+        }
+
+
+        public async Task AddImageToClientStorage(string imagePath, string imageNameOnFirebase)
+        {
+            if (!File.Exists(imagePath))
+            {
+                return;
+            }
+            string objectName = $"{imageNameOnFirebase}{Path.GetExtension(imagePath)}";
+            var uploadUri = await storageClient.InitiateUploadSessionAsync("tripplandatabase-8fbf9.appspot.com", objectName, GetContentType(imagePath), null);
+            using (var fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+            {
+                var uploadInstant = Google.Apis.Upload.ResumableUpload.CreateFromUploadUri(uploadUri, fileStream);
+                await uploadInstant.UploadAsync();
+            }
+        }
+        public async Task UpdateFullName(string fullName, int id)
+        {
             var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
             var snapshot = docRef.GetSnapshotAsync();
             Dictionary<string, object> updates = new Dictionary<string, object>
@@ -443,7 +607,8 @@ namespace Windows_Programming.Database
             };
             await docRef.UpdateAsync(updates);
         }
-        public Task UpdateAddress(string address, int id) { 
+        public Task UpdateAddress(string address, int id)
+        {
             var docRef = firestoreDb.Collection("accounts").Document(id.ToString());
             var snapshot = docRef.GetSnapshotAsync();
             Dictionary<string, object> updates = new Dictionary<string, object>
@@ -452,8 +617,6 @@ namespace Windows_Programming.Database
             };
             return docRef.UpdateAsync(updates);
         }
-
-        // ...
 
         public async Task UpdatePassword(string oldPassword, string newPassword)
         {
@@ -501,12 +664,42 @@ namespace Windows_Programming.Database
             }
             catch (FirebaseAuthException)
             {
-                throw new Exception("Failed to authenticate user: Password is incorrect!" );
+                throw new Exception("Failed to authenticate user: Password is incorrect!");
             }
             catch (Exception)
             {
                 throw new Exception("An error occurred while deleting the user. Please try again! ");
             }
+        }
+
+        public async Task AddTour(Tour tour)
+        {
+            var toursRef = firestoreDb.Collection("tours");
+            var docRef = toursRef.Document();
+            string documentId = docRef.Id;
+            var tourData = new Dictionary<string, object>
+            {
+                { "name", tour.Name },
+                { "places", tour.Places },
+                { "description", tour.Description },
+                { "schedule", tour.Schedule },
+                { "image", Path.GetExtension(tour.Image) },
+                { "price", tour.Price },
+                { "rating", tour.Rating },
+                { "link", tour.Link }
+            };
+            try
+            {
+                await AddImageToClientStorage(tour.Image, $"tours/{documentId}");
+                await docRef.SetAsync(tourData);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to add tour: " + ex.Message);
+            }
+            // ...
+
+
         }
     }
 }
