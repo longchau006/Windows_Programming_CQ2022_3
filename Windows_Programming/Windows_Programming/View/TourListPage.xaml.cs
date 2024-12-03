@@ -28,12 +28,22 @@ namespace Windows_Programming.View
         public TourListPage()
         {
             this.InitializeComponent();
+            //addComponent();
+            loadTour();
+        }
 
+        private async void loadTour()
+        {
             var viewModel = new TourViewModel();
-            viewModel.ViewAllTour();
+            await viewModel.GetAllTour();
             TourListView.DataContext = viewModel;
         }
 
+       /* private async void addComponent()
+        {
+            var viewModel = new TourViewModel();
+            await viewModel.AddTour();
+        }*/
         private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
         {
             if (sender is FrameworkElement element && element.DataContext is Tour tour)

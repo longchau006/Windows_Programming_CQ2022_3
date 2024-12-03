@@ -9,19 +9,39 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <NavigationView x:Name="nvAccount"
-                            Header="Quản lý tài khoản"
-                            PaneDisplayMode="Left"
-                            IsSettingsVisible="False"
-                            IsBackEnabled="True"
-                            SelectionChanged="Account_SelectionChanged" BackRequested="Account_BackRequested"
-                    >
-        <NavigationView.MenuItems>
-            <NavigationViewItem Content="Thông tin tài khoản" Tag="UserInformationPage" Icon="ContactInfo" />
-            <NavigationViewItem Content="Đổi mật khẩu" Tag="ChangePasswordPage" Icon="Admin" />
-            <NavigationViewItem Content="Xóa tài khoản" Tag="DeleteAccountPage" Icon="Delete" />
-        </NavigationView.MenuItems>
-        <Frame x:Name="AccountFrame" />
-    </NavigationView>
+    <Page.Resources>
+        <DataTemplate x:Key="NavLinkItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="{Binding Symbol}" Margin="10,0,0,0"/>
+                <TextBlock Text="{Binding Name}" Margin="10,0,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
 
+    <SplitView x:Name="AccountSplitView" PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+           IsPaneOpen="True" OpenPaneLength="256" CompactPaneLength="48" DisplayMode="Inline">
+        <SplitView.Pane>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="ACCOUNT" x:Name="PaneHeader" Margin="60,12,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                <ListView x:Name="NavLinksList" Margin="0,12,0,0" SelectionMode="Single" Grid.Row="1" VerticalAlignment="Stretch"
+                    ItemClick="Account_SelectionChanged" IsItemClickEnabled="True"
+                    ItemsSource="{x:Bind NavLinks}" ItemTemplate="{StaticResource NavLinkItemTemplate}"/>
+            </Grid>
+        </SplitView.Pane>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="90*"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="splitviewContent" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Padding="20" Style="{StaticResource BaseTextBlockStyle}" Grid.Row="0"/>
+            <Frame x:Name="AccountFrame" Grid.Row="1"/>
+        </Grid>
+        
+    </SplitView>
 </Page>

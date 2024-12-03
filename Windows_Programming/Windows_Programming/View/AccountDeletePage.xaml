@@ -10,10 +10,20 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
-        <TextBlock Text="Nhập mật khẩu để xác nhận xóa tài khoản:" FontSize="20" HorizontalAlignment="Center"/>
-        <TextBox x:Name="Password_TextBlock" Width="150"/>
-        <Button HorizontalAlignment="Center" Click="DeleteAccountClick">Xác nhận xóa</Button>
-        <TextBlock Text="*Lưu ý: Một khi xác nhận xóa thì tài khoản của bạn sẽ biến mất vĩnh viễn trên hệ thống" Foreground="Red" TextWrapping="Wrap"/>
+        <TextBlock Text="Enter password to confirm account deletion:" FontSize="20" HorizontalAlignment="Center"/>
+        <PasswordBox x:Name="PasswordBox" Width="150"/>
+        <Button HorizontalAlignment="Center" Click="DeleteAccountClick">Confirm Deletion</Button>
+        <TextBlock Text="*Note: Once confirmed, your account will be permanently deleted from the system" Foreground="Red" TextWrapping="Wrap"/>
+        <TextBlock x:Name="NotificationPassword_TextBlock"
+         Opacity="0"
+         Visibility="Collapsed"
+         Foreground="Red" 
+         FontSize="16" 
+         Width="300"
+         TextWrapping="Wrap"
+         HorizontalAlignment="Center" 
+         VerticalAlignment="Top" 
+         Margin="0,40,0,0" />
     </StackPanel>
     
 </Page>

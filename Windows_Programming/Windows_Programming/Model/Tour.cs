@@ -8,7 +8,7 @@ namespace Windows_Programming.Model
 {
     public class Tour
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Places { get; set; }
         public string Description { get; set; }
