@@ -228,10 +228,10 @@ namespace Windows_Programming.View
                     tokenLocal = await user.GetIdTokenAsync();
 
 
-                    int numberCurrentAccounts = await firebaseServices.GetAccountsCount();
+                    int numberCurrentAccounts = await firebaseServices.GetMaxAccountId();
                     var newAccount = new Account
                     {
-                        Id = numberCurrentAccounts,
+                        Id = numberCurrentAccounts+1,
                         Username = emailInput,
                         Email = emailInput,
                         Fullname = emailInput,

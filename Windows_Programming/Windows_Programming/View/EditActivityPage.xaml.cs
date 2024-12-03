@@ -505,11 +505,13 @@ namespace Windows_Programming.View
                 };
             }
 
-            MyPlansHomeViewModel.UpdateActivityForPlan(PlanTripViewModel, ActivityViewModel, updateActivity);
+            
 
             try
             {
                 await firebaseServices.UpdateActivityInFirestore(accountId, PlanTripViewModel.Id, ActivityViewModel.Id, updateActivity);
+
+                MyPlansHomeViewModel.UpdateActivityForPlan(PlanTripViewModel, ActivityViewModel, updateActivity);
             }
             catch (Exception ex)
             {

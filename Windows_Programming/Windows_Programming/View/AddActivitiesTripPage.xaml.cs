@@ -494,13 +494,12 @@ namespace Windows_Programming.View
                     Description = descriptionExtend
                 };
             }
-
-            MyPlansHomeViewModel.AddActivitiesForPlan(PlanTripViewModel, newActivity);
-
            
             try
             {
                 await firebaseServices.CreateActivityInFirestore(accountId, PlanTripViewModel.Id, newActivity);
+
+                MyPlansHomeViewModel.AddActivitiesForPlan(PlanTripViewModel, newActivity);
             }
             catch (Exception ex)
             {

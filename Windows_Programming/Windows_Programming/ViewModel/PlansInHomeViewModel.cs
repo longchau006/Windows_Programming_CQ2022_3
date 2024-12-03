@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
 using Windows_Programming.View;
@@ -39,12 +40,15 @@ namespace Windows_Programming.ViewModel
         {
 
             var plans = await firebaseServices.GetAllPlan(MainWindow.MyAccount.Id);
+            
 
             PlansInHome.Clear();
             foreach (var plan in plans)
             {
                 if (plan.DeletedDate == null)
                 {
+                    System.Diagnostics.Debug.WriteLine("Anh nhe");
+                    System.Diagnostics.Debug.WriteLine(plan.PlanImage);
                     PlansInHome.Add(plan);
                 }
             }
@@ -53,7 +57,25 @@ namespace Windows_Programming.ViewModel
 
         public void AddPlanInHome(Plan plan)
         {
-            PlansInHome.Add(plan);
+            System.Diagnostics.Debug.WriteLine("sdsdsdsdsdsdsdsdsdsdsd");
+            System.Diagnostics.Debug.WriteLine(plan.PlanImage);
+            Plan newPlan = new Plan
+            {
+                Id = plan.Id,
+                Name = plan.Name,
+                PlanImage = plan.PlanImage,
+                StartLocation = plan.StartLocation,
+                EndLocation = plan.EndLocation,
+                StartDate = plan.StartDate,
+                EndDate = plan.EndDate,
+                Description = plan.Description
+            };
+            PlansInHome.Add(newPlan);
+            foreach( var myplan in PlansInHome)
+            {
+                System.Diagnostics.Debug.WriteLine(plan.Id);
+                System.Diagnostics.Debug.WriteLine(plan.PlanImage);
+            }
             OnPropertyChanged(nameof(PlansInHome)); // Thông báo rằng PlansInHome đã thay đổi
         }
         public void RemovePlanInHome(Plan plan)
@@ -65,7 +87,7 @@ namespace Windows_Programming.ViewModel
             }
         }
         public void UpdatePlanInHome(Plan existingPlan, Plan updatedPlan)
-        { 
+        {
             if (PlansInHome.Contains(existingPlan))
             {
                 // Cập nhật thông tin của kế hoạch
@@ -76,10 +98,13 @@ namespace Windows_Programming.ViewModel
                 existingPlan.Description = updatedPlan.Description;
                 existingPlan.StartLocation = updatedPlan.StartLocation;
                 existingPlan.EndLocation = updatedPlan.EndLocation;
+                System.Diagnostics.Debug.WriteLine("Anh o update");
+                System.Diagnostics.Debug.WriteLine(existingPlan.PlanImage);
                 // Gọi OnPropertyChanged nếu cần thiết
                 OnPropertyChanged(nameof(PlansInHome)); // Thông báo rằng PlansInHome đã thay đổi
             }
         }
+
         public void AddActivitiesForPlan(Plan specificPlan, Model.Activity activity)
         {
             if (PlansInHome.Contains(specificPlan))

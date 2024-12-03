@@ -21,6 +21,20 @@ namespace Windows_Programming.Model
         public DateTime? DeletedDate { get; set; }
 
         public List<Activity>? Activities { get; set; }
+        public bool IsSelected { get; set; } = false;
+        public int RemainingDays
+        {
+            get
+            {
+                if (DeletedDate.HasValue)
+                {
+                    int daysLeft = (int)(30 - (DateTime.Now - DeletedDate.Value).TotalDays);
+                    return Math.Max(0, daysLeft);
+                }
+                return 0;
+                
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
