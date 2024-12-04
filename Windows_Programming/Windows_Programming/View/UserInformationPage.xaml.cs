@@ -25,66 +25,56 @@ namespace Windows_Programming.View
     public sealed partial class UserInformationPage : Page
     {
         public AccountViewModel accountViewModel = new AccountViewModel();
-        
+        public string fullname = "";
+        public string address = "";
+
         public UserInformationPage()
         {
             this.InitializeComponent();
-            accountViewModel.getInformation();
+            LoadUserInformationAsync();
+        }
+
+        private async void LoadUserInformationAsync()
+        {
+            await accountViewModel.getInformationAsync();
             Username_TextBox.Text = accountViewModel.User.Username;
             Fullname_TextBox.Text = accountViewModel.User.Fullname;
             Email_TextBox.Text = accountViewModel.User.Email;
             Address_TextBox.Text = accountViewModel.User.Address;
         }
 
-        private void ModifyUsernameClick(object sender, RoutedEventArgs e)
-        {
-            SaveUsername_Button.Visibility = Visibility.Visible;
-            CancelUsername_Button.Visibility = Visibility.Visible;
-            ModifyUsername_Button.Visibility = Visibility.Collapsed;
-            Username_TextBox.IsEnabled = true;
-        }
 
         private void ModifyFullnameClick(object sender, RoutedEventArgs e)
         {
+            fullname = Fullname_TextBox.Text;
             SaveFullname_Button.Visibility = Visibility.Visible;
             CancelFullname_Button.Visibility = Visibility.Visible;
             ModifyFullname_Button.Visibility = Visibility.Collapsed;
-            Fullname_TextBox.IsEnabled = true;
+            Fullname_TextBox.IsReadOnly = false;
         }
 
-        private void ModifyEmailClick(object sender, RoutedEventArgs e)
-        {
-            SaveEmail_Button.Visibility = Visibility.Visible;
-            CancelEmail_Button.Visibility = Visibility.Visible;
-            ModifyEmail_Button.Visibility = Visibility.Collapsed;
-            Email_TextBox.IsEnabled = true;
-        }
 
         private void ModifyAddressClick(object sender, RoutedEventArgs e)
         {
+            address = Address_TextBox.Text;
             SaveAddress_Button.Visibility = Visibility.Visible;
             CancelAddress_Button.Visibility = Visibility.Visible;
             ModifyAddress_Button.Visibility = Visibility.Collapsed;
-            Address_TextBox.IsEnabled = true;
+            Address_TextBox.IsReadOnly = false;
         }
 
-        private void SaveUsernameClick(object sender, RoutedEventArgs e)
+
+        private async void SaveFullnameClick(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void CancelUsernameClick(object sender, RoutedEventArgs e)
-        {
-            Username_TextBox.Text = accountViewModel.User.Username;
-            SaveUsername_Button.Visibility = Visibility.Collapsed;
-            CancelUsername_Button.Visibility = Visibility.Collapsed;
-            ModifyUsername_Button.Visibility = Visibility.Visible;
-            Username_TextBox.IsEnabled = false;
-        }
-
-        private void SaveFullnameClick(object sender, RoutedEventArgs e)
-        {
-
+            ModifyFullname_Button.Visibility = Visibility.Visible;
+            SaveFullname_Button.Visibility = Visibility.Collapsed;
+            CancelFullname_Button.Visibility = Visibility.Collapsed;
+            if (fullname == Fullname_TextBox.Text)
+            {
+                return;
+            }
+            await accountViewModel.UpdateFullNameAsync(Fullname_TextBox.Text);
+            LoadUserInformationAsync();
         }
 
         private void CancelFullnameClick(object sender, RoutedEventArgs e)
@@ -93,26 +83,22 @@ namespace Windows_Programming.View
             SaveFullname_Button.Visibility = Visibility.Collapsed;
             CancelFullname_Button.Visibility = Visibility.Collapsed;
             ModifyFullname_Button.Visibility = Visibility.Visible;
-            Fullname_TextBox.IsEnabled = false;
+            Fullname_TextBox.IsReadOnly = true;
         }
 
-        private void SaveEmailClick(object sender, RoutedEventArgs e)
+
+        private async void SaveAddressClick(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        private void CancelEmailClick(object sender, RoutedEventArgs e)
-        {
-            Email_TextBox.Text = accountViewModel.User.Email;
-            SaveEmail_Button.Visibility = Visibility.Collapsed;
-            CancelEmail_Button.Visibility = Visibility.Collapsed;
-            ModifyEmail_Button.Visibility = Visibility.Visible;
-            Email_TextBox.IsEnabled = false;
-        }
-
-        private void SaveAddressClick(object sender, RoutedEventArgs e)
-        {
-
+            ModifyAddress_Button.Visibility = Visibility.Visible;
+            SaveAddress_Button.Visibility = Visibility.Collapsed;
+            CancelAddress_Button.Visibility = Visibility.Collapsed;
+            if (address == Address_TextBox.Text)
+            {
+                return;
+            }
+            await accountViewModel.UpdateAddressAsync(Address_TextBox.Text);
+            LoadUserInformationAsync();
         }
 
         private void CancelAddressClick(object sender, RoutedEventArgs e)
@@ -121,7 +107,7 @@ namespace Windows_Programming.View
             SaveAddress_Button.Visibility = Visibility.Collapsed;
             CancelAddress_Button.Visibility = Visibility.Collapsed;
             ModifyAddress_Button.Visibility = Visibility.Visible;
-            Address_TextBox.IsEnabled = false;
+            Address_TextBox.IsReadOnly = true;
         }
     }
 }

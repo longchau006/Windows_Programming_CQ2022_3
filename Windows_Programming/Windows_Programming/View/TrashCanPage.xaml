@@ -104,6 +104,7 @@
                 </StackPanel>
             </Button>
         </StackPanel>
+
         <!-- Options to select all plan .....-->
         <Button x:Name="Choose_Button" 
                 Background="White" 

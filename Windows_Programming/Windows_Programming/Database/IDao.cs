@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Security.Principal;
@@ -13,12 +14,18 @@ namespace Windows_Programming.Database
     {
         List<Plan> GetAllPlanInHome();
         List<Plan> GetAllPlanInTrashCan();
-        List<Account> GetAllAccount();
-        List<Blog> GetAllBlog();
-        List<Tour> GetAllTour();
-        List<Blog> GetLastestBlog();
-        Blog GetBlogById(int id);
-        Tour GetTourById(int id);
-        void addBlog(Blog blog);
+        Task<List<Blog>> GetAllBlogAsync();
+        Task<List<Tour>> GetAllTour();
+        Task AddTour(Tour tour);
+        Task<List<Blog>> GetLastestBlog();
+        Task<Blog> GetBlogById(string id);
+        Task<Tour> GetTourById(string id);
+        Task AddBlog(Blog blog);
+        Task AddImageToClientStorage(string imagePath, string imageNameOnFirebase);
+        Task UpdateFullName(string fullName, int id);
+        Task UpdateAddress(string address, int id);
+        Task UpdatePassword(string oldPassword, string newPassword);
+        Task DeleteUser(string email, string password, int id);
+        Task <MemoryStream> DownloadImageFromClientStorage(string imageName);
     }
 }

@@ -30,13 +30,18 @@ namespace Windows_Programming.View
         public BlogListPage()
         {
             this.InitializeComponent();
+            InitializeViewModelAsync();
+        }
+
+        private async void InitializeViewModelAsync()
+        {
             var viewModel = new BlogViewModel();
-            viewModel.ViewBlog();
+            await viewModel.GetAllBlog();
             BlogListView.DataContext = viewModel;
 
-            var viewModel2 = new BlogViewModel();
-            viewModel2.ViewLastestBlog();
-            BlogFlipView.DataContext = viewModel2;
+            var latestBlogViewModel = new BlogViewModel();
+            await latestBlogViewModel.GetLastestBlog();
+            BlogFlipView.DataContext = latestBlogViewModel;
         }
 
         private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
@@ -45,7 +50,6 @@ namespace Windows_Programming.View
             {
                 // Navigate to BlogDetailPage with the selected blog's ID
                 Frame.Navigate(typeof(BlogPage), blog.Id);
-
             }
         }
 
@@ -56,7 +60,6 @@ namespace Windows_Programming.View
                 // Navigate to BlogDetailPage with the selected blog's ID
                 Frame.Navigate(typeof(BlogPage), blog.Id);
             }
-
         }
 
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)

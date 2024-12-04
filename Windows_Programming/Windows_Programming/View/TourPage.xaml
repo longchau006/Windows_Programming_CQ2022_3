@@ -5,6 +5,7 @@
     xmlns:local="using:Windows_Programming.View"
     xmlns:local1="using:Windows_Programming.Converter"
     xmlns:local2="using:Windows_Programming.Model"
+    xmlns:local3="using:Windows_Programming.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     d:DataContext="{d:DesignInstance Type=local2:Tour}"
@@ -13,36 +14,37 @@
 
     <Page.Resources>
         <local1:IntToVnCurrencyConverter x:Key="CurrencyFormatter"/>
+        <local3:Base64StringToBitmapImageConverter x:Key="Base64StringToImage"/>
     </Page.Resources>
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel x:Name="TourDetail" Padding="20">
             <TextBlock x:Name="TourName_TextBlock" FontSize="24" FontWeight="Bold" Margin="0,10,0,5" HorizontalAlignment="Center" Text="{Binding Tour.Name}" TextWrapping="Wrap"/>
-            <Image x:Name="TourImage_TextBlock" Source="{Binding Tour.Image}" Width="400" Height="300" Stretch="Uniform"/>
+            <Image x:Name="TourImage_TextBlock" Source="{Binding Tour.Image, Mode=TwoWay, Converter={StaticResource Base64StringToImage}}" Width="400" Height="300" Stretch="Uniform"/>
 
             <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,10,0,10">
-                <TextBlock Text="Địa điểm:" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="Location:" FontSize="16" FontWeight="Bold"/>
                 <TextBlock x:Name="TourPlaces_TextBlock" Text="{Binding Tour.Places}" TextWrapping="Wrap" FontSize="16"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,10,0,10">
-                <TextBlock Text="Đánh giá:" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="Rating:" FontSize="16" FontWeight="Bold"/>
                 <TextBlock x:Name="TourRating_TextBlock" Text="{Binding Tour.Rating}" TextWrapping="Wrap" FontSize="16"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,10,0,10">
-                <TextBlock Text="Giá từ:" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="Price from:" FontSize="16" FontWeight="Bold"/>
                 <TextBlock x:Name="TourPrice_TextBlock" Text="{Binding Tour.Price, Converter={StaticResource CurrencyFormatter}}" TextWrapping="Wrap" FontSize="16"/>
             </StackPanel>
 
-            <TextBlock Text="Bạn sẽ trải nghiệm:" FontWeight="Bold" FontSize="20" Margin="0,10,0,10"/>
+            <TextBlock Text="You will experience:" FontWeight="Bold" FontSize="20" Margin="0,10,0,10"/>
             <TextBlock x:Name="TourDescript_TextBlock" Text="{Binding Tour.Description}" TextWrapping="Wrap" FontSize="16"/>
 
-            <TextBlock Text="Lịch trình:" FontWeight="Bold" FontSize="20" Margin="0,10,0,10"/>
+            <TextBlock Text="Schedule:" FontWeight="Bold" FontSize="20" Margin="0,10,0,10"/>
             <TextBlock x:Name="TourSchedule_TextBlock" Text="{Binding Tour.Schedule}" TextWrapping="Wrap" FontSize="16"/>
             <StackPanel Orientation="Horizontal" Spacing="50" Padding="20">
-                <HyperlinkButton FontSize="20" Click="AddToPlanClick">Thêm vào lịch trình</HyperlinkButton>
-                <HyperlinkButton FontSize="20" NavigateUri="{Binding Tour.Link}">Đặt tour ngay</HyperlinkButton>
+                <HyperlinkButton FontSize="20" Click="AddToPlanClick">Add to plan</HyperlinkButton>
+                <HyperlinkButton FontSize="20" NavigateUri="{Binding Tour.Link}">Book tour now</HyperlinkButton>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

@@ -13,10 +13,10 @@
         <TextBlock Text="Tạo blog mới" FontSize="24" Margin="0,0,0,20"/>
 
         <TextBlock Text="Tiêu đề:" FontSize="18"/>
-        <TextBox x:Name="Title_TextBox" PlaceholderText="Enter the title" Margin="0,0,0,20"/>
+        <TextBox x:Name="Title_TextBox" TextWrapping="Wrap" PlaceholderText="Enter the title" Margin="0,0,0,20"/>
 
         <TextBlock Text="Nội dung:" FontSize="18"/>
-        <TextBox x:Name="Content_TextBox" PlaceholderText="Enter the content" Margin="0,0,0,20" AcceptsReturn="True" Height="200"/>
+        <TextBox x:Name="Content_TextBox" PlaceholderText="Enter the content" TextWrapping="Wrap" Margin="0,0,0,20" AcceptsReturn="True" Height="200"/>
         
         <Button Content="Chọn ảnh" x:Name="Image" HorizontalAlignment="Left" Click="ChooseImageClick"/>
 
