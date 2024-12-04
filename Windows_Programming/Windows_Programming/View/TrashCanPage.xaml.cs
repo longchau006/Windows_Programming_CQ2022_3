@@ -141,6 +141,13 @@ namespace Windows_Programming.View
 
                 if (result == ContentDialogResult.Secondary)
                 {
+                    ContentDialog loadingDialog = new ContentDialog
+                    {
+                        Title = "Restore...",
+                        Content = new ProgressRing { IsActive = true },
+                        XamlRoot = this.XamlRoot
+                    };
+                    loadingDialog.ShowAsync();
                     var temp = selectedPlan.DeletedDate;
                     
                     selectedPlan.DeletedDate = null;
@@ -167,6 +174,7 @@ namespace Windows_Programming.View
                         };
                         await errorDialog.ShowAsync();
                     }
+                    loadingDialog.Hide();
                 }
             }
         }
@@ -178,6 +186,7 @@ namespace Windows_Programming.View
 
             if (selectedPlan != null)
             {
+
                 ContentDialog confirmDialog = new ContentDialog
                 {
                     Title = "Confirm Delete",
@@ -202,6 +211,13 @@ namespace Windows_Programming.View
 
                 if (result == ContentDialogResult.Secondary)
                 {
+                    ContentDialog loadingDialog = new ContentDialog
+                    {
+                        Title = "Deleting...",
+                        Content = new ProgressRing { IsActive = true },
+                        XamlRoot = this.XamlRoot
+                    };
+                    loadingDialog.ShowAsync();
                     try
                     {
                         await firebaseServices.DeleteImediatelyPlanInFirestore(accountId, selectedPlan);
@@ -221,6 +237,7 @@ namespace Windows_Programming.View
                         };
                         await errorDialog.ShowAsync();
                     }
+                    loadingDialog.Hide();
                 }
             }
         }
@@ -381,6 +398,13 @@ namespace Windows_Programming.View
 
             if (result == ContentDialogResult.Secondary)
             {
+                ContentDialog loadingDialog = new ContentDialog
+                {
+                    Title = "Restore...",
+                    Content = new ProgressRing { IsActive = true },
+                    XamlRoot = this.XamlRoot
+                };
+                loadingDialog.ShowAsync();
                 foreach (var plan in selectedPlans.ToList())
                 {
                     plan.DeletedDate = null;
@@ -404,7 +428,7 @@ namespace Windows_Programming.View
                         await errorDialog.ShowAsync();
                     }
                 }
-
+                loadingDialog.Hide();
                 ExitMultiSelectMode();
             }
         }
@@ -440,6 +464,15 @@ namespace Windows_Programming.View
 
             if (result == ContentDialogResult.Secondary)
             {
+                ContentDialog loadingDialog = new ContentDialog
+                {
+                    Title = "Deleting...",
+                    Content = new ProgressRing { IsActive = true },
+                    XamlRoot = this.XamlRoot
+                };
+
+                // Show loading dialog without await to keep it non-modal
+                loadingDialog.ShowAsync();
                 foreach (var plan in selectedPlans.ToList())
                 {
                     try
@@ -462,6 +495,8 @@ namespace Windows_Programming.View
                         await errorDialog.ShowAsync();
                     }
                 }
+                // Hide loading dialog
+                loadingDialog.Hide();
                 ExitMultiSelectMode();
             }
         }

@@ -440,6 +440,15 @@ namespace Windows_Programming.Database
             );
         }
 
+        public async Task DeleteAccountFolderFromStorage(int accountId)
+        {
+            string folderPath = $"plans/{accountId}/";
+
+            await storageClient.DeleteObjectAsync(
+                "tripplandatabase-8fbf9.appspot.com",
+                folderPath
+            );
+        }
 
 
 
