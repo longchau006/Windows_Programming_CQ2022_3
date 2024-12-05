@@ -57,7 +57,7 @@ namespace Windows_Programming.ViewModel
 
         public void AddPlanInHome(Plan plan)
         {
-            System.Diagnostics.Debug.WriteLine("sdsdsdsdsdsdsdsdsdsdsd");
+            System.Diagnostics.Debug.WriteLine("Add Plan in HomeViewModel");
             System.Diagnostics.Debug.WriteLine(plan.PlanImage);
             Plan newPlan = new Plan
             {
