@@ -609,6 +609,75 @@ namespace Windows_Programming.View
             CheckAllPlan_CheckBox.IsChecked = allChecked;
             isUpdatingCheckAll = false;
         }
+        
+        
+        //Order Plan in Trashcan
+        private void OnOrderButtonClick(object sender, RoutedEventArgs e)
+        {
+            OrderFlyout.ShowAt(Order_Button);
+        }
+
+        private void OnOrderOptionClick(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = sender as RadioMenuFlyoutItem;
+            if (selectedItem != null)
+            {
+                switch (selectedItem.Tag.ToString())
+                {
+                    case "NameAsc":
+                        var orderedByNameAsc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderBy(p => p.Name).ToList();
+                        UpdateListView(orderedByNameAsc);
+                        break;
+                    case "NameDesc":
+                        var orderedByNameDesc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderByDescending(p => p.Name).ToList();
+                        UpdateListView(orderedByNameDesc);
+                        break;
+                    case "DateAsc":
+                        var orderedByDateAsc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderBy(p => p.DeletedDate).ToList();
+                        UpdateListView(orderedByDateAsc);
+                        break;
+                    case "DateDesc":
+                        var orderedByDateDesc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderByDescending(p => p.DeletedDate).ToList();
+                        UpdateListView(orderedByDateDesc);
+                        break;
+                }
+            }
+        }
+
+        private void UpdateListView(List<Plan> orderedPlans)
+        {
+            MyPlansTrashCanViewModel.PlansInTrashCan.Clear();
+            foreach (var plan in orderedPlans)
+            {
+                MyPlansTrashCanViewModel.PlansInTrashCan.Add(plan);
+            }
+        }
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = SearchBox.Text.ToLower();
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Show all plans when search box is empty
+                foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+                {
+                    plan.IsVisible = true;
+                }
+                return;
+            }
+
+            foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+            {
+                // Search in name, start location, and end location
+                bool matchesSearch = plan.Name.ToLower().Contains(searchText) ||
+                                   plan.StartLocation.ToLower().Contains(searchText) ||
+                                   plan.EndLocation.ToLower().Contains(searchText);
+
+                plan.IsVisible = matchesSearch;
+            }
+        }
+
 
     }
 }

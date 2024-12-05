@@ -53,6 +53,7 @@ namespace Windows_Programming.Database
                 {
                 new EmailProvider()
                 }
+
             };
 
             authClient = new FirebaseAuthClient(config);
@@ -144,6 +145,19 @@ namespace Windows_Programming.Database
                     throw new Exception("Please enter a valid email address");
 
                 throw new Exception("Failed to create account: " + authEx.Message);
+            }
+        }
+
+
+        public async Task SendPasswordResetEmailAsync(string email)
+        {
+            try
+            {
+                await authClient.ResetEmailPasswordAsync(email);
+            }
+            catch (FirebaseAuthException authEx)
+            {
+                throw new Exception(ParseFirebaseError(authEx.Message));
             }
         }
 
