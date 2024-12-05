@@ -28,7 +28,9 @@
     <None Remove="View\LoginPage.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\MainWindow.xaml" />
+    <None Remove="View\MyBlogsPage.xaml" />
     <None Remove="View\PlanTripPage.xaml" />
+    <None Remove="View\UpdateBlogPage.xaml" />
     <None Remove="View\UserInformationPage.xaml" />
   </ItemGroup>
 
@@ -150,6 +152,12 @@
     <None Update="Configs\Private.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\UpdateBlogPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\MyBlogsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\EditActivityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

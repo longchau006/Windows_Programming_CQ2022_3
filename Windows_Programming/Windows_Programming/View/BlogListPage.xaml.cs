@@ -39,9 +39,8 @@ namespace Windows_Programming.View
             await viewModel.GetAllBlog();
             BlogListView.DataContext = viewModel;
 
-            var latestBlogViewModel = new BlogViewModel();
-            await latestBlogViewModel.GetLastestBlog();
-            BlogFlipView.DataContext = latestBlogViewModel;
+            viewModel.GetLastestBlog();
+            BlogFlipView.DataContext = viewModel;
         }
 
         private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
@@ -65,6 +64,11 @@ namespace Windows_Programming.View
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(CreateBlogPage));
+        }
+
+        private void MyBlog_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MyBlogsPage));
         }
     }
 }

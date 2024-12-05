@@ -483,10 +483,9 @@ namespace Windows_Programming.Database
 
         public async Task<MemoryStream> DownloadImageFromClientStorage(string imageName)
         {
-            string objectName = imageName;
-            var downloadUri = storageClient.CreateUrlSigner().Sign("tripplandatabase-8fbf9.appspot.com", objectName, TimeSpan.FromMinutes(5), HttpMethod.Get);
+            var downloadUri = storageClient.CreateUrlSigner().Sign("tripplandatabase-8fbf9.appspot.com", imageName, TimeSpan.FromMinutes(5), HttpMethod.Get);
             var memoryStream = new MemoryStream();
-            await storageClient.DownloadObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName, memoryStream);
+            await storageClient.DownloadObjectAsync("tripplandatabase-8fbf9.appspot.com", imageName, memoryStream);
             memoryStream.Position = 0; // Reset the stream position to the beginning
             return memoryStream;
         }
@@ -500,15 +499,15 @@ namespace Windows_Programming.Database
                 var blogData = document.ToDictionary();
                 Blog blog = new Blog
                 {
-                    Id = document.Id, // Change Id to string type in Blog class
+                    Id = document.Id, 
                     Title = blogData["title"].ToString(),
                     Content = blogData["content"].ToString(),
                     Author = int.Parse(blogData["author"].ToString()),
                     PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
                 };
-                if (blogData["image_type"] != null)
+                if (blogData["image"] != null)
                 {
-                    blog.Image = $"blogs/{document.Id}{blogData["image_type"]}";
+                    blog.Image = $"blogs/{document.Id}";
                     MemoryStream dataStream = await DownloadImageFromClientStorage(blog.Image);
                     blog.Image = Convert.ToBase64String(dataStream.ToArray());
                 }
@@ -561,10 +560,9 @@ namespace Windows_Programming.Database
                     Author = int.Parse(blogData["author"].ToString()),
                     PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
                 };
-                if (blogData["image_type"] != null)
+                if (blogData["image"] != null)
                 {
-                    blog.Image = $"{document.Id}{blogData["image_type"]}";
-                    MemoryStream dataStream = await DownloadImageFromClientStorage($"blogs/{blog.Image}");
+                    MemoryStream dataStream = await DownloadImageFromClientStorage($"blogs/{document.Id}");
                     blog.Image = Convert.ToBase64String(dataStream.ToArray());
                 }
                 latestBlog.Add(blog);
@@ -587,10 +585,9 @@ namespace Windows_Programming.Database
                     Author = int.Parse(blogData["author"].ToString()),
                     PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
                 };
-                if (blogData["image_type"] != null)
+                if (blogData["image"] != null)
                 {
-                    blog.Image = $"{snapshot.Result.Id}{blogData["image_type"]}";
-                    MemoryStream dataStream = await DownloadImageFromClientStorage($"blogs/{blog.Image}");
+                    MemoryStream dataStream = await DownloadImageFromClientStorage($"blogs/{id}");
                     blog.Image = Convert.ToBase64String(dataStream.ToArray());
                 }
                 return blog;
@@ -636,7 +633,7 @@ namespace Windows_Programming.Database
                 { "content", blog.Content },
                 { "author", blog.Author },
                 { "publishdate", blog.PublishDate.ToUniversalTime() },
-                { "image_type", Path.GetExtension(blog.Image) }
+                { "image", Path.GetExtension(blog.Image) }
             };
             try
             {
@@ -670,14 +667,91 @@ namespace Windows_Programming.Database
         }
 
 
+        public async Task<List<Blog>> GetOwnBlog(int id) { 
+            List<Blog> ownBlogs = new List<Blog>();
+            var docRef = firestoreDb.Collection("blogs").WhereEqualTo("author", id);
+            var snapshot = await docRef.GetSnapshotAsync();
+            foreach (var document in snapshot.Documents)
+            {
+                var blogData = document.ToDictionary();
+                Blog blog = new Blog
+                {
+                    Id = document.Id, // Change Id to string type in Blog class
+                    Title = blogData["title"].ToString(),
+                    Content = blogData["content"].ToString(),
+                    Author = int.Parse(blogData["author"].ToString()),
+                    PublishDate = ((Timestamp)blogData["publishdate"]).ToDateTime()
+                };
+                if (blogData["image"] != null)
+                {
+                    blog.Image = $"blogs/{document.Id}";
+                    MemoryStream dataStream = await DownloadImageFromClientStorage(blog.Image);
+                    blog.Image = Convert.ToBase64String(dataStream.ToArray());
+                }
+                ownBlogs.Add(blog);
+            }
+            return ownBlogs;
+        }
+        public async Task UpdateBlog(Blog blog)
+        {
+            var docRef = firestoreDb.Collection("blogs").Document(blog.Id);
+            var snapshot = await docRef.GetSnapshotAsync();
+            Dictionary<string, object> updates = new Dictionary<string, object>();
+            if (blog.Title != null)
+            {
+                updates.Add("title", blog.Title);
+            }
+            if (blog.Content != null)
+            {
+                updates.Add("content", blog.Content);
+            }
+            updates.Add("publishdate", blog.PublishDate.ToUniversalTime());
+            try
+            {
+                if (blog.Image != null)
+                {
+                    /*                var objectName = $"blogs/{blog.Id}{Path.GetExtension(blog.Image)}";
+                                    await storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);*/
+                    updates.Add("image", Path.GetExtension(blog.Image));
+                    await AddImageToClientStorage(blog.Image, $"blogs/{blog.Id}");
+                }
+                await docRef.UpdateAsync(updates);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to update blog: " + ex.Message);
+            }
+        }
+
+        public Task DeleteBlog(string id)
+        {
+            var docRef = firestoreDb.Collection("blogs").Document(id);
+            var objectName = $"blogs/{id}";
+            storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);
+            return docRef.DeleteAsync();
+        }
+
+        public Task<bool> CheckOwnBlog(string id, int accountId)
+        {
+            var docRef = firestoreDb.Collection("blogs").Document(id);
+            var snapshot = docRef.GetSnapshotAsync();
+            if (snapshot.Result.Exists)
+            {
+                var blogData = snapshot.Result.ToDictionary();
+                if (int.Parse(blogData["author"].ToString()) == accountId)
+                {
+                    return Task.FromResult(true);
+                }
+            }
+            return Task.FromResult(false);
+        }
         public async Task AddImageToClientStorage(string imagePath, string imageNameOnFirebase)
         {
             if (!File.Exists(imagePath))
             {
                 return;
             }
-            string objectName = $"{imageNameOnFirebase}{Path.GetExtension(imagePath)}";
-            var uploadUri = await storageClient.InitiateUploadSessionAsync("tripplandatabase-8fbf9.appspot.com", objectName, GetContentType(imagePath), null);
+            var uploadUri = await storageClient.InitiateUploadSessionAsync("tripplandatabase-8fbf9.appspot.com", imageNameOnFirebase, GetContentType(imagePath), null);
             using (var fileStream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
             {
                 var uploadInstant = Google.Apis.Upload.ResumableUpload.CreateFromUploadUri(uploadUri, fileStream);
@@ -754,10 +828,10 @@ namespace Windows_Programming.Database
                     var blogData = blogDoc.ToDictionary();
                     if (blogData["author"].ToString() == id.ToString())
                     {
-                        if (blogData["image_type"] != null)
+                        if (blogData["image"] != null)
                         {
 
-                            var objectName = $"blogs/{blogDoc.Id}{Path.GetExtension(blogData["image_type"].ToString())}";
+                            var objectName = $"blogs/{blogDoc.Id}";
                             await storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);
                         }
                         await blogDoc.Reference.DeleteAsync();
