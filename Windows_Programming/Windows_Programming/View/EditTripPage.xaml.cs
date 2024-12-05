@@ -224,7 +224,7 @@ namespace Windows_Programming.View
             try
             {
                 
-                string imageUrl = null;
+                string imageUrl = PlanTripViewModel.PlanImage;
                 if (!string.IsNullOrEmpty(selectedImagePath) && selectedImagePath != PlanTripViewModel.PlanImage)
                 {
                     imageUrl = await firebaseServices.UploadImageToStorage(
