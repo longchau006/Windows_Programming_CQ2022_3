@@ -51,48 +51,6 @@ namespace Windows_Programming.View
             }
         }
 
-        private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
-        {
-
-            UpcomingTrips_Button.Style = (Style)Resources["FilterButtonStyle"];
-            PastTrips_Button.Style = (Style)Resources["FilterButtonStyle"];
-
-            Button clickedButton = sender as Button;
-            clickedButton.Style = (Style)Resources["SelectedFilterButtonStyle"];
-
-            /*if (clickedButton == UpcomingTrips_Button)
-            {
-               
-            }
-            else if (clickedButton == PastTrips_Button)
-            {
-                
-            }*/
-        }
-
-        private void OnNavigationFilterButtonClick(object sender, RoutedEventArgs e)
-        {
-
-            Traveler_Button.Style = (Style)Resources["FilterButtonStyle"];
-            NonTraveler_Button.Style = (Style)Resources["FilterButtonStyle"];
-            All_Button.Style = (Style)Resources["FilterButtonStyle"];
-
-            Button clickedButton = sender as Button;
-            clickedButton.Style = (Style)Resources["SelectedFilterButtonStyle"];
-
-            /*while (clickedButton != null)
-            {
-                if (clickedButton == Traveler)
-                {
-                }
-                else if (clickedButton == Non_Traveler)
-                {
-                }
-                else
-                {
-                }
-            }*/
-        }
 
         private void OnNavigationAddButtonClick(object sender, RoutedEventArgs e)
         {
@@ -153,5 +111,31 @@ namespace Windows_Programming.View
                 }
             }
         }
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = Search_TextBox.Text.ToLower();
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Show all plans when search box is empty
+                foreach (var plan in MyPlansHomeViewModel.PlansInHome)
+                {
+                    plan.IsVisible = true;
+                }
+                return;
+            }
+
+            foreach (var plan in MyPlansHomeViewModel.PlansInHome)
+            {
+                // Search in name, start location, and end location
+                bool matchesSearch = plan.Name.ToLower().Contains(searchText) ||
+                                   plan.StartLocation.ToLower().Contains(searchText) ||
+                                   plan.EndLocation.ToLower().Contains(searchText);
+
+                plan.IsVisible = matchesSearch;
+            }
+        }
+
     }
 }

@@ -68,7 +68,8 @@ namespace Windows_Programming.ViewModel
                 EndLocation = plan.EndLocation,
                 StartDate = plan.StartDate,
                 EndDate = plan.EndDate,
-                Description = plan.Description
+                Description = plan.Description,
+                Type = plan.Type
             };
             PlansInHome.Add(newPlan);
             foreach( var myplan in PlansInHome)
@@ -98,6 +99,7 @@ namespace Windows_Programming.ViewModel
                 existingPlan.Description = updatedPlan.Description;
                 existingPlan.StartLocation = updatedPlan.StartLocation;
                 existingPlan.EndLocation = updatedPlan.EndLocation;
+                existingPlan.Type = updatedPlan.Type;
                 System.Diagnostics.Debug.WriteLine("Anh o update");
                 System.Diagnostics.Debug.WriteLine(existingPlan.PlanImage);
                 // Gọi OnPropertyChanged nếu cần thiết

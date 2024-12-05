@@ -66,7 +66,8 @@ namespace Windows_Programming.Helpers
                 { "enddate", plan.EndDate.ToString("o") },
                 { "description", plan.Description },
                 { "startlocation", plan.StartLocation },
-                { "endlocation", plan.EndLocation }
+                { "endlocation", plan.EndLocation },
+                { "type", plan.Type }
             };
         }
         public static Dictionary<string, object> ActivityToFirestoreDocument(Model.Activity activity)

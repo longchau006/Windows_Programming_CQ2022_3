@@ -11,23 +11,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <!-- Style kế thừa với các thuộc tính thay đổi -->
-        <Style x:Key="FilterButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-            <Setter Property="Foreground" Value="Blue"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="Blue"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="0"/>
-        </Style>
-
-        <Style x:Key="SelectedFilterButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-            <Setter Property="BorderBrush" Value="LightBlue"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="CornerRadius" Value="0"/>
-        </Style>
-
         <DataTemplate x:Key="VerticalFormat" x:DataType="myPath:Plan">
-            <Border BorderBrush="Black" BorderThickness="2" CornerRadius="15" Padding="10" Margin="10">
+            <Border BorderBrush="Black" BorderThickness="2" CornerRadius="15" Padding="10" Margin="10" Visibility="{x:Bind IsVisible, Mode=OneWay}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -109,7 +94,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
                     <Button x:Name="FindATrip_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" >
                         <StackPanel Orientation="Horizontal">
-                            <TextBox PlaceholderText="Trip Information!" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center" Height="40"/>
+                            <TextBox x:Name="Search_TextBox" PlaceholderText="Trip Information!" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center" Height="40" TextChanged="OnSearchTextChanged"/>
                             <SymbolIcon Symbol="Find" Foreground="Blue"/>
                         </StackPanel>
                     </Button>
@@ -123,14 +108,13 @@
                             <Flyout Placement="Bottom">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                        <Button x:Name="Traveler_Button" Content="Traveler" Style="{StaticResource FilterButtonStyle}" Click="OnNavigationFilterButtonClick" />
-                                        <Button x:Name="NonTraveler_Button" Content="Non-Traveler"  Style="{StaticResource FilterButtonStyle}" Click="OnNavigationFilterButtonClick"/>
-                                        <Button x:Name="All_Button" Content="All" Style="{StaticResource FilterButtonStyle}" Click="OnNavigationFilterButtonClick"/>
+                                        <CheckBox Content="Traveller"/>
+                                        <CheckBox Content="Non-Traveller"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                        <Button x:Name="UpcomingTrips_Button" Content="Upcoming Trips"  Style="{StaticResource FilterButtonStyle}" Click="OnNavigationButtonClick" />
-                                        <Button x:Name="PastTrips_Button" Content="Past Trips" Style="{StaticResource FilterButtonStyle}" Click="OnNavigationButtonClick"/>
+                                        <CheckBox x:Name="UpcomingTrips_Button" Content="Upcoming Trips" Margin="0,0,5,0"/>
+                                        <CheckBox x:Name="PastTrips_Button" Content="Past Trips"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Flyout>

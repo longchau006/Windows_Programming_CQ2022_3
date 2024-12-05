@@ -22,6 +22,7 @@ using Windows_Programming.Model;
 using WinRT.Interop;
 using Windows_Programming.Database;
 using static System.Net.Mime.MediaTypeNames;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,12 +41,43 @@ namespace Windows_Programming.View
         private string selectedImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "danang.jpg");
 
         int accountId = MainWindow.MyAccount.Id;
+
+        int strType = -1;
         public AddTripPage()
         {
             this.InitializeComponent();
 
             firebaseServices = FirebaseServicesDAO.Instance;
         }
+
+        private void OnNavigationCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            var selectedCheckBox = sender as CheckBox;
+
+            // Ensure only one checkbox is selected
+            if (selectedCheckBox == Traveller_CheckBox)
+            {
+                strType = 1;
+                NonTraveller_CheckBox.IsChecked = false;
+            }
+            else if (selectedCheckBox == NonTraveller_CheckBox)
+            {
+                strType = 0;
+                Traveller_CheckBox.IsChecked = false;
+            }
+        }
+
+        private void OnNavigationCheckBoxUnchecked(object sender, RoutedEventArgs e)
+        {
+            var uncheckedCheckBox = sender as CheckBox;
+
+            if (!Traveller_CheckBox.IsChecked.GetValueOrDefault() && !NonTraveller_CheckBox.IsChecked.GetValueOrDefault())
+            {
+                strType = -1;
+            }
+
+        }
+
 
         private async void OnNavigationChangePhotoButtonClick(object sender, RoutedEventArgs e)
         {
@@ -148,16 +180,23 @@ namespace Windows_Programming.View
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
             // Lấy thông tin từ các trường
+            bool type = false;
             string tripName = TripName_TextBox.Text;
             string startLocation = StartLocation_TextBox.Text;
             string endLocation = EndLocation_TextBox.Text;
             DateTime? startDate = Start_DatePicker.SelectedDate?.DateTime;
             DateTime? endDate = End_DatePicker.SelectedDate?.DateTime;
             string description = Description_TextBox.Text;
+            if(strType == 1)
+            {
+                type = true;
+            }
             // Danh sách chứa các thông báo lỗi
             List<string> errorMessages = new List<string>();
 
             // Kiểm tra các trường có bị trống hay không
+            if (strType == -1)
+                errorMessages.Add("Traveller, Non-Traveller is required.");
             if (string.IsNullOrWhiteSpace(tripName))
                 errorMessages.Add("Trip Name is required.");
             if (string.IsNullOrWhiteSpace(startLocation))
@@ -211,7 +250,8 @@ namespace Windows_Programming.View
                     EndLocation = endLocation,
                     StartDate = startDate.Value,
                     EndDate = endDate.Value,
-                    Description = description
+                    Description = description,
+                    Type = type
                 };
                 // Phải thêm vào ni trc chứ k nó lỗi khi xóa hết rồi thêm lại cái mới nó sẽ dính ảnh của ảnh cũ
                 MyPlansHomeViewModel.AddPlanInHome(newPlan);
