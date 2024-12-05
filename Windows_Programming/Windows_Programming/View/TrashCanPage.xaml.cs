@@ -609,6 +609,47 @@ namespace Windows_Programming.View
             CheckAllPlan_CheckBox.IsChecked = allChecked;
             isUpdatingCheckAll = false;
         }
+        //Order Plan in Trashcan
+        private void OnOrderButtonClick(object sender, RoutedEventArgs e)
+        {
+            OrderFlyout.ShowAt(Order_Button);
+        }
+
+        private void OnOrderOptionClick(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = sender as RadioMenuFlyoutItem;
+            if (selectedItem != null)
+            {
+                switch (selectedItem.Tag.ToString())
+                {
+                    case "NameAsc":
+                        var orderedByNameAsc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderBy(p => p.Name).ToList();
+                        UpdateListView(orderedByNameAsc);
+                        break;
+                    case "NameDesc":
+                        var orderedByNameDesc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderByDescending(p => p.Name).ToList();
+                        UpdateListView(orderedByNameDesc);
+                        break;
+                    case "DateAsc":
+                        var orderedByDateAsc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderBy(p => p.DeletedDate).ToList();
+                        UpdateListView(orderedByDateAsc);
+                        break;
+                    case "DateDesc":
+                        var orderedByDateDesc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderByDescending(p => p.DeletedDate).ToList();
+                        UpdateListView(orderedByDateDesc);
+                        break;
+                }
+            }
+        }
+
+        private void UpdateListView(List<Plan> orderedPlans)
+        {
+            MyPlansTrashCanViewModel.PlansInTrashCan.Clear();
+            foreach (var plan in orderedPlans)
+            {
+                MyPlansTrashCanViewModel.PlansInTrashCan.Add(plan);
+            }
+        }
 
     }
 }
