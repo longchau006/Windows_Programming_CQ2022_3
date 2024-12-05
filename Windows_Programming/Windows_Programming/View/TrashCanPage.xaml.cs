@@ -141,6 +141,13 @@ namespace Windows_Programming.View
 
                 if (result == ContentDialogResult.Secondary)
                 {
+                    ContentDialog loadingDialog = new ContentDialog
+                    {
+                        Title = "Restore...",
+                        Content = new ProgressRing { IsActive = true },
+                        XamlRoot = this.XamlRoot
+                    };
+                    loadingDialog.ShowAsync();
                     var temp = selectedPlan.DeletedDate;
                     
                     selectedPlan.DeletedDate = null;
@@ -167,6 +174,7 @@ namespace Windows_Programming.View
                         };
                         await errorDialog.ShowAsync();
                     }
+                    loadingDialog.Hide();
                 }
             }
         }
@@ -178,6 +186,7 @@ namespace Windows_Programming.View
 
             if (selectedPlan != null)
             {
+
                 ContentDialog confirmDialog = new ContentDialog
                 {
                     Title = "Confirm Delete",
@@ -202,6 +211,13 @@ namespace Windows_Programming.View
 
                 if (result == ContentDialogResult.Secondary)
                 {
+                    ContentDialog loadingDialog = new ContentDialog
+                    {
+                        Title = "Deleting...",
+                        Content = new ProgressRing { IsActive = true },
+                        XamlRoot = this.XamlRoot
+                    };
+                    loadingDialog.ShowAsync();
                     try
                     {
                         await firebaseServices.DeleteImediatelyPlanInFirestore(accountId, selectedPlan);
@@ -221,6 +237,7 @@ namespace Windows_Programming.View
                         };
                         await errorDialog.ShowAsync();
                     }
+                    loadingDialog.Hide();
                 }
             }
         }
@@ -381,6 +398,13 @@ namespace Windows_Programming.View
 
             if (result == ContentDialogResult.Secondary)
             {
+                ContentDialog loadingDialog = new ContentDialog
+                {
+                    Title = "Restore...",
+                    Content = new ProgressRing { IsActive = true },
+                    XamlRoot = this.XamlRoot
+                };
+                loadingDialog.ShowAsync();
                 foreach (var plan in selectedPlans.ToList())
                 {
                     plan.DeletedDate = null;
@@ -404,7 +428,7 @@ namespace Windows_Programming.View
                         await errorDialog.ShowAsync();
                     }
                 }
-
+                loadingDialog.Hide();
                 ExitMultiSelectMode();
             }
         }
@@ -440,6 +464,15 @@ namespace Windows_Programming.View
 
             if (result == ContentDialogResult.Secondary)
             {
+                ContentDialog loadingDialog = new ContentDialog
+                {
+                    Title = "Deleting...",
+                    Content = new ProgressRing { IsActive = true },
+                    XamlRoot = this.XamlRoot
+                };
+
+                // Show loading dialog without await to keep it non-modal
+                loadingDialog.ShowAsync();
                 foreach (var plan in selectedPlans.ToList())
                 {
                     try
@@ -462,6 +495,8 @@ namespace Windows_Programming.View
                         await errorDialog.ShowAsync();
                     }
                 }
+                // Hide loading dialog
+                loadingDialog.Hide();
                 ExitMultiSelectMode();
             }
         }
@@ -574,6 +609,75 @@ namespace Windows_Programming.View
             CheckAllPlan_CheckBox.IsChecked = allChecked;
             isUpdatingCheckAll = false;
         }
+        
+        
+        //Order Plan in Trashcan
+        private void OnOrderButtonClick(object sender, RoutedEventArgs e)
+        {
+            OrderFlyout.ShowAt(Order_Button);
+        }
+
+        private void OnOrderOptionClick(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = sender as RadioMenuFlyoutItem;
+            if (selectedItem != null)
+            {
+                switch (selectedItem.Tag.ToString())
+                {
+                    case "NameAsc":
+                        var orderedByNameAsc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderBy(p => p.Name).ToList();
+                        UpdateListView(orderedByNameAsc);
+                        break;
+                    case "NameDesc":
+                        var orderedByNameDesc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderByDescending(p => p.Name).ToList();
+                        UpdateListView(orderedByNameDesc);
+                        break;
+                    case "DateAsc":
+                        var orderedByDateAsc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderBy(p => p.DeletedDate).ToList();
+                        UpdateListView(orderedByDateAsc);
+                        break;
+                    case "DateDesc":
+                        var orderedByDateDesc = MyPlansTrashCanViewModel.PlansInTrashCan.OrderByDescending(p => p.DeletedDate).ToList();
+                        UpdateListView(orderedByDateDesc);
+                        break;
+                }
+            }
+        }
+
+        private void UpdateListView(List<Plan> orderedPlans)
+        {
+            MyPlansTrashCanViewModel.PlansInTrashCan.Clear();
+            foreach (var plan in orderedPlans)
+            {
+                MyPlansTrashCanViewModel.PlansInTrashCan.Add(plan);
+            }
+        }
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = SearchBox.Text.ToLower();
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Show all plans when search box is empty
+                foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+                {
+                    plan.IsVisible = true;
+                }
+                return;
+            }
+
+            foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+            {
+                // Search in name, start location, and end location
+                bool matchesSearch = plan.Name.ToLower().Contains(searchText) ||
+                                   plan.StartLocation.ToLower().Contains(searchText) ||
+                                   plan.EndLocation.ToLower().Contains(searchText);
+
+                plan.IsVisible = matchesSearch;
+            }
+        }
+
 
     }
 }

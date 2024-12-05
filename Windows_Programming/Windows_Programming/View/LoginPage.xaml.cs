@@ -104,8 +104,58 @@ namespace Windows_Programming.View
             
         }
 
-        private void ForgotPasswordClick(object sender, RoutedEventArgs e)
+        private async  void ForgotPasswordClick(object sender, RoutedEventArgs e)
         {
+            // Create the dialog
+            TextBox emailInput = new TextBox
+            {
+                PlaceholderText = "Enter your email address",
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Reset Password",
+                Content = emailInput,
+                PrimaryButtonText = "Send Reset Link",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                string email = emailInput.Text.Trim();
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    ShowDialog("Please enter an email address.");
+                    return;
+                }
+
+                if (!CheckInput.CheckFormatEmail(email))
+                {
+                    ShowDialog("Please enter a valid email address.");
+                    return;
+                }
+
+                CreateLoadingDialog();
+
+                try
+                {
+                    var loadingTask = loadingDialog.ShowAsync();
+                    await firebaseServices.SendPasswordResetEmailAsync(email);
+                    loadingDialog.Hide();
+                    ShowDialog("Password reset link has been sent to your email.");
+                }
+                catch (Exception ex)
+                {
+                    loadingDialog.Hide();
+                    ShowDialog(ex.Message);
+                }
+            }
 
         }
 
