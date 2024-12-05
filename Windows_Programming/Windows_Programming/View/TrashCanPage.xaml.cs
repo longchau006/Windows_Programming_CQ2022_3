@@ -609,6 +609,8 @@ namespace Windows_Programming.View
             CheckAllPlan_CheckBox.IsChecked = allChecked;
             isUpdatingCheckAll = false;
         }
+        
+        
         //Order Plan in Trashcan
         private void OnOrderButtonClick(object sender, RoutedEventArgs e)
         {
@@ -650,6 +652,32 @@ namespace Windows_Programming.View
                 MyPlansTrashCanViewModel.PlansInTrashCan.Add(plan);
             }
         }
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = SearchBox.Text.ToLower();
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Show all plans when search box is empty
+                foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+                {
+                    plan.IsVisible = true;
+                }
+                return;
+            }
+
+            foreach (var plan in MyPlansTrashCanViewModel.PlansInTrashCan)
+            {
+                // Search in name, start location, and end location
+                bool matchesSearch = plan.Name.ToLower().Contains(searchText) ||
+                                   plan.StartLocation.ToLower().Contains(searchText) ||
+                                   plan.EndLocation.ToLower().Contains(searchText);
+
+                plan.IsVisible = matchesSearch;
+            }
+        }
+
 
     }
 }
