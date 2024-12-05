@@ -27,5 +27,9 @@ namespace Windows_Programming.Database
         Task UpdatePassword(string oldPassword, string newPassword);
         Task DeleteUser(string email, string password, int id);
         Task <MemoryStream> DownloadImageFromClientStorage(string imageName);
+        Task<List<Blog>> GetOwnBlog(int id);
+        Task UpdateBlog(Blog blog);
+        Task DeleteBlog(string id);
+        Task<bool> CheckOwnBlog(string id, int accountId);
     }
 }

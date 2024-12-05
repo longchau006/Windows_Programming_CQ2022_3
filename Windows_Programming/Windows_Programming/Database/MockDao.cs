@@ -450,5 +450,9 @@ namespace Windows_Programming.Database
         public Task DeleteUser(string email, string password, int id) { throw new NotImplementedException(); }
         public Task<MemoryStream> DownloadImageFromClientStorage(string imageName) { throw new NotImplementedException(); }
         public Task AddTour(Tour tour) { throw new NotImplementedException(); }
+        public Task<List<Blog>> GetOwnBlog(int id) { throw new NotImplementedException(); }
+        public Task UpdateBlog(Blog blog) { throw new NotImplementedException(); }
+        public Task DeleteBlog(string id) { throw new NotImplementedException(); }
+        public Task<bool> CheckOwnBlog(string id, int accountId) {  throw new NotImplementedException(); }
     }
 }

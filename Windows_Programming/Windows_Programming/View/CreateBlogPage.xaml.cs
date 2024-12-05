@@ -35,7 +35,7 @@ namespace Windows_Programming.View
             this.InitializeComponent();
         }
 
-        private void SubmitClick(object sender, RoutedEventArgs e)
+        private async void SubmitClick(object sender, RoutedEventArgs e)
         {
             Blog blog = new Blog();
             blog.Title = Title_TextBox.Text;
@@ -57,6 +57,14 @@ namespace Windows_Programming.View
                     CloseButtonText = "OK"
                 };
             }
+            ContentDialog contentDialog = new ContentDialog
+            {
+                Title = "Success",
+                Content = "Blog created successfully",
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
+            await contentDialog.ShowAsync();
             Frame.Navigate(typeof(BlogListPage));
         }
 
