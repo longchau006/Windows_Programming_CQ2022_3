@@ -233,12 +233,18 @@ namespace Windows_Programming.View
             }
 
 
-           
+            ContentDialog loadingDialog = new ContentDialog
+            {
+                Title = "Create New Plan...",
+                Content = new ProgressRing { IsActive = true },
+                XamlRoot = this.XamlRoot
+            };
+            loadingDialog.ShowAsync();
 
             // Ghi đối tượng lên Firestore
             try
             {
-                
+
 
                 // Tạo đối tượng Plan từ các thông tin đã nhập
                 Plan newPlan = new Plan
@@ -289,8 +295,10 @@ namespace Windows_Programming.View
                     XamlRoot = this.XamlRoot
                 };
                 _ = errorDialog.ShowAsync();
+                loadingDialog.Hide();
                 return;
             }
+            loadingDialog.Hide();
 
             // Hiển thị thông báo thành công
             ContentDialog successDialog = new ContentDialog

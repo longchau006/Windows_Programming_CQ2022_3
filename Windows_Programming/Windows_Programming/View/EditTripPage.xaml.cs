@@ -261,7 +261,13 @@ namespace Windows_Programming.View
                 return;
             }
 
-            
+            ContentDialog loadingDialog = new ContentDialog
+            {
+                Title = "Edit Plan...",
+                Content = new ProgressRing { IsActive = true },
+                XamlRoot = this.XamlRoot
+            };
+            loadingDialog.ShowAsync();
 
             // Ghi đối tượng lên Firestore
             try
@@ -310,9 +316,10 @@ namespace Windows_Programming.View
                     XamlRoot = this.XamlRoot
                 };
                 _ = errorDialog.ShowAsync();
+                loadingDialog.Hide();
                 return;
             }
-
+            loadingDialog.Hide();
             // Hiển thị thông báo thành công hoặc điều hướng đến trang khác
             ContentDialog successDialog = new ContentDialog
             {

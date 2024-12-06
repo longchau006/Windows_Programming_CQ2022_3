@@ -19,7 +19,8 @@
                 FontSize="16"
                 BorderBrush="#ADD8E6" 
                 BorderThickness="1" 
-                Background="#FFFFFF"/>
+                Background="#FFFFFF"
+                KeyDown="InputRegisterKeyDown"/>
 
         <PasswordBox x:Name="PasswordInputRegister_TextBox" 
                    PlaceholderText="Enter your password" 
@@ -28,7 +29,8 @@
                    FontSize="16"
                    BorderBrush="#007BFF" 
                    BorderThickness="1" 
-                   Background="#FFFFFF"/>
+                   Background="#FFFFFF"
+                   KeyDown="InputRegisterKeyDown"/>
 
         <PasswordBox x:Name="ConfirmPasswordInputRegister_TextBox" 
                    PlaceholderText="Enter your password again" 
