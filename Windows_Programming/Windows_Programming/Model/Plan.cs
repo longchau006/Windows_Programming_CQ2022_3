@@ -9,7 +9,7 @@ namespace Windows_Programming.Model
 {
     public class Plan : INotifyPropertyChanged
     {
-        public int Id {  get; set; }                                             
+        public int Id { get; set; }
         public string Name { get; set; }
         public string PlanImage { get; set; }
         public DateTime StartDate { get; set; }
@@ -32,7 +32,21 @@ namespace Windows_Programming.Model
                     return Math.Max(0, daysLeft);
                 }
                 return 0;
-                
+
+            }
+        }
+
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsVisible)));
+                }
             }
         }
 
