@@ -47,6 +47,16 @@ namespace Windows_Programming.View
                 loginWindow.Title = "Register";
             }
         }
+
+        //Catch Signup button click enter
+        private void InputRegisterKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                // Call the same login method as the button click
+                RegisterButtonClick(sender, new RoutedEventArgs());
+            }
+        }
         private async void RegisterButtonClick(object sender, RoutedEventArgs e)
         {
             string emailInput = EmailInputRegister_TextBox.Text;

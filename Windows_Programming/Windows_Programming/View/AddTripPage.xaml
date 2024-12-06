@@ -18,7 +18,7 @@
         <!-- Form Fields -->
         <StackPanel Grid.Column="0" Spacing="15">
             <TextBlock Text="Add Trip" FontSize="24" FontWeight="Bold" />
-            <TextBlock Text="Add a trip manually below and we'll create the trip for you." TextWrapping="WrapWholeWords" Margin="0,0,0,20"/>
+            <TextBlock Text="Add a trip manually below and we'll create the trip for you." TextWrapping="WrapWholeWords" Margin="0,0,0,5"/>
 
             <!-- Trip Name -->
             <StackPanel>
@@ -51,12 +51,18 @@
                 </StackPanel>
             </StackPanel>
 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="10">
+                <CheckBox x:Name="Traveller_CheckBox" Content="Traveller" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked" />
+                <CheckBox x:Name="NonTraveller_CheckBox" Content="Non-Traveller" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked" />
+            </StackPanel>
+
+
             <StackPanel>
                 <TextBlock Text="Description"/>
                 <TextBox x:Name ="Description_TextBox" PlaceholderText="Enter description" BorderBrush="Black" BorderThickness="1" />
             </StackPanel>
-            <!-- Buttons -->
-            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,20,0,0">
+                    <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,5,0,0">
                 <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
                 <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
             </StackPanel>

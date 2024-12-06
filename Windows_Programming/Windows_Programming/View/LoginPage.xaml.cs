@@ -73,6 +73,16 @@ namespace Windows_Programming.View
 
             }
         }
+        //Catch Event enter
+        private void InputLoginKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                // Call the same login method as the button click
+                LoginButtonClick(sender, new RoutedEventArgs());
+            }
+        }
+
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {

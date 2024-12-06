@@ -21,6 +21,7 @@ using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
 using WinRT.Interop;
 using Windows_Programming.Database;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,6 +40,8 @@ namespace Windows_Programming.View
         private string selectedImagePath;
 
         int accountId = MainWindow.MyAccount.Id;
+
+        int strType = -1;
         public EditTripPage()
         {
             this.InitializeComponent();
@@ -56,6 +59,36 @@ namespace Windows_Programming.View
             {
                 this.DataContext = PlanTripViewModel;
                 selectedImagePath = PlanTripViewModel.PlanImage;
+            }
+
+        }
+
+        public bool NonTravellerCheckBox_IsChecked => !PlanTripViewModel.Type;
+
+        private void OnNavigationCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            var selectedCheckBox = sender as CheckBox;
+
+            // Ensure only one checkbox is selected
+            if (selectedCheckBox == Traveller_CheckBox)
+            {
+                strType = 1;
+                NonTraveller_CheckBox.IsChecked = false;
+            }
+            else if (selectedCheckBox == NonTraveller_CheckBox)
+            {
+                strType = 0;
+                Traveller_CheckBox.IsChecked = false;
+            }
+        }
+
+        private void OnNavigationCheckBoxUnchecked(object sender, RoutedEventArgs e)
+        {
+            var uncheckedCheckBox = sender as CheckBox;
+
+            if (!Traveller_CheckBox.IsChecked.GetValueOrDefault() && !NonTraveller_CheckBox.IsChecked.GetValueOrDefault())
+            {
+                strType = -2;
             }
 
         }
@@ -137,7 +170,7 @@ namespace Windows_Programming.View
 
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            TripName_TextBox.Text = PlanTripViewModel.Name.ToString();
+            /*TripName_TextBox.Text = PlanTripViewModel.Name.ToString();
             StartLocation_TextBox.Text = PlanTripViewModel.StartLocation.ToString();
             EndLocation_TextBox.Text = PlanTripViewModel.EndLocation.ToString();
             Start_DatePicker.Date = new DateTimeOffset(PlanTripViewModel.StartDate);
@@ -155,7 +188,7 @@ namespace Windows_Programming.View
                 {
                     Trip_Image.Source = null;
                 }
-            }
+            }*/
             // Điều hướng về trang trước
             if (Frame != null && Frame.CanGoBack)
             {
@@ -166,13 +199,20 @@ namespace Windows_Programming.View
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
             // Lấy thông tin từ các trường
+            bool type = PlanTripViewModel.Type;
             string tripName = TripName_TextBox.Text;
             string startLocation = StartLocation_TextBox.Text;
             string endLocation = EndLocation_TextBox.Text;
             DateTime? startDate = Start_DatePicker.SelectedDate?.DateTime;
             DateTime? endDate = End_DatePicker.SelectedDate?.DateTime;
             string description = Description_TextBox.Text;
-
+            if (strType == 1)
+            {
+                type = true;
+            } else if (strType == 0)
+            {
+                type = false;
+            }    
             // Danh sách chứa các thông báo lỗi
             List<string> errorMessages = new List<string>();
 
@@ -183,12 +223,15 @@ namespace Windows_Programming.View
                 (startDate.HasValue && startDate.Value == PlanTripViewModel.StartDate) &&
                 (endDate.HasValue && endDate.Value == PlanTripViewModel.EndDate) &&
                 (description == PlanTripViewModel.Description) &&
-                (selectedImagePath == PlanTripViewModel.PlanImage))
+                (selectedImagePath == PlanTripViewModel.PlanImage) &&
+                (type == PlanTripViewModel.Type))
             {
                 errorMessages.Add("No edits");
             }
 
             // Kiểm tra các trường có bị trống hay không
+            if (strType ==-2)
+                errorMessages.Add("Traveller, Non-Traveller is required.");
             if (string.IsNullOrWhiteSpace(tripName))
                 errorMessages.Add("Trip Name is required.");
             if (string.IsNullOrWhiteSpace(startLocation))
@@ -218,7 +261,13 @@ namespace Windows_Programming.View
                 return;
             }
 
-            
+            ContentDialog loadingDialog = new ContentDialog
+            {
+                Title = "Edit Plan...",
+                Content = new ProgressRing { IsActive = true },
+                XamlRoot = this.XamlRoot
+            };
+            loadingDialog.ShowAsync();
 
             // Ghi đối tượng lên Firestore
             try
@@ -243,7 +292,8 @@ namespace Windows_Programming.View
                     EndLocation = endLocation,
                     StartDate = startDate.Value,
                     EndDate = endDate.Value,
-                    Description = description
+                    Description = description,
+                    Type = type
                 };
                 MyPlansHomeViewModel.UpdatePlanInHome(PlanTripViewModel, newPlan);
                 //Do cai nay la string nen khi thay doi o home phai gan planImage la selceted trc cho no update o local trc
@@ -266,9 +316,10 @@ namespace Windows_Programming.View
                     XamlRoot = this.XamlRoot
                 };
                 _ = errorDialog.ShowAsync();
+                loadingDialog.Hide();
                 return;
             }
-
+            loadingDialog.Hide();
             // Hiển thị thông báo thành công hoặc điều hướng đến trang khác
             ContentDialog successDialog = new ContentDialog
             {
