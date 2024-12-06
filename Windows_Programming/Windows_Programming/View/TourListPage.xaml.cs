@@ -48,7 +48,7 @@ namespace Windows_Programming.View
         {
             if (sender is FrameworkElement element && element.DataContext is Tour tour)
             {
-                Frame.Navigate(typeof(TourPage), tour.Id);
+                Frame.Navigate(typeof(TourPage), tour);
 
             }
         }
