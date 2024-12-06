@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows_Programming.ViewModel;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,6 +28,7 @@ namespace Windows_Programming.View
         public AccountViewModel accountViewModel = new AccountViewModel();
         public string fullname = "";
         public string address = "";
+        public ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         public UserInformationPage()
         {
@@ -75,6 +77,7 @@ namespace Windows_Programming.View
             }
             await accountViewModel.UpdateFullNameAsync(Fullname_TextBox.Text);
             LoadUserInformationAsync();
+            localSettings.Values["fullname"] = Fullname_TextBox.Text;
         }
 
         private void CancelFullnameClick(object sender, RoutedEventArgs e)
@@ -99,6 +102,7 @@ namespace Windows_Programming.View
             }
             await accountViewModel.UpdateAddressAsync(Address_TextBox.Text);
             LoadUserInformationAsync();
+            localSettings.Values["address"] = Address_TextBox.Text;
         }
 
         private void CancelAddressClick(object sender, RoutedEventArgs e)

@@ -525,6 +525,21 @@ namespace Windows_Programming.Database
             foreach (var document in snapshot.Documents)
             {
                 var blogData = document.ToDictionary();
+
+                // Xử lý trường 'activities'
+                var activities = blogData.ContainsKey("activities") && blogData["activities"] is Dictionary<string, object> activitiesMap
+                    ? activitiesMap.ToDictionary(k => k.Key, v => v.Value?.ToString() ?? string.Empty)
+                    : new Dictionary<string, string>();
+
+                // Xử lý transport (có thể chứa map con)
+                var transport = blogData.ContainsKey("transport") && blogData["transport"] is Dictionary<string, object> transportMap
+                    ? transportMap.ToDictionary(
+                        k => k.Key,
+                        v => v.Value is Dictionary<string, object> subMap
+                            ? subMap.ToDictionary(subKey => subKey.Key, subValue => subValue.Value?.ToString() ?? string.Empty)
+                            : new Dictionary<string, string>())
+                    : new Dictionary<string, Dictionary<string, string>>();
+
                 Tour tour = new Tour
                 {
                     Id = document.Id,
@@ -535,7 +550,9 @@ namespace Windows_Programming.Database
                     Image = $"{document.Id}{blogData["image"]}",
                     Price = int.Parse(blogData["price"].ToString()),
                     Rating = int.Parse(blogData["rating"].ToString()),
-                    Link = blogData["link"].ToString()
+                    Link = blogData["link"].ToString(),
+                    Activities = activities,
+                    Transport = transport
                 };
                 MemoryStream dataStream = await DownloadImageFromClientStorage($"tours/{tour.Image}");
                 tour.Image = Convert.ToBase64String(dataStream.ToArray());

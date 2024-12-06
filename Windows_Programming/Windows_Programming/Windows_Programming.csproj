@@ -19,6 +19,7 @@
   <ItemGroup>
     <None Remove="View\AccountPage.xaml" />
     <None Remove="View\AddActivitiesTripPage.xaml" />
+    <None Remove="View\AddTourToPlanPage.xaml" />
     <None Remove="View\AddTripPage.xaml" />
     <None Remove="View\EditActivityPage.xaml" />
     <None Remove="View\EditTripPage.xaml" />
@@ -152,6 +153,9 @@
     <None Update="Configs\Private.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\AddTourToPlanPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\UpdateBlogPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
