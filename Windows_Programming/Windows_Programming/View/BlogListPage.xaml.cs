@@ -16,6 +16,7 @@ using Windows_Programming.ViewModel;
 using Windows_Programming.Model;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Devices.PointOfService;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,20 +28,30 @@ namespace Windows_Programming.View
     /// </summary>  
     public sealed partial class BlogListPage : Page
     {
+        private ContentDialog loadingDialog;
+        public BlogViewModel viewModel { get; set; }
         public BlogListPage()
         {
             this.InitializeComponent();
-            InitializeViewModelAsync();
+            this.Loaded += BlogListPage_Loaded;
         }
 
-        private async void InitializeViewModelAsync()
+        private async void BlogListPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var viewModel = new BlogViewModel();
+            CreateLoadingDialog();
+            await InitializeViewModelAsync();
+        }
+
+        private async Task InitializeViewModelAsync()
+        {
+            var loadingTask = loadingDialog.ShowAsync();
+            viewModel = new BlogViewModel();
             await viewModel.GetAllBlog();
             BlogListView.DataContext = viewModel;
 
             viewModel.GetLastestBlog();
             BlogFlipView.DataContext = viewModel;
+            loadingDialog.Hide();
         }
 
         private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
@@ -70,5 +81,52 @@ namespace Windows_Programming.View
         {
             Frame.Navigate(typeof(MyBlogsPage));
         }
+        private void mySearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            viewModel.searchBlog(mySearchBox.Text);
+            BlogListView.DataContext = null;
+            BlogListView.DataContext = viewModel;
+        }
+
+        private void mySearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+           /* viewModel.searchBlog(mySearchBox.Text);
+            BlogListView.DataContext = null;
+            BlogListView.DataContext = viewModel;*/
+        }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
+        }
+
     }
 }

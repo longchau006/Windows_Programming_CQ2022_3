@@ -18,8 +18,14 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!-- ScrollViewer to handle scrolling if content exceeds screen size -->
         <ScrollViewer HorizontalScrollBarVisibility="auto" VerticalScrollBarVisibility="Auto">
-            <StackPanel Padding="20" >
+            <StackPanel Padding="20">
                 <TextBlock FontSize="36" HorizontalAlignment="Center" FontWeight="Bold" Foreground="DarkSlateGray" Text="Tour List" Margin="0,0,0,20"/>
+                <AutoSuggestBox x:Name="mySearchBox" 
+                     PlaceholderText="Search" 
+                     QueryIcon="Find" 
+                     TextChanged="mySearchBox_TextChanged" 
+                     QuerySubmitted="mySearchBox_QuerySubmitted" 
+                     Width="200" Margin="0,0,0,10"/>  
                 <ListView x:Name="TourListView"
                  MaxHeight="500"
                  Width="750"

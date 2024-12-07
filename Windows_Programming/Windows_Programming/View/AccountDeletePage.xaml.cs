@@ -26,6 +26,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class AccountDeletePage : Page
     {
+        private ContentDialog loadingDialog;
+
         private Window _mainWindow;
         public AccountDeletePage()
         {
@@ -61,14 +63,16 @@ namespace Windows_Programming.View
                 ShowDialog("Old Password Error. Password include at least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character: @ $ ! % * ? &");
                 return;
             }
-
+            CreateLoadingDialog();
             AccountViewModel accountViewModel = new AccountViewModel();
             try
             {
+                var loadingTask = loadingDialog.ShowAsync();
                 await accountViewModel.DeleteUserAsync(MainWindow.MyAccount.Email, PasswordBox.Password);
             }
             catch (Exception ex)
             {
+                loadingDialog.Hide();
                 ContentDialog deletePasswordError = new ContentDialog
                 {
                     Title = "Change Password",
@@ -79,7 +83,7 @@ namespace Windows_Programming.View
                 await deletePasswordError.ShowAsync();
                 return;
             }
-
+            loadingDialog.Hide();
             ContentDialog dialog = new ContentDialog
             {
                 Title = "Delete Account",
@@ -126,5 +130,39 @@ namespace Windows_Programming.View
             _mainWindow.Close();
 
         }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
+        }
+
     }
 }

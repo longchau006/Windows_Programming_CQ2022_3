@@ -458,16 +458,13 @@ namespace Windows_Programming.Database
         {
             string folderPath = $"plans/{accountId}/";
 
-            await storageClient.DeleteObjectAsync(
-                "tripplandatabase-8fbf9.appspot.com",
-                folderPath
-            );
+            var objects = storageClient.ListObjects("tripplandatabase-8fbf9.appspot.com", folderPath);
+
+            foreach (var obj in objects)
+            {
+                await storageClient.DeleteObjectAsync(obj);
+            }
         }
-
-
-
-
-
 
 
         //From IDAO
@@ -857,6 +854,7 @@ namespace Windows_Programming.Database
 
                     }
                 }
+                await DeleteAccountFolderFromStorage(id);
 
                 await docRef.DeleteAsync();
                 await credential.User.DeleteAsync();

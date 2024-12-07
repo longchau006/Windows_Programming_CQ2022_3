@@ -11,6 +11,7 @@ namespace Windows_Programming.ViewModel
     public class TourViewModel
     {
         public List<Tour> AllTour { get; set; }
+        public List<Tour> AllTour_Copy { get; set; }
 
         /*public async Task AddTour()
         {
@@ -108,10 +109,20 @@ namespace Windows_Programming.ViewModel
             });
         }*/
 
+        public TourViewModel()
+        {
+            AllTour = new List<Tour>();
+            AllTour_Copy = new List<Tour>();
+        }
+
         public async Task GetAllTour()
         {
             IDao dao = FirebaseServicesDAO.Instance;
             AllTour = await dao.GetAllTour(); ;
+            foreach (var tour in AllTour)
+            {
+                AllTour_Copy.Add(tour);
+            }
         }
 
         public Tour Tour { get; set; }
@@ -120,6 +131,18 @@ namespace Windows_Programming.ViewModel
         {
             IDao dao = FirebaseServicesDAO.Instance;
             Tour = await dao.GetTourById(id);
+        }
+
+        public void searchTour(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                AllTour = AllTour_Copy;
+            }
+            else
+            {
+                AllTour = AllTour_Copy.Where(tour => tour.Name.Contains(keyword)).ToList();
+            }
         }
     }
 }
