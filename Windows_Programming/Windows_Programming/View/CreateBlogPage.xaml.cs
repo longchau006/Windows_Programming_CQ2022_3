@@ -28,6 +28,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class CreateBlogPage : Page
     {
+        private ContentDialog loadingDialog;
+
         public string imagePath { get; set; }
 
         public CreateBlogPage()
@@ -37,6 +39,7 @@ namespace Windows_Programming.View
 
         private async void SubmitClick(object sender, RoutedEventArgs e)
         {
+            CreateLoadingDialog();
             Blog blog = new Blog();
             blog.Title = Title_TextBox.Text;
             blog.Content = Content_TextBox.Text;
@@ -46,7 +49,9 @@ namespace Windows_Programming.View
             BlogViewModel blogViewModel = new BlogViewModel();
             try
             {
-                blogViewModel.AddBlog(blog);
+                var loadingTask = loadingDialog.ShowAsync();
+                await blogViewModel.AddBlog(blog);
+                loadingDialog.Hide();
             }
             catch (Exception ex)
             {
@@ -86,6 +91,39 @@ namespace Windows_Programming.View
                 imagePath = file.Path;
                 Image.Content = file.Name;
             }
+        }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
         }
     }
 }

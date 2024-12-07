@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows_Programming.Model;
@@ -25,32 +26,80 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class TourListPage : Page
     {
+        private ContentDialog loadingDialog;
+        public TourViewModel tourViewModel = new TourViewModel();
+
         public TourListPage()
         {
             this.InitializeComponent();
-            //addComponent();
-            loadTour();
+            this.Loaded += TourListPage_Loaded;
         }
 
-        private async void loadTour()
+        private async void TourListPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var viewModel = new TourViewModel();
-            await viewModel.GetAllTour();
-            TourListView.DataContext = viewModel;
+            CreateLoadingDialog();
+            await loadTour();
         }
 
-       /* private async void addComponent()
+        private async Task loadTour()
         {
-            var viewModel = new TourViewModel();
-            await viewModel.AddTour();
-        }*/
+            var loadingTask = loadingDialog.ShowAsync();
+            await tourViewModel.GetAllTour();
+            loadingDialog.Hide();
+            TourListView.DataContext = tourViewModel;
+        }
+
         private void OnBlogTapped(object sender, TappedRoutedEventArgs e)
         {
             if (sender is FrameworkElement element && element.DataContext is Tour tour)
             {
                 Frame.Navigate(typeof(TourPage), tour);
-
             }
+        }
+
+        private void mySearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+        }
+
+        private void mySearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            tourViewModel.searchTour(mySearchBox.Text);
+
+            TourListView.DataContext = null;
+            TourListView.DataContext = tourViewModel;
+        }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
         }
     }
 }

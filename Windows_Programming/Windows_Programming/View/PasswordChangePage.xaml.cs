@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows_Programming.ViewModel;
 using Windows_Programming.Helpers;
 using Windows.Storage;
-using System.Windows;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -28,6 +17,7 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class PasswordChangePage : Page
     {
+        private ContentDialog loadingDialog;
         private Window _mainWindow;
         public PasswordChangePage()
         {
@@ -74,14 +64,16 @@ namespace Windows_Programming.View
                 ShowDialog("Password and Confirm Password do not match!");
                 return;
             }
-
+            CreateLoadingDialog();
             AccountViewModel accountViewModel = new AccountViewModel();
             try
             {
+                var loadingTask = loadingDialog.ShowAsync();
                 await accountViewModel.UpdatePasswordAsync(OldPasswordBox.Password, NewPasswordBox.Password);
             }
             catch (Exception ex)
             {
+                loadingDialog.Hide();
                 ContentDialog changePasswordError = new ContentDialog
                 {
                     Title = "Change Password",
@@ -92,6 +84,7 @@ namespace Windows_Programming.View
                 await changePasswordError.ShowAsync();
                 return;
             }
+            loadingDialog.Hide();
             ContentDialog successDialog = new ContentDialog
             {
                 Title = "Change Password",
@@ -142,5 +135,39 @@ namespace Windows_Programming.View
             _mainWindow.Close();
             
         }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
+        }
+
     }
 }

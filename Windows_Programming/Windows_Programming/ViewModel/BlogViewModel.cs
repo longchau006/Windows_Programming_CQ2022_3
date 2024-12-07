@@ -16,24 +16,30 @@ namespace Windows_Programming.ViewModel
         public List<Blog> OwnBlogs { get; set; }
         public List<Blog> lastestBlog { get; set; }
         public Blog blog { get; set; }
+        public List<Blog> AllBlog_Copy { get; set; }
 
         public BlogViewModel()
         {
             AllBlog = new List<Blog>();
             OwnBlogs = new List<Blog>();
             lastestBlog = new List<Blog>();
+            AllBlog_Copy = new List<Blog>();
         }
 
-        public void AddBlog(Blog blog)
+        public async Task AddBlog(Blog blog)
         {
             IDao dao = FirebaseServicesDAO.Instance;
-            dao.AddBlog(blog);
+            await dao.AddBlog(blog);
         }
 
         public async Task GetAllBlog()
         {
             IDao dao = FirebaseServicesDAO.Instance;
             AllBlog = await dao.GetAllBlogAsync();
+            foreach (var blog in AllBlog)
+            {
+                AllBlog_Copy.Add(blog);
+            }
         }
 
         public void GetLastestBlog()
@@ -71,6 +77,18 @@ namespace Windows_Programming.ViewModel
         {
             IDao dao = FirebaseServicesDAO.Instance;
             dao.DeleteBlog(id);
+        }
+
+        public void searchBlog(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                AllBlog = AllBlog_Copy;
+            }
+            else
+            {
+                AllBlog = AllBlog_Copy.Where(blog => blog.Title.Contains(keyword)).ToList();
+            }
         }
     }
 }

@@ -31,6 +31,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class AddTourToPlanPage : Page
     {
+        private ContentDialog loadingDialog;
+
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public PlansInTrashCanViewModel MyPlansTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
@@ -38,6 +40,8 @@ namespace Windows_Programming.View
         private string selectedImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "danang.jpg");
 
         int accountId = MainWindow.MyAccount.Id;
+
+        public Plan PlanTripViewModel { get; set; }
 
         Tour Tour { get; set; }
 
@@ -55,7 +59,7 @@ namespace Windows_Programming.View
             {
                 AddTrip(tour);
                 Tour = new Tour();
-                Tour = tour; 
+                Tour = tour;
             }
         }
 
@@ -157,17 +161,6 @@ namespace Windows_Programming.View
         // Xóa các thông tin nhập khi nhấn Cancel
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            //TripName_TextBox.Text = string.Empty;
-            //StartLocation_TextBox.Text = string.Empty;
-            //EndLocation_TextBox.Text = string.Empty;
-            //Start_DatePicker.SelectedDate = null;
-            //End_DatePicker.SelectedDate = null; 
-            //var image = new BitmapImage(new Uri("ms-appx:///Assets/danang.jpg"));
-            //Trip_Image.Source = image;
-
-            //selectedImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "danang.jpg");
-            //Description_TextBox.Text = string.Empty;
-
             // Điều hướng về trang trước
             if (Frame != null && Frame.CanGoBack)
             {
@@ -179,6 +172,7 @@ namespace Windows_Programming.View
         // Lấy thông tin khi nhấn Save
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
         {
+            CreateLoadingDialog();
             // Lấy thông tin từ các trường
             string tripName = TripName_TextBox.Text;
             string startLocation = StartLocation_TextBox.Text;
@@ -226,6 +220,7 @@ namespace Windows_Programming.View
             }
 
             // Ghi đối tượng lên Firestore
+            var loadingTask = loadingDialog.ShowAsync();
             try
             {
                 // Tạo đối tượng Plan từ các thông tin đã nhập
@@ -240,22 +235,17 @@ namespace Windows_Programming.View
                     EndDate = endDate.Value,
                     Description = description
                 };
-                Plan currentPlan = new Plan
-                {
-                    Id = newId,
-                    Name = tripName,
-                    PlanImage = selectedImagePath,
-                    StartLocation = startLocation,
-                    EndLocation = endLocation,
-                    StartDate = startDate.Value,
-                    EndDate = endDate.Value,
-                    Description = description
-                };
+
                 // Phải thêm vào ni trc chứ k nó lỗi khi xóa hết rồi thêm lại cái mới nó sẽ dính ảnh của ảnh cũ
-                MyPlansHomeViewModel.AddPlanInHome(currentPlan);
-
-                System.Diagnostics.Debug.WriteLine($"aaaaaaaaaaaaaaa Image Path: {newPlan.PlanImage}");
-
+                MyPlansHomeViewModel.AddPlanInHome(newPlan);
+                foreach (Plan plan in MyPlansHomeViewModel.PlansInHome)
+                {
+                    if (plan.Id == newId)
+                    {
+                        PlanTripViewModel = plan;
+                        PlanTripViewModel.Activities = new List<Model.Activity>();
+                    }
+                }
                 string imageUrl = null;
 
                 if (!string.IsNullOrEmpty(selectedImagePath))
@@ -266,29 +256,8 @@ namespace Windows_Programming.View
                         newId
                     );
                 }
-                System.Diagnostics.Debug.WriteLine($"Image luc add vao va imageUrl {imageUrl}");
                 newPlan.PlanImage = imageUrl;
-                System.Diagnostics.Debug.WriteLine($"bbbbbbbbbbb Image Path: {MyPlansHomeViewModel.PlansInHome[0].PlanImage}");
                 await firebaseServices.CreatePlanInFirestore(accountId, newPlan);
-
-                // Hiển thị thông báo thành công
-                ContentDialog successDialog = new ContentDialog
-                {
-                    Title = "Trip Added Successfully",
-                    Content = "Your trip has been saved.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.XamlRoot
-                };
-                await successDialog.ShowAsync();
-
-                // Truyền Tour và StartDate vào AddTourToActivityPage
-                /*var parameters = new Dictionary<string, object>
-            {
-                { "Tour", Tour},
-                {"Plan", newPlan},
-                { "StartDate", startDate }
-            };
-                Frame.Navigate(typeof(AddTourToActivityPage), parameters);*/
 
                 if (newPlan.Activities == null)
                 {
@@ -314,7 +283,6 @@ namespace Windows_Programming.View
                 );
                 foreach (var activity in Tour.Activities)
                 {
-                    
                     var newActivity = new Model.Activity
                     {
                         Id = newPlan.Activities.Any() ? (newPlan.Activities.Max(activity => activity.Id) + 1) : 0,
@@ -330,14 +298,10 @@ namespace Windows_Programming.View
                     try
                     {
                         await firebaseServices.CreateActivityInFirestore(accountId, newPlan.Id, newActivity);
-
-                        MyPlansHomeViewModel.AddActivitiesForPlan(currentPlan, newActivity);
-
+                        MyPlansHomeViewModel.AddActivitiesForPlan(PlanTripViewModel, newActivity);
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
-
                         ContentDialog errorDialog = new ContentDialog
                         {
                             Title = "Error",
@@ -347,16 +311,6 @@ namespace Windows_Programming.View
                         };
                         await errorDialog.ShowAsync();
                     }
-
-                    ContentDialog success1Dialog = new ContentDialog
-                    {
-                        Title = "Activity Added Successfully",
-                        Content = "Your activity has been saved.",
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    await success1Dialog.ShowAsync();
-
                     startDateTime = endDateTime;
                     endTime = endTime.Add(TimeSpan.FromHours(2));
                 }
@@ -378,7 +332,7 @@ namespace Windows_Programming.View
                     try
                     {
                         await firebaseServices.CreateActivityInFirestore(accountId, newPlan.Id, newTransport);
-                        MyPlansHomeViewModel.AddActivitiesForPlan(currentPlan, newTransport);
+                        MyPlansHomeViewModel.AddActivitiesForPlan(PlanTripViewModel, newTransport);
 
                     }
                     catch (Exception ex)
@@ -393,14 +347,6 @@ namespace Windows_Programming.View
                         };
                         await errorDialog.ShowAsync();
                     }
-                    ContentDialog success2Dialog = new ContentDialog
-                    {
-                        Title = "Transport Added Successfully",
-                        Content = "Your transport has been saved.",
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    await success2Dialog.ShowAsync();
                 }
 
             }
@@ -418,8 +364,51 @@ namespace Windows_Programming.View
                 await errorDialog.ShowAsync();
             }
 
+            // Hiển thị thông báo thành công
+            loadingDialog.Hide();
+            ContentDialog successDialog = new ContentDialog
+            {
+                Title = "Success",
+                Content = "Trip created successfully.",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            await successDialog.ShowAsync();
             Frame.Navigate(typeof(TourListPage));
 
+        }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
         }
     }
 }
