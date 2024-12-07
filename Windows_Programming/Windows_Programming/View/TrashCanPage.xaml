@@ -32,8 +32,8 @@
                           Unchecked="OnPlanUnchecked"/>
 
 
-                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0">
-                        <TextBlock Foreground="Black" FontSize="24" FontWeight="Bold">
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0" Spacing="5">
+                        <TextBlock Foreground="Black" TextWrapping="Wrap" FontSize="24" FontWeight="Bold">
                             <Run Text="{x:Bind Name}"/>
                             
                         </TextBlock>
@@ -87,13 +87,13 @@
         </MenuFlyout>
     </Page.Resources>
 
-    <StackPanel>
+    <StackPanel Padding="20">
         <!-- Title-->
-        <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="20" FontWeight="Bold" Margin="30,0,6,0"/>
+        <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="30" FontWeight="Bold" Margin="30,0,6,0"/>
         <!-- Search bar and filter bar-->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
+        <StackPanel Spacing="10" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
             <Button x:Name="FindATrip_Button" Background="White" BorderBrush="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Spacing="5">
                     <TextBox x:Name="SearchBox" 
                 PlaceholderText="Search by name, location..." 
                 Width="400" 
@@ -175,16 +175,16 @@
 
         <Image x:Name="EmptyTrashImage" 
            Source="/Assets/empty_trashcan.png"
-           Width="200" 
+           Width="300" 
            HorizontalAlignment="Center"
            VerticalAlignment="Center"
                Margin="0,150,0,0"
-           Height="200"
+           Height="300"
            Visibility="Collapsed"/>
 
         <!-- ListTrashCan-->
         <StackPanel Orientation="Vertical">
-            <ListView  Name="PlansInTrashCan_ListView" Width="800" Height="500" 
+            <ListView  Name="PlansInTrashCan_ListView" Width="1100" Height="500" 
                   ItemsSource="{x:Bind MyPlansTrashCanViewModel.PlansInTrashCan}"
                   ItemTemplate="{StaticResource VerticalFormat}">
             </ListView>

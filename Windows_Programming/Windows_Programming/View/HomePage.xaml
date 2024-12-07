@@ -22,13 +22,13 @@
                     <StackPanel Grid.Column="0" Spacing="10" Padding="10">
                         <Button x:Name="NameTrip_Button" Content="{x:Bind Name}" FontSize="30" FontWeight="Bold" Background="White" BorderBrush="White" DataContext="{x:Bind}" Click="OnNavigationButtonNameTripClick"/>
 
-                        <TextBlock x:Name="LocationTrip_TextBlock" FontSize="18">
+                        <TextBlock x:Name="LocationTrip_TextBlock" TextWrapping="Wrap" FontSize="18">
                             <Run Text="{x:Bind StartLocation}" />
                             <Run Text=" - " />
                             <Run Text="{x:Bind EndLocation}" />
                         </TextBlock>
 
-                        <TextBlock x:Name="DateTrip_TextBlock" FontSize="18">
+                        <TextBlock x:Name="DateTrip_TextBlock" TextWrapping="Wrap" FontSize="18">
                             <Run Text="{x:Bind StartDate}" />
                             <Run Text=" - " />
                             <Run Text="{x:Bind EndDate}" />
@@ -77,8 +77,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <Grid>
+        <StackPanel Padding="10" Grid.Row="0">
+            <Grid Padding="50">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -91,7 +91,7 @@
                     </StackPanel>
                 </Button>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                <StackPanel Spacing="20" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
                     <Button x:Name="FindATrip_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" >
                         <StackPanel Orientation="Horizontal">
                             <TextBox x:Name="Search_TextBox" PlaceholderText="Trip Information!" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center" Height="40" TextChanged="OnSearchTextChanged"/>
@@ -126,7 +126,7 @@
         </StackPanel>
         <!-- SchedulePanel -->
         <StackPanel x:Name="Schedule_Panel" Grid.Row="1">
-            <ListView  Name="PlansInHome_ListView" Width="800" Height="600" 
+            <ListView  Name="PlansInHome_ListView" Width="1100" Height="450" 
                               ItemsSource="{x:Bind MyPlansHomeViewModel.PlansInHome, Mode=OneWay}"
                               ItemTemplate="{StaticResource VerticalFormat}">
             </ListView>

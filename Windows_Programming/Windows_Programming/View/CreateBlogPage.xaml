@@ -9,18 +9,18 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel Padding="20">
+    <StackPanel Padding="30" Spacing="10">
         <TextBlock Text="Create New Blog" FontSize="24" Margin="0,0,0,20"/>
 
         <TextBlock Text="Title:" FontSize="18"/>
         <TextBox x:Name="Title_TextBox" TextWrapping="Wrap" PlaceholderText="Enter the title" Margin="0,0,0,20"/>
 
         <TextBlock Text="Content:" FontSize="18"/>
-        <TextBox x:Name="Content_TextBox" PlaceholderText="Enter the content" TextWrapping="Wrap" Margin="0,0,0,20" AcceptsReturn="True" Height="200"/>
+        <TextBox x:Name="Content_TextBox" PlaceholderText="Enter the content" TextWrapping="Wrap" Margin="0,0,0,20" AcceptsReturn="True" Height="300"/>
         
         <Button Content="Choose Image" x:Name="Image" HorizontalAlignment="Left" Click="ChooseImageClick"/>
 
-        <Button Content="Publish" HorizontalAlignment="Right" Click="SubmitClick" Margin="0,10,0,0"/>
+        <Button Content="Publish" HorizontalAlignment="Right" Width="150" Click="SubmitClick" Margin="0,10,0,0"/>
 
     </StackPanel>
 
