@@ -289,11 +289,10 @@ namespace Windows_Programming.Database
 
         public async Task DeleteImediatelyPlanInFirestore(int accountId, Plan plan)
         {
-
             var planRef = firestoreDb.Collection("accounts")
-                                         .Document(accountId.ToString())
-                                         .Collection("plans")
-                                         .Document(plan.Id.ToString());
+                                     .Document(accountId.ToString())
+                                     .Collection("plans")
+                                     .Document(plan.Id.ToString());
 
             await planRef.DeleteAsync();
         }
@@ -844,18 +843,20 @@ namespace Windows_Programming.Database
                     {
                         if (blogData["image"] != null)
                         {
-
                             var objectName = $"blogs/{blogDoc.Id}";
                             await storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);
                         }
                         await blogDoc.Reference.DeleteAsync();
-                        // delete image that belongs to the blog
-                        
-
                     }
                 }
                 await DeleteAccountFolderFromStorage(id);
 
+                var plansRef = docRef.Collection("plans");
+                var plansSnapshot = await plansRef.GetSnapshotAsync();
+                foreach (var planDoc in plansSnapshot.Documents)
+                {
+                    await planDoc.Reference.DeleteAsync();
+                }
                 await docRef.DeleteAsync();
                 await credential.User.DeleteAsync();
             }

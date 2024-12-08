@@ -22,7 +22,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <!-- Discover Panel -->
-            <StackPanel x:Name="Discover_Panel" Grid.Row="0" Orientation="Vertical" >
+            <StackPanel x:Name="Discover_Panel" Grid.Row="0" Orientation="Vertical" Spacing="5">
                 <TextBlock Text="Edit Discover" FontSize="24" FontWeight="Bold" />
 
                 <TextBlock Text="Event Name" Margin="0,5,0,0" />
@@ -137,14 +137,14 @@
                     <TextBlock Text="Start Date" Margin="0,0,5,0"/>
                     <DatePicker x:Name="StartExtend_DatePicker" Date="{x:Bind ExtendViewModel.StartDate,Converter={StaticResource DataTimeToDateTimeOffsetConverter}, Mode=OneWay}"/>
                     <TextBlock Text="Start Time" Margin="20,0,5,0" />
-                    <TimePicker x:Name="StartExtend_TimePicker" ClockIdentifier="12HourClock" Time="{x:Bind LodgingViewModel.StartDate, Converter= {StaticResource DateTimeToTimeSpanConverter}, Mode=OneWay}"/>
+                    <TimePicker x:Name="StartExtend_TimePicker" ClockIdentifier="12HourClock" Time="{x:Bind ExtendViewModel.StartDate, Converter= {StaticResource DateTimeToTimeSpanConverter}, Mode=OneWay}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="End Date" Margin="0,0,5,0"/>
                     <DatePicker x:Name="EndExtend_DatePicker" Date="{x:Bind ExtendViewModel.EndDate,Converter={StaticResource DataTimeToDateTimeOffsetConverter}, Mode=OneWay}"/>
                     <TextBlock Text="End Time" Margin="20,0,5,0" />
-                    <TimePicker x:Name="EndExtend_TimePicker" ClockIdentifier="12HourClock" Time="{x:Bind LodgingViewModel.EndDate, Converter= {StaticResource DateTimeToTimeSpanConverter}, Mode=OneWay}"/>
+                    <TimePicker x:Name="EndExtend_TimePicker" ClockIdentifier="12HourClock" Time="{x:Bind ExtendViewModel.EndDate, Converter= {StaticResource DateTimeToTimeSpanConverter}, Mode=OneWay}"/>
                 </StackPanel>
 
                 <TextBlock Text="Description" />

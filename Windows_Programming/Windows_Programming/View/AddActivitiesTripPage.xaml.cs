@@ -30,7 +30,7 @@ namespace Windows_Programming.View
     {
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
-        public Plan PlanTripViewModel { get; set;}
+        public Plan PlanTripViewModel { get; set; }
         int flag = 0;
         int accountId = MainWindow.MyAccount.Id;
         public AddActivitiesTripPage()
@@ -56,6 +56,7 @@ namespace Windows_Programming.View
         }
         private void OnNavigationButtonClick(object sender, RoutedEventArgs e)
         {
+            saveButton.Visibility = Visibility.Visible;
             Discover_Button.Style = (Style)Resources["ButtonStyle"];
             Transport_Button.Style = (Style)Resources["ButtonStyle"];
             Lodging_Button.Style = (Style)Resources["ButtonStyle"];
@@ -96,7 +97,7 @@ namespace Windows_Programming.View
                 Transport_Panel.Visibility = Visibility.Collapsed;
                 Lodging_Panel.Visibility = Visibility.Collapsed;
             }
-         }
+        }
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
             /*if (flag == 1)
@@ -151,7 +152,7 @@ namespace Windows_Programming.View
             }
         }
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
-        { 
+        {
             if (PlanTripViewModel.Activities == null)
             {
                 PlanTripViewModel.Activities = new List<Windows_Programming.Model.Activity>();
@@ -167,40 +168,6 @@ namespace Windows_Programming.View
                 TimeSpan? startTime = StartDiscover_TimePicker.SelectedTime;
                 TimeSpan? endTime = EndDiscover_TimePicker.SelectedTime;
                 string descriptionDiscover = DescriptionDiscover_TextBox.Text;
-
-                List<string> errorMessages = new List<string>();
-
-                if (string.IsNullOrWhiteSpace(nameDiscover))
-                    errorMessages.Add("Name is required.");
-                if (string.IsNullOrWhiteSpace(venueDiscover))
-                    errorMessages.Add("Venue is required.");
-                if (string.IsNullOrWhiteSpace(addressDiscover))
-                    errorMessages.Add("Address is required");
-                if (startDate == null)
-                    errorMessages.Add("Start Date is required.");
-                if (endDate == null)
-                    errorMessages.Add("End Date is required.");
-                if (startTime == null)
-                    errorMessages.Add("Start Time is required.");
-                if (endTime == null)
-                    errorMessages.Add("End Time is required.");
-                if (PlanTripViewModel.StartDate > startDate || startDate > endDate || endDate > PlanTripViewModel.EndDate ||
-                    (startDate == endDate && startTime > endTime))
-                    errorMessages.Add("Time error.");
-
-                if (errorMessages.Count > 0)
-                {
-                    ContentDialog dialog = new ContentDialog
-                    {
-                        Title = "Incomplete or Invalid Information",
-                        Content = string.Join("\n", errorMessages), 
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    _ = dialog.ShowAsync();
-
-                    return;
-                }
 
                 DateTime? startDateTime = null;
                 if (startDate.HasValue && startTime.HasValue)
@@ -228,9 +195,43 @@ namespace Windows_Programming.View
                     );
                 }
 
+                List<string> errorMessages = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(nameDiscover))
+                    errorMessages.Add("Name is required.");
+                if (string.IsNullOrWhiteSpace(venueDiscover))
+                    errorMessages.Add("Venue is required.");
+                if (string.IsNullOrWhiteSpace(addressDiscover))
+                    errorMessages.Add("Address is required");
+                if (startDate == null)
+                    errorMessages.Add("Start Date is required.");
+                if (endDate == null)
+                    errorMessages.Add("End Date is required.");
+                if (startTime == null)
+                    errorMessages.Add("Start Time is required.");
+                if (endTime == null)
+                    errorMessages.Add("End Time is required.");
+                if (PlanTripViewModel.StartDate > startDateTime || startDateTime > endDateTime || endDateTime > PlanTripViewModel.EndDate)
+                    errorMessages.Add("Time error.");
+
+                if (errorMessages.Count > 0)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Incomplete or Invalid Information",
+                        Content = string.Join("\n", errorMessages),
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    _ = dialog.ShowAsync();
+
+                    return;
+                }
+
+
                 newActivity = new Windows_Programming.Model.Activity
                 {
-                    Id = PlanTripViewModel.Activities.Any()? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1):0,
+                    Id = PlanTripViewModel.Activities.Any() ? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1) : 0,
                     Type = flag,
                     Name = nameDiscover,
                     Venue = venueDiscover,
@@ -252,42 +253,6 @@ namespace Windows_Programming.View
                 TimeSpan? endTime = EndTransport_TimePicker.SelectedTime;
                 string descriptionTransport = DescriptionTransport_TextBox.Text;
 
-                List<string> errorMessages = new List<string>();
-
-                if (string.IsNullOrWhiteSpace(nameTransport))
-                    errorMessages.Add("Name is required.");
-                if (string.IsNullOrWhiteSpace(vehicleTransport))
-                    errorMessages.Add("Vehicle is required.");
-                if (string.IsNullOrWhiteSpace(startLocation))
-                    errorMessages.Add("Start Location is required.");
-                if (string.IsNullOrWhiteSpace(endLocation))
-                    errorMessages.Add("End Location is required.");
-                if (startDate == null)
-                    errorMessages.Add("Start Date is required.");
-                if (endDate == null)
-                    errorMessages.Add("End Date is required.");
-                if (startTime == null)
-                    errorMessages.Add("Start Time is required.");
-                if (endTime == null)
-                    errorMessages.Add("End Time is required.");
-                if (PlanTripViewModel.StartDate > startDate || startDate > endDate || endDate > PlanTripViewModel.EndDate ||
-                    (startDate == endDate && startTime > endTime))
-                    errorMessages.Add("Time error.");
-
-                if (errorMessages.Count > 0)
-                {
-                    ContentDialog dialog = new ContentDialog
-                    {
-                        Title = "Incomplete or Invalid Information",
-                        Content = string.Join("\n", errorMessages),
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    _ = dialog.ShowAsync();
-
-                    return;
-                }
-
                 DateTime? startDateTime = null;
                 if (startDate.HasValue && startTime.HasValue)
                 {
@@ -312,6 +277,41 @@ namespace Windows_Programming.View
                         endTime.Value.Minutes,
                         endTime.Value.Seconds
                     );
+                }
+
+                List<string> errorMessages = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(nameTransport))
+                    errorMessages.Add("Name is required.");
+                if (string.IsNullOrWhiteSpace(vehicleTransport))
+                    errorMessages.Add("Vehicle is required.");
+                if (string.IsNullOrWhiteSpace(startLocation))
+                    errorMessages.Add("Start Location is required.");
+                if (string.IsNullOrWhiteSpace(endLocation))
+                    errorMessages.Add("End Location is required.");
+                if (startDate == null)
+                    errorMessages.Add("Start Date is required.");
+                if (endDate == null)
+                    errorMessages.Add("End Date is required.");
+                if (startTime == null)
+                    errorMessages.Add("Start Time is required.");
+                if (endTime == null)
+                    errorMessages.Add("End Time is required.");
+                if (PlanTripViewModel.StartDate > startDateTime || startDateTime > endDateTime || endDateTime > PlanTripViewModel.EndDate)
+                    errorMessages.Add("Time error.");
+
+                if (errorMessages.Count > 0)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Incomplete or Invalid Information",
+                        Content = string.Join("\n", errorMessages),
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    _ = dialog.ShowAsync();
+
+                    return;
                 }
 
                 newActivity = new Transport
@@ -339,40 +339,6 @@ namespace Windows_Programming.View
                 TimeSpan? endTime = EndLodging_TimePicker.SelectedTime;
                 string descriptionLodging = DescriptionLodging_TextBox.Text;
 
-                List<string> errorMessages = new List<string>();
-
-                if (string.IsNullOrWhiteSpace(nameLodging))
-                    errorMessages.Add("Name is required.");
-                if (string.IsNullOrWhiteSpace(roomLodging))
-                    errorMessages.Add("Room Info is required.");
-                if (string.IsNullOrWhiteSpace(addressLodging))
-                    errorMessages.Add("Address is required");
-                if (startDate == null)
-                    errorMessages.Add("Start Date is required.");
-                if (endDate == null)
-                    errorMessages.Add("End Date is required.");
-                if (startTime == null)
-                    errorMessages.Add("Start Time is required.");
-                if (endTime == null)
-                    errorMessages.Add("End Time is required.");
-                if (PlanTripViewModel.StartDate > startDate || startDate > endDate || endDate > PlanTripViewModel.EndDate ||
-                    (startDate == endDate && startTime > endTime))
-                    errorMessages.Add("Time error.");
-
-                if (errorMessages.Count > 0)
-                {
-                    ContentDialog dialog = new ContentDialog
-                    {
-                        Title = "Incomplete or Invalid Information",
-                        Content = string.Join("\n", errorMessages),
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    _ = dialog.ShowAsync();
-
-                    return;
-                }
-
                 DateTime? startDateTime = null;
                 if (startDate.HasValue && startTime.HasValue)
                 {
@@ -397,6 +363,39 @@ namespace Windows_Programming.View
                         endTime.Value.Minutes,
                         endTime.Value.Seconds
                     );
+                }
+
+                List<string> errorMessages = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(nameLodging))
+                    errorMessages.Add("Name is required.");
+                if (string.IsNullOrWhiteSpace(roomLodging))
+                    errorMessages.Add("Room Info is required.");
+                if (string.IsNullOrWhiteSpace(addressLodging))
+                    errorMessages.Add("Address is required");
+                if (startDate == null)
+                    errorMessages.Add("Start Date is required.");
+                if (endDate == null)
+                    errorMessages.Add("End Date is required.");
+                if (startTime == null)
+                    errorMessages.Add("Start Time is required.");
+                if (endTime == null)
+                    errorMessages.Add("End Time is required.");
+                if (PlanTripViewModel.StartDate > startDateTime || startDateTime > endDateTime || endDateTime > PlanTripViewModel.EndDate)
+                    errorMessages.Add("Time error.");
+
+                if (errorMessages.Count > 0)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Incomplete or Invalid Information",
+                        Content = string.Join("\n", errorMessages),
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    _ = dialog.ShowAsync();
+
+                    return;
                 }
 
                 newActivity = new Lodging
@@ -423,42 +422,6 @@ namespace Windows_Programming.View
                 TimeSpan? endTime = EndExtend_TimePicker.SelectedTime;
                 string descriptionExtend = DescriptionExtend_TextBox.Text;
 
-                List<string> errorMessages = new List<string>();
-
-                if (string.IsNullOrWhiteSpace(activityExtend))
-                    errorMessages.Add("Activity is required.");
-                if (string.IsNullOrWhiteSpace(nameExtend))
-                    errorMessages.Add("Name is required.");
-                if (string.IsNullOrWhiteSpace(venueExtend))
-                    errorMessages.Add("Venue is required.");
-                if (string.IsNullOrWhiteSpace(addressExtend))
-                    errorMessages.Add("Address is required");
-                if (startDate == null)
-                    errorMessages.Add("Start Date is required.");
-                if (endDate == null)
-                    errorMessages.Add("End Date is required.");
-                if (startTime == null)
-                    errorMessages.Add("Start Time is required.");
-                if (endTime == null)
-                    errorMessages.Add("End Time is required.");
-                if (PlanTripViewModel.StartDate > startDate || startDate > endDate || endDate > PlanTripViewModel.EndDate ||
-                    (startDate == endDate && startTime > endTime))
-                    errorMessages.Add("Time error.");
-
-                if (errorMessages.Count > 0)
-                {
-                    ContentDialog dialog = new ContentDialog
-                    {
-                        Title = "Incomplete or Invalid Information",
-                        Content = string.Join("\n", errorMessages),
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    _ = dialog.ShowAsync();
-
-                    return;
-                }
-
                 DateTime? startDateTime = null;
                 if (startDate.HasValue && startTime.HasValue)
                 {
@@ -485,6 +448,41 @@ namespace Windows_Programming.View
                     );
                 }
 
+                List<string> errorMessages = new List<string>();
+
+                if (string.IsNullOrWhiteSpace(activityExtend))
+                    errorMessages.Add("Activity is required.");
+                if (string.IsNullOrWhiteSpace(nameExtend))
+                    errorMessages.Add("Name is required.");
+                if (string.IsNullOrWhiteSpace(venueExtend))
+                    errorMessages.Add("Venue is required.");
+                if (string.IsNullOrWhiteSpace(addressExtend))
+                    errorMessages.Add("Address is required");
+                if (startDate == null)
+                    errorMessages.Add("Start Date is required.");
+                if (endDate == null)
+                    errorMessages.Add("End Date is required.");
+                if (startTime == null)
+                    errorMessages.Add("Start Time is required.");
+                if (endTime == null)
+                    errorMessages.Add("End Time is required.");
+                if (PlanTripViewModel.StartDate > startDateTime || startDateTime > endDateTime || endDateTime > PlanTripViewModel.EndDate)
+                    errorMessages.Add("Time error.");
+
+                if (errorMessages.Count > 0)
+                {
+                    ContentDialog dialog = new ContentDialog
+                    {
+                        Title = "Incomplete or Invalid Information",
+                        Content = string.Join("\n", errorMessages),
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    _ = dialog.ShowAsync();
+
+                    return;
+                }
+
                 newActivity = new Extend
                 {
                     Id = PlanTripViewModel.Activities.Any() ? (PlanTripViewModel.Activities.Max(activity => activity.Id) + 1) : 0,
@@ -498,7 +496,7 @@ namespace Windows_Programming.View
                     Description = descriptionExtend
                 };
             }
-           
+
             try
             {
                 await firebaseServices.CreateActivityInFirestore(accountId, PlanTripViewModel.Id, newActivity);

@@ -16,7 +16,7 @@
     </Page.Resources>
 
     <Viewbox>
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="550">
             <!-- ScrollViewer to handle scrolling if content exceeds screen size -->
             <ScrollViewer HorizontalScrollBarVisibility="auto" VerticalScrollBarVisibility="Auto">
                 <StackPanel Padding="20">
@@ -28,7 +28,7 @@
                      QuerySubmitted="mySearchBox_QuerySubmitted" 
                      Width="200" Margin="0,0,0,10"/>
                     <ListView x:Name="TourListView"
-                 MaxHeight="500"
+                 MaxHeight="400"
                  Width="750"
                  BorderThickness="1"
                  BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}"
