@@ -69,7 +69,8 @@ namespace Windows_Programming.ViewModel
                 StartDate = plan.StartDate,
                 EndDate = plan.EndDate,
                 Description = plan.Description,
-                Type = plan.Type
+                Type = plan.Type,
+                Activities = plan.Activities,
             };
             PlansInHome.Add(newPlan);
             foreach( var myplan in PlansInHome)

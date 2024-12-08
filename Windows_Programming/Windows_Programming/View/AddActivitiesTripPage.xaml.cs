@@ -99,7 +99,7 @@ namespace Windows_Programming.View
          }
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            if (flag == 1)
+            /*if (flag == 1)
             {
                 NameDiscover_TextBox.Text = string.Empty;
                 VenueDiscover_TextBox.Text = string.Empty;
@@ -144,6 +144,10 @@ namespace Windows_Programming.View
                 StartExtend_TimePicker.SelectedTime = null;
                 EndExtend_TimePicker.SelectedTime = null;
                 DescriptionExtend_TextBox.Text = string.Empty;
+            }*/
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
             }
         }
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)

@@ -108,7 +108,7 @@ namespace Windows_Programming.View
         }
         private void OnNavigationCancelButtonClick(object sender, RoutedEventArgs e)
         {
-            if (ActivityViewModel.Type == 1)
+            /*if (ActivityViewModel.Type == 1)
             {
                 NameDiscover_TextBox.Text = string.Empty;
                 VenueDiscover_TextBox.Text = string.Empty;
@@ -153,6 +153,10 @@ namespace Windows_Programming.View
                 StartExtend_TimePicker.SelectedTime = null;
                 EndExtend_TimePicker.SelectedTime = null;
                 DescriptionExtend_TextBox.Text = string.Empty;
+            }*/
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
             }
         }
         private async void OnNavigationSaveButtonClick(object sender, RoutedEventArgs e)
@@ -170,12 +174,7 @@ namespace Windows_Programming.View
                 string descriptionDiscover = DescriptionDiscover_TextBox.Text;
 
                 List<string> errorMessages = new List<string>();
-                if (nameDiscover == ActivityViewModel.Name &&
-                    venueDiscover == ActivityViewModel.Venue &&
-                    descriptionDiscover == ActivityViewModel.Description)
-                {
-                    errorMessages.Add("No edit");
-                }    
+                
                 if (string.IsNullOrWhiteSpace(nameDiscover))
                     errorMessages.Add("Name is required.");
                 if (string.IsNullOrWhiteSpace(venueDiscover))

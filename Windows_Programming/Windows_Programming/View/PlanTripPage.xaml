@@ -286,10 +286,10 @@
                          <Run Text="{x:Bind PlanTripViewModel.EndDate}" />
                         </TextBlock>
 
-                        <Button x:Name="ManageSharingAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                        <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
                             <StackPanel Orientation="Horizontal">
                                 <SymbolIcon Symbol="Link" />
-                                <TextBlock Text="Manage Sharing" Margin="10,0,0,0"/>
+                                <TextBlock Text="View Excel" Margin="10,0,0,0"/>
                             </StackPanel>
                         </Button>
 
@@ -308,9 +308,7 @@
                                 <Button.Flyout >
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutItem x:Name="PrintTripAlone_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
-                                        <MenuFlyoutItem x:Name="MergeTripAlone_MenuFlyoutItem" Text="Merge Trip" Foreground="Blue"/>
                                         <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" Click="OnNavigationDeleteTripClick"/>
-                                        <MenuFlyoutItem x:Name="ExportTripToCalendarAlone_MenuFlyoutItem" Text="Export Trip to Calendar" Foreground="Blue"/>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
