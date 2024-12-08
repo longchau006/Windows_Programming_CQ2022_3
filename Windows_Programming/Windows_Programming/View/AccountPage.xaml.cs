@@ -31,9 +31,9 @@ namespace Windows_Programming.View
             this.InitializeComponent();
             NavLinks = new List<NavLink>
             {
-                new NavLink { Name = "User Information", Tag = "UserInformationPage", Symbol = Symbol.OtherUser },
-                new NavLink { Name = "Change Password", Tag = "ChangePasswordPage", Symbol = Symbol.Admin  },
-                new NavLink { Name = "Delete Account", Tag = "DeleteAccountPage", Symbol = Symbol.Delete }
+                new NavLink { Name = "USER INFORMATION", Tag = "UserInformationPage", Symbol = Symbol.OtherUser },
+                new NavLink { Name = "CHANGE PASSWORD", Tag = "ChangePasswordPage", Symbol = Symbol.Admin  },
+                new NavLink { Name = "DELETE ACCOUNT", Tag = "DeleteAccountPage", Symbol = Symbol.Delete }
             };
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

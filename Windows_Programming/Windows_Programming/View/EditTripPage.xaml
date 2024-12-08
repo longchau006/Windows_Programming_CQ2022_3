@@ -13,75 +13,77 @@
     <Page.Resources>
         <helpers:DataTimeToDateTimeOffsetConverter x:Key="DataTimeToDateTimeOffsetConverter" />
     </Page.Resources>
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="300" />
-        </Grid.ColumnDefinitions>
 
-        <!-- Form Fields -->
-        <StackPanel Grid.Column="0" Spacing="15">
-            <TextBlock Text="Edit Trip" FontSize="24" FontWeight="Bold" />
-            <TextBlock Text="Edit a trip manually below and we'll fix the trip for you." TextWrapping="WrapWholeWords" Margin="0,0,0,5"/>
+    <Viewbox>
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
 
-            <!-- Trip Name -->
-            <StackPanel>
-                <TextBlock Text="Trip Name" />
-                <TextBox x:Name ="TripName_TextBox" Text="{x:Bind PlanTripViewModel.Name}" BorderBrush="Black" BorderThickness="1"/>
-            </StackPanel>
-            <!-- Start and End Location -->
-            <StackPanel Orientation="Vertical" Spacing="20">
+            <!-- Form Fields -->
+            <StackPanel Grid.Column="0" Spacing="15">
+                <TextBlock Text="Edit Trip" FontSize="24" FontWeight="Bold" />
+                <TextBlock Text="Edit a trip manually below and we'll fix the trip for you." TextWrapping="WrapWholeWords" Margin="0,0,0,5"/>
+
+                <!-- Trip Name -->
                 <StackPanel>
-                    <TextBlock Text="Start Location" />
-                    <TextBox x:Name ="StartLocation_TextBox" Text="{x:Bind PlanTripViewModel.StartLocation}" BorderBrush="Black" BorderThickness="1"/>
+                    <TextBlock Text="Trip Name" />
+                    <TextBox x:Name ="TripName_TextBox" Text="{x:Bind PlanTripViewModel.Name}" BorderBrush="Black" BorderThickness="1"/>
                 </StackPanel>
+                <!-- Start and End Location -->
+                <StackPanel Orientation="Vertical" Spacing="20">
+                    <StackPanel>
+                        <TextBlock Text="Start Location" />
+                        <TextBox x:Name ="StartLocation_TextBox" Text="{x:Bind PlanTripViewModel.StartLocation}" BorderBrush="Black" BorderThickness="1"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="End Location" />
+                        <TextBox x:Name ="EndLocation_TextBox" Text="{x:Bind PlanTripViewModel.EndLocation}" BorderBrush="Black" BorderThickness="1"/>
+                    </StackPanel>
+                </StackPanel>
+
+
+                <!-- Start and End Date -->
+                <StackPanel Orientation="Horizontal" Spacing="20">
+                    <StackPanel Orientation="Vertical" >
+                        <TextBlock Text="Start Date " />
+                        <DatePicker x:Name="Start_DatePicker" Date="{x:Bind PlanTripViewModel.StartDate, Converter={StaticResource DataTimeToDateTimeOffsetConverter}, Mode=OneWay}" BorderBrush="Black" BorderThickness="1" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="End Date " />
+                        <DatePicker x:Name="End_DatePicker" Date="{x:Bind PlanTripViewModel.EndDate,Converter={StaticResource DataTimeToDateTimeOffsetConverter}, Mode=OneWay}" BorderBrush="Black" BorderThickness="1" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="10">
+                    <CheckBox x:Name="Traveller_CheckBox" Content="Traveller" IsChecked="{x:Bind PlanTripViewModel.Type, Mode=OneWay}"  Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked" />
+                    <CheckBox x:Name="NonTraveller_CheckBox" Content="Non-Traveller" IsChecked="{x:Bind NonTravellerCheckBox_IsChecked, Mode=OneWay}" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked" />
+                </StackPanel>
+
+
                 <StackPanel>
-                    <TextBlock Text="End Location" />
-                    <TextBox x:Name ="EndLocation_TextBox" Text="{x:Bind PlanTripViewModel.EndLocation}" BorderBrush="Black" BorderThickness="1"/>
+                    <TextBlock Text="Description"/>
+                    <TextBox x:Name ="Description_TextBox" Text="{x:Bind PlanTripViewModel.Description}" BorderBrush="Black" BorderThickness="1" />
+                </StackPanel>
+
+                <!-- Buttons -->
+                <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,5,0,0">
+                    <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
+                    <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
                 </StackPanel>
             </StackPanel>
 
-
-            <!-- Start and End Date -->
-            <StackPanel Orientation="Horizontal" Spacing="20">
-                <StackPanel Orientation="Vertical" >
-                    <TextBlock Text="Start Date " />
-                    <DatePicker x:Name="Start_DatePicker" Date="{x:Bind PlanTripViewModel.StartDate, Converter={StaticResource DataTimeToDateTimeOffsetConverter}, Mode=OneWay}" BorderBrush="Black" BorderThickness="1" />
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="End Date " />
-                    <DatePicker x:Name="End_DatePicker" Date="{x:Bind PlanTripViewModel.EndDate,Converter={StaticResource DataTimeToDateTimeOffsetConverter}, Mode=OneWay}" BorderBrush="Black" BorderThickness="1" />
-                </StackPanel>
+            <!-- Photo Section -->
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Image x:Name="Trip_Image" Source="{x:Bind PlanTripViewModel.PlanImage}" Width="200" Height="200" Stretch="UniformToFill" />
+                <Button x:Name="ChangePhoto_Button" BorderBrush ="White" Foreground="Blue" Click="OnNavigationChangePhotoButtonClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="BrowsePhotos" />
+                        <TextBlock Text="Change Photo" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="10">
-                <CheckBox x:Name="Traveller_CheckBox" Content="Traveller" IsChecked="{x:Bind PlanTripViewModel.Type, Mode=OneWay}"  Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked" />
-                <CheckBox x:Name="NonTraveller_CheckBox" Content="Non-Traveller" IsChecked="{x:Bind NonTravellerCheckBox_IsChecked, Mode=OneWay}" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked" />
-            </StackPanel>
-
-
-            <StackPanel>
-                <TextBlock Text="Description"/>
-                <TextBox x:Name ="Description_TextBox" Text="{x:Bind PlanTripViewModel.Description}" BorderBrush="Black" BorderThickness="1" />
-            </StackPanel>
-            
-            <!-- Buttons -->
-            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,5,0,0">
-                <Button Content="Cancel" Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationCancelButtonClick"/>
-                <Button Content="Save"  Foreground="Blue" Background="White" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationSaveButtonClick"/>
-            </StackPanel>
-        </StackPanel>
-
-        <!-- Photo Section -->
-        <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Image x:Name="Trip_Image" Source="{x:Bind PlanTripViewModel.PlanImage}" Width="200" Height="200" Stretch="UniformToFill" />
-            <Button x:Name="ChangePhoto_Button" BorderBrush ="White" Foreground="Blue" Click="OnNavigationChangePhotoButtonClick">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="BrowsePhotos" />
-                    <TextBlock Text="Change Photo" Margin="10,0,0,0"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </Viewbox>
 </Page>

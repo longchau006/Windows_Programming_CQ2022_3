@@ -27,8 +27,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row = "0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+            <StackPanel Grid.Row = "0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
             <!-- Discover Button -->
             <Button x:Name="Discover_Button" Width="100" Height="100"  Style="{StaticResource ButtonStyle}" Click="OnNavigationButtonClick">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">
@@ -135,7 +134,7 @@
 
             <TextBlock Text="Room Info" Margin="0,5,0,0" />
             <TextBox x:Name ="RoomInfoLodging_TextBox" PlaceholderText="Enter room info" BorderBrush="Black" BorderThickness="1" />
-            
+
             <TextBlock Text="Address" Margin="0,5,0,0" />
             <TextBox x:Name ="AddressLodging_TextBox" PlaceholderText="Enter address" BorderBrush="Black" BorderThickness="1" />
 
@@ -163,7 +162,7 @@
 
             <TextBlock Text="Activity"/>
             <TextBox x:Name ="ActivityExtend_TextBox" PlaceholderText="Enter activity" BorderBrush="Black" BorderThickness="1" />
-            
+
             <TextBlock Text="Event Name"/>
             <TextBox x:Name ="NameExtend_TextBox" PlaceholderText="Enter event name" BorderBrush="Black" BorderThickness="1" />
 

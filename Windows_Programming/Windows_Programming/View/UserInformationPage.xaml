@@ -9,28 +9,37 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel Spacing="20" Padding="20" VerticalAlignment="Center" HorizontalAlignment="Center">
-        <StackPanel Orientation="Horizontal" Spacing="20">
-            <TextBlock Text="Username:" FontSize="20" FontWeight="Bold"/>
-            <TextBox x:Name="Username_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="20">
-            <TextBlock Text="Fullname:" FontSize="20" FontWeight="Bold"/>
-            <TextBox x:Name="Fullname_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure"/>
-            <Button x:Name="ModifyFullname_Button" Click="ModifyFullnameClick">Edit</Button>
-            <Button x:Name="SaveFullname_Button" Visibility="Collapsed" Click="SaveFullnameClick">Save</Button>
-            <Button x:Name="CancelFullname_Button" Visibility="Collapsed" Click="CancelFullnameClick">Cancel</Button>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="20">
-            <TextBlock Text="Email:" FontSize="20" FontWeight="Bold" />
-            <TextBox x:Name="Email_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Spacing="20">
-            <TextBlock Text="Address:" FontSize="20" FontWeight="Bold"/>
-            <TextBox x:Name="Address_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure"/>
-            <Button x:Name="ModifyAddress_Button" Click="ModifyAddressClick">Edit</Button>
-            <Button x:Name="SaveAddress_Button" Visibility="Collapsed" Click="SaveAddressClick">Save</Button>
-            <Button x:Name="CancelAddress_Button" Visibility="Collapsed" Click="CancelAddressClick">Cancel</Button>
-        </StackPanel>
-    </StackPanel>
+    <Grid Padding="100" VerticalAlignment="Center" HorizontalAlignment="Center" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Username:" FontSize="20" FontWeight="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,20,0"/>
+        <TextBox x:Name="Username_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure" Grid.Row="0" Grid.Column="1" Margin="0,0,20,0"/>
+
+        <TextBlock Text="Fullname:" FontSize="20" FontWeight="Bold" Grid.Row="1" Grid.Column="0" Margin="0,0,20,0"/>
+        <TextBox x:Name="Fullname_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure" Grid.Row="1" Grid.Column="1" Margin="0,0,20,0"/>
+        <Button x:Name="ModifyFullname_Button" Click="ModifyFullnameClick" Grid.Row="1" Grid.Column="2" Content="Edit" Margin="0,0,20,0"/>
+        <Button x:Name="SaveFullname_Button" Visibility="Collapsed" Click="SaveFullnameClick" Grid.Row="1" Grid.Column="3" Content="Save" Margin="0,0,20,0"/>
+        <Button x:Name="CancelFullname_Button" Visibility="Collapsed" Click="CancelFullnameClick" Grid.Row="1" Grid.Column="4" Content="Cancel" Margin="0,0,20,0"/>
+
+        <TextBlock Text="Email:" FontSize="20" FontWeight="Bold" Grid.Row="2" Grid.Column="0" Margin="0,0,20,0"/>
+        <TextBox x:Name="Email_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure" Grid.Row="2" Grid.Column="1" Margin="0,0,20,0"/>
+
+        <TextBlock Text="Address:" FontSize="20" FontWeight="Bold" Grid.Row="3" Grid.Column="0" Margin="0,0,20,0"/>
+        <TextBox x:Name="Address_TextBox" IsReadOnly="True" Foreground="Red" Background="Azure" Grid.Row="3" Grid.Column="1" Margin="0,0,20,0"/>
+        <Button x:Name="ModifyAddress_Button" Click="ModifyAddressClick" Grid.Row="3" Grid.Column="2" Content="Edit" Margin="0,0,20,0"/>
+        <Button x:Name="SaveAddress_Button" Visibility="Collapsed" Click="SaveAddressClick" Grid.Row="3" Grid.Column="3" Content="Save" Margin="0,0,20,0"/>
+        <Button x:Name="CancelAddress_Button" Visibility="Collapsed" Click="CancelAddressClick" Grid.Row="3" Grid.Column="4" Content="Cancel" Margin="0,0,20,0"/>
+    </Grid>
 </Page>

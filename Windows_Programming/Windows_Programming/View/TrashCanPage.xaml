@@ -32,8 +32,8 @@
                           Unchecked="OnPlanUnchecked"/>
 
 
-                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0">
-                        <TextBlock Foreground="Black" FontSize="24" FontWeight="Bold">
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0" Spacing="5">
+                        <TextBlock Foreground="Black" TextWrapping="Wrap" FontSize="24" FontWeight="Bold">
                             <Run Text="{x:Bind Name}"/>
                             
                         </TextBlock>
@@ -87,14 +87,15 @@
         </MenuFlyout>
     </Page.Resources>
 
-    <StackPanel>
-        <!-- Title-->
-        <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="20" FontWeight="Bold" Margin="30,0,6,0"/>
-        <!-- Search bar and filter bar-->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
-            <Button x:Name="FindATrip_Button" Background="White" BorderBrush="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="SearchBox" 
+    <Viewbox>
+        <StackPanel Padding="20" Height="600" Width="1200">
+            <!-- Title-->
+            <TextBlock Text="TRASH CAN" Foreground="Black" FontSize="30" FontWeight="Bold" Margin="30,0,6,0"/>
+            <!-- Search bar and filter bar-->
+            <StackPanel Spacing="10" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600">
+                <Button x:Name="FindATrip_Button" Background="White" BorderBrush="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBox x:Name="SearchBox" 
                 PlaceholderText="Search by name, location..." 
                 Width="400" 
                 HorizontalAlignment="Left" 
@@ -104,91 +105,92 @@
                 BorderThickness="2"
                 CornerRadius="5"
                 TextChanged="OnSearchTextChanged"/>
-                    <SymbolIcon Symbol="Find" Foreground="Blue"/>
-                </StackPanel>
-            </Button>
-            <Button x:Name="Order_Button" Background="White" BorderBrush="White" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Click="OnOrderButtonClick">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Sort" Foreground="Blue"/>
-                    <TextBlock Text="Order by" Margin="10,0,0,0" Foreground="Blue"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
+                        <SymbolIcon Symbol="Find" Foreground="Blue"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="Order_Button" Background="White" BorderBrush="White" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Click="OnOrderButtonClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Sort" Foreground="Blue"/>
+                        <TextBlock Text="Order by" Margin="10,0,0,0" Foreground="Blue"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
 
-        <!-- Options to select all plan .....-->
-        <Button x:Name="Choose_Button" 
+            <!-- Options to select all plan .....-->
+            <Button x:Name="Choose_Button" 
                 Background="White" 
                 BorderBrush="Black"
                 HorizontalAlignment="Right"
                 Click="OnChooseClick"
                 Margin="0,0,20,0"
                 Visibility="{x:Bind ChooseButtonVisibility, Mode=OneWay}">
-                    <TextBlock Text="Choose" Foreground="Blue"/>
-                </Button>
+                <TextBlock Text="Choose" Foreground="Blue"/>
+            </Button>
 
-        <Grid x:Name="MultiSelectContainer" 
+            <Grid x:Name="MultiSelectContainer" 
       Visibility="Collapsed" 
       Margin="20,0">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- Left side -->
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="130,0,0,0">
-                <CheckBox x:Name="CheckAllPlan_CheckBox" 
+                <!-- Left side -->
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="130,0,0,0">
+                    <CheckBox x:Name="CheckAllPlan_CheckBox" 
                  VerticalAlignment="Center"
                  Visibility="Collapsed"
                  Checked="OnButtonAllPlansCheck"
                  Unchecked="OnButtonAllPlansUnCheck"/>
-                <TextBlock Text="All" Margin="-80,6,0,0"/>
-            </StackPanel>
-            
+                    <TextBlock Text="All" Margin="-80,6,0,0"/>
+                </StackPanel>
 
-            <!-- Right side -->
-            <StackPanel x:Name="MultiSelectButtons" 
+
+                <!-- Right side -->
+                <StackPanel x:Name="MultiSelectButtons" 
                 Grid.Column="1"
                 Orientation="Horizontal" 
                 HorizontalAlignment="Right">
 
-                <Button x:Name="MultiRestore_Button" 
+                    <Button x:Name="MultiRestore_Button" 
                 IsEnabled="False"
                 Click="OnMultiRestoreClick">
-                    <TextBlock Text="Restore" Foreground="Gray"/>
-                </Button>
+                        <TextBlock Text="Restore" Foreground="Gray"/>
+                    </Button>
 
-                <Button x:Name="MultiDelete_Button" 
+                    <Button x:Name="MultiDelete_Button" 
                 IsEnabled="False"
                 Margin="10,0"
                 Click="OnMultiDeleteClick">
-                    <TextBlock Text="Delete" Foreground="Gray"/>
-                </Button>
+                        <TextBlock Text="Delete" Foreground="Gray"/>
+                    </Button>
 
-                <Button x:Name="Cancel_Button" 
+                    <Button x:Name="Cancel_Button" 
                 Click="OnCancelMultiSelectClick">
-                    <TextBlock Text="Cancel"/>
-                </Button>
-            </StackPanel>
-        </Grid>
+                        <TextBlock Text="Cancel"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
 
-        <Image x:Name="EmptyTrashImage" 
+            <Image x:Name="EmptyTrashImage" 
            Source="/Assets/empty_trashcan.png"
-           Width="200" 
+           Width="300" 
            HorizontalAlignment="Center"
            VerticalAlignment="Center"
                Margin="0,150,0,0"
-           Height="200"
+           Height="300"
            Visibility="Collapsed"/>
 
-        <!-- ListTrashCan-->
-        <StackPanel Orientation="Vertical">
-            <ListView  Name="PlansInTrashCan_ListView" Width="800" Height="500" 
+            <!-- ListTrashCan-->
+            <StackPanel Orientation="Vertical">
+                <ListView  Name="PlansInTrashCan_ListView" Width="1100" Height="500" 
                   ItemsSource="{x:Bind MyPlansTrashCanViewModel.PlansInTrashCan}"
                   ItemTemplate="{StaticResource VerticalFormat}">
-            </ListView>
-        </StackPanel>
+                </ListView>
+            </StackPanel>
 
-    </StackPanel>
+        </StackPanel>
+    </Viewbox>
 </Page>
