@@ -15,7 +15,7 @@
     </Page.Resources>
 
     <Viewbox>
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="20">
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="20" Height="650" Width="1100">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="300" />
@@ -64,7 +64,7 @@
 
                 <StackPanel>
                     <TextBlock Text="Description"/>
-                    <TextBox x:Name ="Description_TextBox" Text="{x:Bind PlanTripViewModel.Description}" BorderBrush="Black" BorderThickness="1" />
+                    <TextBox x:Name ="Description_TextBox" Text="{x:Bind PlanTripViewModel.Description}" BorderBrush="Black" TextWrapping="Wrap" Height="130" BorderThickness="1" />
                 </StackPanel>
 
                 <!-- Buttons -->
