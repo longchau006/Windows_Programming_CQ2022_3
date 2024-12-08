@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="20" Padding="50">
         <TextBlock Text="Enter password to confirm account deletion:" FontSize="20" HorizontalAlignment="Center"/>
         <PasswordBox x:Name="PasswordBox" Width="150"/>
         <Button HorizontalAlignment="Center" Click="DeleteAccountClick">Confirm Deletion</Button>

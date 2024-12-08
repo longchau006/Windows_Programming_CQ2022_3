@@ -71,72 +71,73 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Viewbox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Padding="10" Grid.Row="0">
-            <Grid Padding="50">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <StackPanel Padding="10" Grid.Row="0">
+                <Grid Padding="50">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Button x:Name="AddATrip_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationAddButtonClick">
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="Add" Foreground="Blue"/>
-                        <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
+                    <Button x:Name="AddATrip_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationAddButtonClick">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Add" Foreground="Blue"/>
+                            <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
+                        </StackPanel>
+                    </Button>
+
+                    <StackPanel Spacing="20" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <Button x:Name="FindATrip_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" >
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox x:Name="Search_TextBox" PlaceholderText="Trip Information!" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center" Height="40" TextChanged="OnSearchTextChanged"/>
+                                <SymbolIcon Symbol="Find" Foreground="Blue"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="Filter_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Filter" Foreground="Blue"/>
+                                <TextBlock Text="Filter" Margin="10,0,0,0" Foreground="Blue"/>
+                            </StackPanel>
+                            <Button.Flyout >
+                                <Flyout Placement="Bottom">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                            <CheckBox x:Name="Traveller_CheckBox"  Content="Traveller" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
+                                            <CheckBox x:Name="NonTraveller_CheckBox" Content="Non-Traveller" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                            <CheckBox x:Name="UpcomingTrips_CheckBox" Content="Upcoming Plans" Margin="0,0,5,0" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
+                                            <CheckBox x:Name="CurrentTrips_CheckBox" Content="Current Plans" Margin="0,0,5,0" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
+                                            <CheckBox x:Name="PastTrips_CheckBox" Content="Past Plans" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
                     </StackPanel>
-                </Button>
-
-                <StackPanel Spacing="20" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
-                    <Button x:Name="FindATrip_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" >
-                        <StackPanel Orientation="Horizontal">
-                            <TextBox x:Name="Search_TextBox" PlaceholderText="Trip Information!" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Center" Height="40" TextChanged="OnSearchTextChanged"/>
-                            <SymbolIcon Symbol="Find" Foreground="Blue"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button x:Name="Filter_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40">
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="Filter" Foreground="Blue"/>
-                            <TextBlock Text="Filter" Margin="10,0,0,0" Foreground="Blue"/>
-                        </StackPanel>
-                        <Button.Flyout >
-                            <Flyout Placement="Bottom">
-                                <StackPanel Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                        <CheckBox x:Name="Traveller_CheckBox"  Content="Traveller" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
-                                        <CheckBox x:Name="NonTraveller_CheckBox" Content="Non-Traveller" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
-                                    </StackPanel>
-
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                        <CheckBox x:Name="UpcomingTrips_CheckBox" Content="Upcoming Plans" Margin="0,0,5,0" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
-                                        <CheckBox x:Name="CurrentTrips_CheckBox" Content="Current Plans" Margin="0,0,5,0" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
-                                        <CheckBox x:Name="PastTrips_CheckBox" Content="Past Plans" Checked="OnNavigationCheckBoxChecked" Unchecked="OnNavigationCheckBoxUnchecked"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </StackPanel>
-        <!-- SchedulePanel -->
-        <StackPanel x:Name="Schedule_Panel" Grid.Row="1">
-            <ListView  Name="PlansInHome_ListView" Width="1100" Height="450" 
+                </Grid>
+            </StackPanel>
+            <!-- SchedulePanel -->
+            <StackPanel x:Name="Schedule_Panel" Grid.Row="1">
+                <ListView  Name="PlansInHome_ListView" Width="1100" Height="450" 
                               ItemsSource="{x:Bind MyPlansHomeViewModel.PlansInHome, Mode=OneWay}"
                               ItemTemplate="{StaticResource VerticalFormat}">
-            </ListView>
-        </StackPanel>
-        <!-- NoSchedulePanel -->
-        <StackPanel x:Name="NoSchedule_Panel" Grid.Row="1" HorizontalAlignment="Center" >
-            <!-- Hình ảnh mô phỏng lộ trình -->
-            <Grid HorizontalAlignment="Center" Margin="20,50,20,-90">
-                <!-- Đường gập ghềnh với ngã rẽ -->
-                <Path Data="M10,100 
+                </ListView>
+            </StackPanel>
+            <!-- NoSchedulePanel -->
+            <StackPanel x:Name="NoSchedule_Panel" Grid.Row="1" HorizontalAlignment="Center" >
+                <!-- Hình ảnh mô phỏng lộ trình -->
+                <Grid HorizontalAlignment="Center" Margin="20,50,20,-90">
+                    <!-- Đường gập ghềnh với ngã rẽ -->
+                    <Path Data="M10,100 
                       C30,50 80,150 120,80 
                       C150,200 200,50 240,100 
                       L290,50                 
@@ -150,24 +151,24 @@
                       C600,150 650,50 700,120" 
                  Stroke="Gray" StrokeThickness="3" StrokeDashArray="4,2"/>
 
-                <!-- Hình ảnh mô tả cho từng giai đoạn của lộ trình -->
-                <Image Source="ms-appx:///Assets/image_plane.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="-45,30,0,160"/>
-                <Image Source="ms-appx:///Assets/image_monument.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="90,0,0,230"/>
-                <Image Source="ms-appx:///Assets/image_monument1.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="250,0,0,190"/>
-                <Image Source="ms-appx:///Assets/image_train.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="345,0,0,90"/>
-                <Image Source="ms-appx:///Assets/image_monument3.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="420,40,0,0"/>
-                <Image Source="ms-appx:///Assets/image_car.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="510,0,0,100"/>
-                <Image Source="ms-appx:///Assets/image_monument4.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="570,0,0,230"/>
-                <Image Source="ms-appx:///Assets/image_monument2.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="680,80,0,120"/>
-            </Grid>
-            <!-- Nút thêm chuyến đi và thông báo không có chuyến đi -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                <TextBlock Text="No Schedule" FontSize="20" HorizontalAlignment="Center" Margin="10" Foreground="Gray"/>
-                <Button Content="Add a Trip" Width="200" HorizontalAlignment="Center" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationAddButtonClick" />
+                    <!-- Hình ảnh mô tả cho từng giai đoạn của lộ trình -->
+                    <Image Source="ms-appx:///Assets/image_plane.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="-45,30,0,160"/>
+                    <Image Source="ms-appx:///Assets/image_monument.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="90,0,0,230"/>
+                    <Image Source="ms-appx:///Assets/image_monument1.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="250,0,0,190"/>
+                    <Image Source="ms-appx:///Assets/image_train.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="345,0,0,90"/>
+                    <Image Source="ms-appx:///Assets/image_monument3.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="420,40,0,0"/>
+                    <Image Source="ms-appx:///Assets/image_car.png" Width="70" Height="70" HorizontalAlignment="Left" Margin="510,0,0,100"/>
+                    <Image Source="ms-appx:///Assets/image_monument4.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="570,0,0,230"/>
+                    <Image Source="ms-appx:///Assets/image_monument2.png" Width="90" Height="90" HorizontalAlignment="Left" Margin="680,80,0,120"/>
+                </Grid>
+                <!-- Nút thêm chuyến đi và thông báo không có chuyến đi -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                    <TextBlock Text="No Schedule" FontSize="20" HorizontalAlignment="Center" Margin="10" Foreground="Gray"/>
+                    <Button Content="Add a Trip" Width="200" HorizontalAlignment="Center" Style="{StaticResource AccentButtonStyle}" Click="OnNavigationAddButtonClick" />
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-    </Grid>
-
+        </Grid>
+    </Viewbox>
 
 </Page>
 

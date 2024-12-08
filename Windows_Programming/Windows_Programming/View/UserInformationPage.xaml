@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="20" VerticalAlignment="Center" HorizontalAlignment="Center" RowSpacing="10">
+    <Grid Padding="100" VerticalAlignment="Center" HorizontalAlignment="Center" RowSpacing="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>

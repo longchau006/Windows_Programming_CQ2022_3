@@ -21,15 +21,13 @@
         </Style>
     </Page.Resources>
 
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row = "0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+            <StackPanel Grid.Row = "0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
             <!-- Discover Button -->
             <Button x:Name="Discover_Button" Width="100" Height="100"  Style="{StaticResource ButtonStyle}" Click="OnNavigationButtonClick">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Spacing="5">

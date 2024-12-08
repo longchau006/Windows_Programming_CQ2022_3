@@ -258,85 +258,86 @@
 
     </Page.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <!-- Main Content -->
-        <StackPanel Grid.Row="0" Padding="20">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+    <Viewbox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- Main Content -->
+            <StackPanel Grid.Row="0" Padding="20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" Spacing="10" Padding="10">
-                    <TextBlock x:Name="NameTripAlone_TextBlock" Text="{x:Bind PlanTripViewModel.Name}"  FontSize="30" FontWeight="Bold" TextWrapping="Wrap"/>
-                    <TextBlock x:Name="LocationTripAlone_TextBlock" FontSize="18" >
+                    <StackPanel Grid.Column="0" Spacing="10" Padding="10">
+                        <TextBlock x:Name="NameTripAlone_TextBlock" Text="{x:Bind PlanTripViewModel.Name}"  FontSize="30" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="LocationTripAlone_TextBlock" FontSize="18" >
                          <Run Text="{x:Bind PlanTripViewModel.StartLocation}" />
                          <Run Text=" - " />
                          <Run Text="{x:Bind PlanTripViewModel.EndLocation}" />
-                    </TextBlock>
-                    <TextBlock x:Name="DateTripAlone_TextBlock" FontSize="18" >
+                        </TextBlock>
+                        <TextBlock x:Name="DateTripAlone_TextBlock" FontSize="18" >
                          <Run Text="{x:Bind PlanTripViewModel.StartDate}" />
                          <Run Text=" - " />
                          <Run Text="{x:Bind PlanTripViewModel.EndDate}" />
-                    </TextBlock>
+                        </TextBlock>
 
-                    <Button x:Name="ManageSharingAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="Link" />
-                            <TextBlock Text="Manage Sharing" Margin="10,0,0,0"/>
+                        <Button x:Name="ManageSharingAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Link" />
+                                <TextBlock Text="Manage Sharing" Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <Button x:Name="EditTripInfoAlone_Button" BorderBrush ="White" Foreground="Blue" Click="OnNavigationEditTripInfoForTripClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Edit" />
+                                    <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="MoreOptionsAlone_Button" BorderBrush ="White" Foreground="Blue">
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="More" />
+                                    <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                </StackPanel>
+                                <Button.Flyout >
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem x:Name="PrintTripAlone_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
+                                        <MenuFlyoutItem x:Name="MergeTripAlone_MenuFlyoutItem" Text="Merge Trip" Foreground="Blue"/>
+                                        <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" Click="OnNavigationDeleteTripClick"/>
+                                        <MenuFlyoutItem x:Name="ExportTripToCalendarAlone_MenuFlyoutItem" Text="Export Trip to Calendar" Foreground="Blue"/>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
                         </StackPanel>
-                    </Button>
-
-                    <StackPanel Orientation="Horizontal" Spacing="20">
-                        <Button x:Name="EditTripInfoAlone_Button" BorderBrush ="White" Foreground="Blue" Click="OnNavigationEditTripInfoForTripClick">
-                            <StackPanel Orientation="Horizontal">
-                                <SymbolIcon Symbol="Edit" />
-                                <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
-                            </StackPanel>
-                        </Button>
-                        <Button x:Name="MoreOptionsAlone_Button" BorderBrush ="White" Foreground="Blue">
-                            <StackPanel Orientation="Horizontal">
-                                <SymbolIcon Symbol="More" />
-                                <TextBlock Text="More_Options" Margin="10,0,0,5"/>
-                            </StackPanel>
-                            <Button.Flyout >
-                                <MenuFlyout Placement="Bottom">
-                                    <MenuFlyoutItem x:Name="PrintTripAlone_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
-                                    <MenuFlyoutItem x:Name="MergeTripAlone_MenuFlyoutItem" Text="Merge Trip" Foreground="Blue"/>
-                                    <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" Click="OnNavigationDeleteTripClick"/>
-                                    <MenuFlyoutItem x:Name="ExportTripToCalendarAlone_MenuFlyoutItem" Text="Export Trip to Calendar" Foreground="Blue"/>
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
                     </StackPanel>
-                </StackPanel>
 
-                <Image x:Name="TripAlone_Image" Source ="{x:Bind PlanTripViewModel.PlanImage}" Grid.Column="1" Width="200" Height="200" Stretch="UniformToFill" Margin="20" />
+                    <Image x:Name="TripAlone_Image" Source ="{x:Bind PlanTripViewModel.PlanImage}" Grid.Column="1" Width="200" Height="200" Stretch="UniformToFill" Margin="20" />
 
-            </Grid>
-        </StackPanel>
-        <!-- Add a Plan Button -->
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,10">
-            <Button x:Name="AddAPlan_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White" Click="OnNavigationAddActivitiesForTripClick">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Add" Foreground="Blue"/>
-                    <TextBlock Text="Add a Activities" Margin="10,0,0,0" Foreground="Blue"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
-        <!-- Schedule -->
-        <StackPanel x:Name="Schedule_Panel" Grid.Row="2">
-            <ListView  Name="Schedule_ListView" Width="1000" Height="300" 
+                </Grid>
+            </StackPanel>
+            <!-- Add a Plan Button -->
+            <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <Button x:Name="AddAPlan_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White" Click="OnNavigationAddActivitiesForTripClick">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Add" Foreground="Blue"/>
+                        <TextBlock Text="Add a Activities" Margin="10,0,0,0" Foreground="Blue"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <!-- Schedule -->
+            <StackPanel x:Name="Schedule_Panel" Grid.Row="2">
+                <ListView  Name="Schedule_ListView" Width="1000" Height="300" 
                ItemsSource="{x:Bind PlanTripViewModel.Activities, Mode=OneWay}"
                ItemTemplateSelector="{StaticResource ActivityTemplateSelector}">
-            </ListView>
-        </StackPanel>
-    </Grid>
-
+                </ListView>
+            </StackPanel>
+        </Grid>
+    </Viewbox>
 
 </Page>

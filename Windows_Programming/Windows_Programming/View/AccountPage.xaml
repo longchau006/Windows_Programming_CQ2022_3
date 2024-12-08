@@ -34,14 +34,15 @@
             </Grid>
         </SplitView.Pane>
 
-        <Grid Padding="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
-                <RowDefinition Height="90*"/>
-            </Grid.RowDefinitions>
-            <TextBlock x:Name="splitviewContent" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold" Padding="20" Style="{StaticResource BaseTextBlockStyle}" Grid.Row="0"/>
-            <Frame x:Name="AccountFrame" Grid.Row="1"/>
-        </Grid>
-        
+        <Viewbox>
+            <Grid Padding="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="90*"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="splitviewContent" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Padding="20" Style="{StaticResource BaseTextBlockStyle}" Grid.Row="0"/>
+                <Frame x:Name="AccountFrame" Grid.Row="1"/>
+            </Grid>
+        </Viewbox>
     </SplitView>
 </Page>
