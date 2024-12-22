@@ -4,15 +4,20 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Windows_Programming.View"
+    xmlns:myPath="using:Windows_Programming.Model"
+    xmlns:converters="using:Windows_Programming.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Trip Plan Application"
     mc:Ignorable="d">
-
+    
     <Grid x:Name="RootGrid">
         <Grid.RenderTransform>
             <CompositeTransform x:Name="RootTransform" />
         </Grid.RenderTransform>
+        <Grid.Resources>
+            <converters:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter"/>
+        </Grid.Resources>
 
         <NavigationView x:Name="Home_Nagigation" PaneDisplayMode="Left" IsSettingsVisible="False" IsBackEnabled="True" SelectionChanged="HomeNagigationSelectionChanged" BackRequested="OnBackRequested" CompactPaneLength="50" OpenPaneLength="150">
             <NavigationView.MenuItems>
@@ -30,6 +35,79 @@
             <Frame Name="contentNavigation"/>
 
         </NavigationView>
+
+        <!-- Floating Chat Button -->
+        <Button x:Name="ChatButton"
+                Click="ChatButton_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,0,20,20"
+                Width="50"
+                Height="50"
+                CornerRadius="25">
+            <FontIcon Glyph="&#xE8BD;" />
+            <!-- Chat icon -->
+        </Button>
+        <!-- Giao diện Chat-->
+        <Grid x:Name="ChatPanel"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      Width="360"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Stretch"
+      Margin="0,0,60,65"
+      Visibility="Collapsed"
+      BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+      BorderThickness="1"
+      CornerRadius="8">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Chat Support"
+              Padding="12"
+              Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+            <ScrollViewer Grid.Row="1"
+                 Padding="12">
+                <!-- Giao diện Chat
+                <ItemsControl ItemsSource="{x:Bind MyMessageChatViewModel.Messages}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate  x:DataType="myPath:Message">
+                            <Grid>
+                                <Border Background="{ThemeResource SystemListLowColor}"
+                                MaxWidth="240"
+                                Margin="0,4"
+                                Padding="12,8"
+                                CornerRadius="8"
+                                HorizontalAlignment="{x:Bind IsAI, Converter={StaticResource BoolToAlignmentConverter}}">
+                                    <TextBlock Text="{x:Bind Content}"
+                                     TextWrapping="Wrap"
+                                     FontSize="14"/>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                -->
+                
+                <StackPanel>
+                    <TextBlock Text="ABCD"></TextBlock>
+                    <TextBlock Text="ABCD"></TextBlock>
+                </StackPanel>
+                 
+                
+            
+            
+            </ScrollViewer>
+
+            <TextBox Grid.Row="2"
+             PlaceholderText="Type a message..."
+             Margin="12"/>
+        </Grid>
     </Grid>
 
 </Window>

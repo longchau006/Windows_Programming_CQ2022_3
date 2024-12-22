@@ -24,6 +24,7 @@ using System.Text;
 using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Windows_Programming.Helpers;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,9 +39,16 @@ namespace Windows_Programming.View
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         private static Account myAccount=null;
+        private static MessagesChatViewModel _myMessagesChatViewModel;
+        public MessagesChatViewModel MyMessageChatViewModel =>_myMessagesChatViewModel;
+
+        private bool isChatVisible = false;
+        // Change the Messages property to ObservableCollection
+
         public MainWindow() 
         {
             this.InitializeComponent();
+            // Initialize messages in constructor
             //Khoi tao user after go tu dang nhap hoac dang ki
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             myAccount = new Account
@@ -79,6 +87,9 @@ namespace Windows_Programming.View
 
             _myPlansInTrashCanViewModel = new PlansInTrashCanViewModel();
             _myPlansInTrashCanViewModel.Init();
+
+            _myMessagesChatViewModel = new MessagesChatViewModel();
+            _myMessagesChatViewModel.Init();
 
 
             //contentNavigation.Navigate(typeof(HomePage));
@@ -178,6 +189,21 @@ namespace Windows_Programming.View
             {
                 return myAccount;
             }
+        }
+
+        //ChatBot:
+
+        // Add this to your MainWindow class
+        // Change from static to instance property
+
+
+
+        private bool _isChatVisible = false;
+
+        private void ChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isChatVisible = !_isChatVisible;
+            ChatPanel.Visibility = _isChatVisible ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
