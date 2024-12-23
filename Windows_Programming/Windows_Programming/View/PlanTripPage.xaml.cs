@@ -16,6 +16,7 @@ using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
 using System.Diagnostics;
 using Windows_Programming.Database;
+using ClosedXML.Excel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -134,5 +135,121 @@ namespace Windows_Programming.View
             }
         }
 
+        public void OnNavigationViewExcelButtonClick(object sender, RoutedEventArgs e)
+        {
+           
+            MyPlansHomeViewModel.SortActivitiesByStartDate(PlanTripViewModel);
+            if (PlanTripViewModel == null)
+            {
+                // Hiển thị thông báo nếu không có kế hoạch nào được chọn
+                ContentDialog noPlanDialog = new ContentDialog
+                {
+                    Title = "No Plan Selected",
+                    Content = "Please select a plan to view in Excel.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                _ = noPlanDialog.ShowAsync();
+                return;
+            }
+
+            // Tạo workbook Excel
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.AddWorksheet("Plan " + PlanTripViewModel.Name);
+
+                // Ghi dữ liệu kế hoạch
+                worksheet.Cell(1, 1).Value = "NAME";
+                worksheet.Cell(1, 2).Value = PlanTripViewModel.Name;
+
+                worksheet.Cell(2, 1).Value = "LOCATION";
+                worksheet.Cell(2, 2).Value = PlanTripViewModel.StartLocation + " - " + PlanTripViewModel.EndLocation;
+
+                worksheet.Cell(3, 1).Value = "TIME";
+                worksheet.Cell(3, 2).Value = PlanTripViewModel.StartDate.ToString("dd/MM/yyyy") + " - " + PlanTripViewModel.EndDate.ToString("dd/MM/yyyy");
+
+                worksheet.Cell(4, 1).Value = "DESCRIPTION";
+                worksheet.Cell(4, 2).Value = PlanTripViewModel.Description;
+
+                worksheet.Cell(5, 1).Value = "LIST OF ACTIVITIES";
+                worksheet.Cell(6, 1).Value = "NAME";
+                worksheet.Cell(6, 2).Value = "TIME";
+                worksheet.Cell(6, 3).Value = "ACTIVITY";
+                worksheet.Cell(6, 4).Value = "DESCRIPTION";
+                worksheet.Cell(6, 5).Value = "TYPE";
+
+                int i = 7;
+
+                foreach (var activity in PlanTripViewModel.Activities)
+                {
+                    worksheet.Cell(i, 1).Value = activity.Name;
+                    worksheet.Cell(i, 2).Value = (activity.StartDate.HasValue ? activity.StartDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A") +
+                                                 " - " +
+                                                 (activity.EndDate.HasValue ? activity.EndDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A");
+
+                    if (activity is Model.Transport transport)
+                    {
+                        worksheet.Cell(i, 3).Value = "Travel by " +
+                                                     transport.Vehicle +
+                                                     " from " +
+                                                     transport.StartLocation +
+                                                     " to " +
+                                                     transport.EndLocation;
+                    }
+                    else if (activity is Model.Lodging lodging)
+                    {
+                        worksheet.Cell(i, 3).Value = "Stay " +
+                                                     lodging.RoomInfo +
+                                                     " - " +
+                                                     lodging.Address;
+                    }
+                    else if (activity is Model.Extend extend)
+                    {
+                        worksheet.Cell(i, 3).Value = extend.NameMore +
+                                                     extend.Venue +
+                                                     " - " +
+                                                     extend.Address;
+                    }
+                    else if (activity is Model.Activity)
+                    {
+                        worksheet.Cell(i, 3).Value = "Discover" +
+                                                     activity.Venue +
+                                                     " - " +
+                                                     activity.Address;
+                    }
+                    worksheet.Cell(i, 4).Value = activity.Description;
+                    worksheet.Cell(i, 5).Value = activity.Type;
+                    i++;
+                }
+                // Lưu workbook vào file tạm
+                string tempFilePath = Path.Combine(Path.GetTempPath(), "Plan " + PlanTripViewModel.Name + ".xlsx");
+                workbook.SaveAs(tempFilePath);
+
+                // Mở file Excel
+                OpenFile(tempFilePath);
+            }
+        }
+        private void OpenFile(string filePath)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Could not open the file: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                _ = errorDialog.ShowAsync();
+            }
+        }
     }
 }

@@ -201,34 +201,34 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0">
-            <TextBlock x:Name="NameExtend_TextBlock" Text="{x:Bind Name}" FontSize="20" />
-        </StackPanel>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="NameExtend_TextBlock" Text="{x:Bind Name}" FontSize="20" />
+                            </StackPanel>
 
-        <StackPanel Grid.Column="1">
-                 <Button x:Name="ExtendMoreOptions_Button" BorderBrush ="White" Foreground="Blue">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="More" />
-                    <TextBlock Text="More_Options" Margin="10,0,0,5"/>
-                </StackPanel>
-                <Button.Flyout >
-                    <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem x:Name="DeleteExtend_MenuFlyoutItem" Text="Delete " Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteActivityClick"/>
-                        <MenuFlyoutItem x:Name="EditExtend_MenuFlyoutItem" Text="Update" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationUpdateActivityClick"/>
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
-        </StackPanel>
-    </Grid>
-</StackPanel>
-                <StackPanel Grid.Row="1" >
+                            <StackPanel Grid.Column="1">
+                                <Button x:Name="ExtendMoreOptions_Button" BorderBrush ="White" Foreground="Blue">
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="More" />
+                                        <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                    </StackPanel>
+                                    <Button.Flyout >
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem x:Name="DeleteExtend_MenuFlyoutItem" Text="Delete " Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteActivityClick"/>
+                                            <MenuFlyoutItem x:Name="EditExtend_MenuFlyoutItem" Text="Update" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationUpdateActivityClick"/>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" >
                     <TextBlock x:Name="TimeExtend_TextBlock" FontSize="18">
                     <Run Text="{x:Bind StartDate}"/>
                     <Run Text="-" />
@@ -286,7 +286,7 @@
                          <Run Text="{x:Bind PlanTripViewModel.EndDate}" />
                         </TextBlock>
 
-                        <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                        <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" Click="OnNavigationViewExcelButtonClick">
                             <StackPanel Orientation="Horizontal">
                                 <SymbolIcon Symbol="Link" />
                                 <TextBlock Text="View Excel" Margin="10,0,0,0"/>
