@@ -24,6 +24,7 @@ using Google.Cloud.Firestore.V1;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using WinRT.Interop;
+using System.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -389,7 +390,7 @@ namespace Windows_Programming.View
         {
             // Lấy thông tin kế hoạch cần hiển thị
             var plan = (sender as Button).DataContext as Plan; // Hàm này trả về kế hoạch đang được chọn
-            MyPlansHomeViewModel.SortActivitiesByStartDate(plan);
+
             if (plan == null)
             {
                 // Hiển thị thông báo nếu không có kế hoạch nào được chọn
@@ -417,7 +418,7 @@ namespace Windows_Programming.View
                 worksheet.Cell(2, 2).Value = plan.StartLocation + " - " + plan.EndLocation;
 
                 worksheet.Cell(3, 1).Value = "TIME";
-                worksheet.Cell(3, 2).Value = plan.StartDate.ToString("dd/MM/yyyy") + " - " + plan.EndDate.ToString("dd/MM/yyyy");
+                worksheet.Cell(3, 2).Value = plan.StartDate.ToString("dd/MM/yyyy hh:mm:ss tt") + " - " + plan.EndDate.ToString("dd/MM/yyyy hh:mm:ss tt");
 
                 worksheet.Cell(4, 1).Value = "DESCRIPTION";
                 worksheet.Cell(4, 2).Value = plan.Description;
@@ -429,47 +430,50 @@ namespace Windows_Programming.View
                 worksheet.Cell(6, 4).Value = "DESCRIPTION";
                 worksheet.Cell(6, 5).Value = "TYPE";
                 int i = 7;
-
-                foreach (var activity in plan.Activities)
+                if (plan.Activities != null && plan.Activities.Any())
                 {
-                    worksheet.Cell(i, 1).Value = activity.Name;
-                    worksheet.Cell(i, 2).Value = (activity.StartDate.HasValue ? activity.StartDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A") +
-                                                 " - " +
-                                                 (activity.EndDate.HasValue ? activity.EndDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A");
+                    MyPlansHomeViewModel.SortActivitiesByStartDate(plan);
+                    foreach (var activity in plan.Activities)
+                    {
+                        worksheet.Cell(i, 1).Value = activity.Name;
+                        worksheet.Cell(i, 2).Value = (activity.StartDate.HasValue ? activity.StartDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A") +
+                                                     " - " +
+                                                     (activity.EndDate.HasValue ? activity.EndDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A");
 
-                    if (activity is Model.Transport transport)
-                    {
-                        worksheet.Cell(i, 3).Value = "Travel by " +
-                                                     transport.Vehicle +
-                                                     " from " +
-                                                     transport.StartLocation +
-                                                     " to " +
-                                                     transport.EndLocation;
+                        if (activity is Model.Transport transport)
+                        {
+                            worksheet.Cell(i, 3).Value = "Travel by " +
+                                                         transport.Vehicle +
+                                                         " from " +
+                                                         transport.StartLocation +
+                                                         " to " +
+                                                         transport.EndLocation;
+                        }
+                        else if (activity is Model.Lodging lodging)
+                        {
+                            worksheet.Cell(i, 3).Value = "Stay " +
+                                                         lodging.RoomInfo +
+                                                         " - " +
+                                                         lodging.Address;
+                        }
+                        else if (activity is Model.Extend extend)
+                        {
+                            worksheet.Cell(i, 3).Value = extend.NameMore +
+                                                         extend.Venue +
+                                                         " - " +
+                                                         extend.Address;
+                        }
+                        else if (activity is Model.Activity)
+                        {
+                            worksheet.Cell(i, 3).Value = "Discover " +
+                                                         activity.Venue +
+                                                         " - " +
+                                                         activity.Address;
+                        }
+                        worksheet.Cell(i, 4).Value = activity.Description;
+                        worksheet.Cell(i, 5).Value = activity.Type;
+                        i++;
                     }
-                    else if (activity is Model.Lodging lodging)
-                    {
-                        worksheet.Cell(i, 3).Value = "Stay " +
-                                                     lodging.RoomInfo +
-                                                     " - " +
-                                                     lodging.Address;
-                    }
-                    else if (activity is Model.Extend extend)
-                    {
-                        worksheet.Cell(i, 3).Value = extend.NameMore +
-                                                     extend.Venue +
-                                                     " - " +
-                                                     extend.Address;
-                    }
-                    else if (activity is Model.Activity)
-                    {
-                        worksheet.Cell(i, 3).Value = "Discover" +
-                                                     activity.Venue +
-                                                     " - " +
-                                                     activity.Address;
-                    }
-                    worksheet.Cell(i, 4).Value = activity.Description;
-                    worksheet.Cell(i, 5).Value = activity.Type;
-                    i++;
                 }
                     // Lưu workbook vào file tạm
                     string tempFilePath = Path.Combine(Path.GetTempPath(), "Plan " + plan.Name+ ".xlsx");
@@ -504,8 +508,14 @@ namespace Windows_Programming.View
 
         private async void OnNavigationUploadButtonClick(object sender, RoutedEventArgs e)
         {
-            // 1. Chọn file Excel
-            // Tạo FileOpenPicker để chọn tệp
+            int newId = MyPlansHomeViewModel.PlansInHome.Any() ? (MyPlansHomeViewModel.PlansInHome.Max(plan => plan.Id)) + 1 : 0;
+            if (MyPlansInTrashCanViewModel.PlansInTrashCan.Count > 0 && (MyPlansInTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id) + 1) > newId)
+            {
+                newId = MyPlansInTrashCanViewModel.PlansInTrashCan.Max(plan => plan.Id) + 1;
+            }
+
+            string selectedImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "danang.jpg");
+
             var openPicker = new FileOpenPicker();
             Window tempWindow = new();
             var hWnd = WindowNative.GetWindowHandle(tempWindow);
@@ -517,48 +527,244 @@ namespace Windows_Programming.View
             StorageFile file = await openPicker.PickSingleFileAsync();
             tempWindow.Close();
 
-            /*if (file != null)
+            if (file != null)
             {
                 using (var stream = await file.OpenStreamForReadAsync())
                 using (var workbook = new XLWorkbook(stream))
                 {
-                    var worksheet = workbook.Worksheet(1); // Sheet đầu tiên
+                    var worksheet = workbook.Worksheet(1); 
                     try
                     {
-                        // Giả sử thông tin kế hoạch nằm trên các ô cụ thể
-                        var planName = worksheet.Cell(1, 2).GetValue<string>();
-                        var startDateStr = worksheet.Cell(2, 2).GetValue<string>();
-                        var endDateStr = worksheet.Cell(3, 2).GetValue<string>();
-                        var description = worksheet.Cell(4, 2).GetValue<string>();
-                        var startLocation = worksheet.Cell(5, 2).GetValue<string>();
-                        var endLocation = worksheet.Cell(6, 2).GetValue<string>();
+                        string planName = worksheet.Cell(1, 2).GetValue<string>();
+                        string locationStr = worksheet.Cell(2, 2).GetValue<string>();
+                        string timeStr = worksheet.Cell(3, 2).GetValue<string>();
+                        string description = worksheet.Cell(4, 2).GetValue<string>();
 
-                        // Chuyển đổi ngày giờ nếu cần
-                        DateTime? startDate = DateTime.TryParse(startDateStr, out var parsedStartDate) ? parsedStartDate : null;
-                        DateTime? endDate = DateTime.TryParse(endDateStr, out var parsedEndDate) ? parsedEndDate : null;
+                        var locations = locationStr.Split(" - ");
+                        string startLocation = locations[0];
+                        string endLocation = locations[1];
 
-                        // 3. Tạo đối tượng Plan
-                        var newPlan = new Plan
+                        var dates = timeStr.Split(" - ");
+                        DateTime? startDate = null;
+                        DateTime? endDate = null;
+
+                        string dateTimeFormat = "dd/MM/yyyy hh:mm:ss tt";
+                        CultureInfo culture = CultureInfo.InvariantCulture;
+
+                        if (dates.Length == 2)
                         {
-                            Name = planName,
-                            StartDate = startDate,
-                            EndDate = endDate,
-                            Description = description,
-                            StartLocation = startLocation,
-                            EndLocation = endLocation
-                        };
+                            startDate = DateTime.TryParseExact(dates[0], dateTimeFormat, culture, DateTimeStyles.None, out DateTime parsedStartDate)
+                                        ? parsedStartDate : null;
 
-                        // 4. Thêm vào danh sách kế hoạch
-                        MyPlansHomeViewModel.PlansInHome.Add(newPlan);
+                            endDate = DateTime.TryParseExact(dates[1], dateTimeFormat, culture, DateTimeStyles.None, out DateTime parsedEndDate)
+                                      ? parsedEndDate : null;
+                        }
 
-                        // Thông báo thành công
-                        ContentDialog dialog = new ContentDialog
+                        // Ghi đối tượng plan lên Firestore
+                        try
                         {
-                            Title = "Upload Successful",
-                            Content = "Plan has been successfully added!",
-                            CloseButtonText = "OK"
+                            Plan newPlan = new Plan
+                            {
+                                Id = newId,
+                                Name = planName,
+                                PlanImage = selectedImagePath,
+                                StartLocation = startLocation,
+                                EndLocation = endLocation,
+                                StartDate = startDate.Value,
+                                EndDate = endDate.Value,
+                                Description = description,
+                                Type = true
+                            };
+                            // Phải thêm vào ni trc chứ k nó lỗi khi xóa hết rồi thêm lại cái mới nó sẽ dính ảnh của ảnh cũ
+                            MyPlansHomeViewModel.AddPlanInHome(newPlan);
+
+
+                            System.Diagnostics.Debug.WriteLine($"aaaaaaaaaaaaaaa Image Path: {newPlan.PlanImage}");
+
+                            string imageUrl = null;
+
+                            if (!string.IsNullOrEmpty(selectedImagePath))
+                            {
+
+                                imageUrl = await firebaseServices.UploadImageToStorage(
+                                    selectedImagePath,
+                                    accountId,
+                                    newId
+                                );
+                            }
+                            System.Diagnostics.Debug.WriteLine($"Image luc add vao va imageUrl {imageUrl}");
+                            newPlan.PlanImage = imageUrl;
+                            System.Diagnostics.Debug.WriteLine($"bbbbbbbbbbb Image Path: {MyPlansHomeViewModel.PlansInHome[0].PlanImage}");
+                            await firebaseServices.CreatePlanInFirestore(accountId, newPlan);
+
+                            foreach (var plan in MyPlansHomeViewModel.PlansInHome)
+                            {
+                                if (plan.Id == newId)
+                                {
+                                    if (plan.Activities == null)
+                                    {
+                                        plan.Activities = new List<Windows_Programming.Model.Activity>();
+                                    }
+                                    int i = 7;
+                                    while (!string.IsNullOrWhiteSpace(worksheet.Cell(i, 1).GetValue<string>()))
+                                    {
+                                        Windows_Programming.Model.Activity newActivity = null;
+
+                                        string nameA = worksheet.Cell(i, 1).GetValue<string>();
+                                        string timeAStr = worksheet.Cell(i, 2).GetValue<string>();
+                                        string activityStr = worksheet.Cell(i, 3).GetValue<string>();
+                                        string descriptionA = worksheet.Cell(i, 4).GetValue<string>();
+                                        int type = worksheet.Cell(i, 5).GetValue<int>();
+
+                                        var dateAs = timeAStr.Split(" - ");
+                                        DateTime? startDateA = null;
+                                        DateTime? endDateA = null;
+
+                                        if (dates.Length == 2)
+                                        {
+                                            startDateA = DateTime.TryParseExact(dateAs[0], dateTimeFormat, culture, DateTimeStyles.None, out DateTime parsedAStartDate)
+                                                        ? parsedAStartDate : null;
+
+                                            endDateA = DateTime.TryParseExact(dateAs[1], dateTimeFormat, culture, DateTimeStyles.None, out DateTime parsedAEndDate)
+                                                      ? parsedAEndDate : null;
+                                        }
+
+                                        if (type == 1)
+                                        {
+                                            int lastDashIndex = activityStr.LastIndexOf('-');
+                                            string address = activityStr.Substring(lastDashIndex + 1).Trim();
+                                            string venus = activityStr.Substring("Discover".Length, lastDashIndex - "Discover".Length).Trim();
+
+                                            newActivity = new Windows_Programming.Model.Activity
+                                            {
+                                                Id = plan.Activities.Any() ? (plan.Activities.Max(activity => activity.Id) + 1) : 0,
+                                                Type = 1,
+                                                Name = nameA,
+                                                Venue = venus,
+                                                Address = address,
+                                                StartDate = startDateA,
+                                                EndDate = endDateA,
+                                                Description = descriptionA
+                                            };
+                                        }
+                                        else if (type == 2)
+                                        {
+                                            int byIndex = activityStr.IndexOf("by") + "by".Length;
+                                            int fromIndex = activityStr.IndexOf("from");
+                                            int toIndex = activityStr.IndexOf("to");
+
+                                            string vehicle = activityStr.Substring(byIndex, fromIndex - byIndex).Trim();
+                                            string startLocationA = activityStr.Substring(fromIndex + "from".Length, toIndex - (fromIndex + "from".Length)).Trim();
+                                            string endLocationA = activityStr.Substring(toIndex + "to".Length).Trim();
+
+                                            newActivity = new Windows_Programming.Model.Transport
+                                            {
+                                                Id = plan.Activities.Any() ? (plan.Activities.Max(activity => activity.Id) + 1) : 0,
+                                                Type = 2,
+                                                Name = nameA,
+                                                Vehicle = vehicle,
+                                                StartLocation = startLocationA,
+                                                EndLocation = endLocationA,
+                                                StartDate = startDateA,
+                                                EndDate = endDateA,
+                                                Description = descriptionA
+                                            };
+                                        }
+                                        else if (type == 3)
+                                        {
+                                            int lastDashIndex = activityStr.LastIndexOf('-');
+                                            string address = activityStr.Substring(lastDashIndex + 1).Trim();
+                                            string room = activityStr.Substring("Stay".Length, lastDashIndex - "Stay".Length).Trim();
+
+                                            newActivity = new Windows_Programming.Model.Lodging
+                                            {
+                                                Id = plan.Activities.Any() ? (plan.Activities.Max(activity => activity.Id) + 1) : 0,
+                                                Type = 3,
+                                                Name = nameA,
+                                                RoomInfo = room,
+                                                Address = address,
+                                                StartDate = startDateA,
+                                                EndDate = endDateA,
+                                                Description = descriptionA
+                                            };
+                                        }
+                                        else if (type == 4)
+                                        {
+                                            int secondUpperIndex = FindSecondUpperCase(activityStr);
+                                            int lastDashIndex = activityStr.LastIndexOf('-');
+
+                                            string act = activityStr.Substring(0, secondUpperIndex).Trim();
+                                            string address = activityStr.Substring(lastDashIndex + 1).Trim();
+                                            string venus = activityStr.Substring(secondUpperIndex, lastDashIndex - secondUpperIndex).Trim();
+
+                                            newActivity = new Windows_Programming.Model.Extend
+                                            {
+                                                Id = plan.Activities.Any() ? (plan.Activities.Max(activity => activity.Id) + 1) : 0,
+                                                Type = 4,
+                                                NameMore = act,
+                                                Name = nameA,
+                                                Venue = venus,
+                                                Address = address,
+                                                StartDate = startDateA,
+                                                EndDate = endDateA,
+                                                Description = descriptionA
+                                            };
+                                        }
+
+                                        try
+                                        {
+                                            await firebaseServices.CreateActivityInFirestore(accountId, plan.Id, newActivity);
+
+                                            MyPlansHomeViewModel.AddActivitiesForPlan(plan, newActivity);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
+
+                                            ContentDialog errorDialog = new ContentDialog
+                                            {
+                                                Title = "Error",
+                                                Content = "Failed to save the activity to Firestore.",
+                                                CloseButtonText = "OK",
+                                                XamlRoot = this.XamlRoot
+                                            };
+                                            _ = errorDialog.ShowAsync();
+                                            return;
+                                        }
+                                        i++;
+                                    }
+
+                                }
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
+
+                            ContentDialog errorDialog = new ContentDialog
+                            {
+                                Title = "Error",
+                                Content = "Failed to save the trip to Firestore.",
+                                CloseButtonText = "OK",
+                                XamlRoot = this.XamlRoot
+                            };
+                            _ = errorDialog.ShowAsync();
+                            return;
+                        }
+
+                        // Hiển thị thông báo thành công
+                        ContentDialog successDialog = new ContentDialog
+                        {
+                            Title = "Trip Added Successfully",
+                            Content = "Your trip has been saved.",
+                            CloseButtonText = "OK",
+                            XamlRoot = this.XamlRoot
                         };
-                        await dialog.ShowAsync();
+                        _ = successDialog.ShowAsync();
+
+                        Frame.Navigate(typeof(HomePage));
+
                     }
                     catch (Exception ex)
                     {
@@ -575,7 +781,6 @@ namespace Windows_Programming.View
             }
             else
             {
-                // Người dùng không chọn tệp nào
                 var dialog = new ContentDialog
                 {
                     Title = "No File Selected",
@@ -584,9 +789,25 @@ namespace Windows_Programming.View
                     XamlRoot = this.XamlRoot
                 };
                 await dialog.ShowAsync();
-            }*/
+            }
 
         }
 
+        static int FindSecondUpperCase(string str)
+        {
+            bool firstUpperFound = false;
+            for (int i = 1; i < str.Length; i++)
+            {
+                if (char.IsUpper(str[i]))
+                {
+                    if (firstUpperFound)
+                    {
+                        return i;
+                    }
+                    firstUpperFound = true;
+                }
+            }
+            return str.Length; 
+        }
     }
 }
