@@ -45,6 +45,12 @@ namespace Windows_Programming.ViewModel
             //new Message { Content = "Excellent choice! Paris is beautiful this time of year. Would you like to see our available Paris tour packages?", IsAI = true })
             OnPropertyChanged(nameof(Messages));
         }
+        public void AddNewMessageInHome(Message newMessage)
+        {
+
+            Messages.Add(newMessage);
+            OnPropertyChanged(nameof(Messages)); // Thông báo rằng PlansInHome đã thay đổi
+        }
     }
 }
 

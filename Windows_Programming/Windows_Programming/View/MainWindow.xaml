@@ -47,15 +47,15 @@
         </Button>
         <!-- Giao diện Chat-->
         <Grid x:Name="ChatPanel"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-      Width="360"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Stretch"
-      Margin="0,0,60,65"
-      Visibility="Collapsed"
-      BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-      BorderThickness="1"
-      CornerRadius="8">
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Width="360"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Stretch"
+            Margin="0,0,60,65"
+            Visibility="Collapsed"
+            BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -63,11 +63,13 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Chat Support"
+            <TextBlock Text="ChatGemini Support"
               Padding="12"
               Style="{ThemeResource SubtitleTextBlockStyle}"/>
 
-            <ScrollViewer Grid.Row="1" 
+            <ScrollViewer 
+              x:Name="ChatScrollViewer" 
+              Grid.Row="1" 
               Padding="12"
               VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{x:Bind MyMessageChatViewModel.Messages, Mode=OneWay}">
@@ -89,10 +91,27 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+            <StackPanel Width="Auto" Orientation="Horizontal" Grid.Row="2" Margin="12">
+                <!-- TextBox for multi-line input -->
+                <TextBox 
+                x:Name="MessageTextBox"
+                PlaceholderText="Type a message..."
+                VerticalAlignment="Bottom"
+                AcceptsReturn="True"
+                TextWrapping="Wrap"
+                MaxHeight="100"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                HorizontalAlignment="Stretch"
+                PreviewKeyDown="MessageTextBox_PreviewKeyDown"
+                Width="290"
+                Margin="0,0,0,0"/>
 
-            <TextBox Grid.Row="2"
-             PlaceholderText="Type a message..."
-             Margin="12"/>
+                <!-- Send Button -->
+                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SendButton_Click">
+                    <SymbolIcon Symbol="Send" />
+                </Button>
+            </StackPanel>
+
         </Grid>
     </Grid>
 

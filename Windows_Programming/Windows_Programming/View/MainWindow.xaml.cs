@@ -25,6 +25,8 @@ using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Windows_Programming.Helpers;
 using System.Collections.ObjectModel;
+using Google.Protobuf;
+using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,8 +41,7 @@ namespace Windows_Programming.View
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         private static Account myAccount=null;
-        private static MessagesChatViewModel _myMessagesChatViewModel;
-        public MessagesChatViewModel MyMessageChatViewModel =>_myMessagesChatViewModel;
+
 
         private bool isChatVisible = false;
         // Change the Messages property to ObservableCollection
@@ -193,11 +194,6 @@ namespace Windows_Programming.View
 
         //ChatBot:
 
-        // Add this to your MainWindow class
-        // Change from static to instance property
-
-
-
         private bool _isChatVisible = false;
 
         private void ChatButton_Click(object sender, RoutedEventArgs e)
@@ -205,5 +201,52 @@ namespace Windows_Programming.View
             _isChatVisible = !_isChatVisible;
             ChatPanel.Visibility = _isChatVisible ? Visibility.Visible : Visibility.Collapsed;
         }
+        private static MessagesChatViewModel _myMessagesChatViewModel;
+        public MessagesChatViewModel MyMessageChatViewModel => _myMessagesChatViewModel;
+        private async void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
+            {
+                Message newMessage = new Message { Content = MessageTextBox.Text, IsAI = false };
+                MessageTextBox.Text = string.Empty;
+                MyMessageChatViewModel.AddNewMessageInHome(newMessage);
+                Message newAIMessage = new Message { Content = "Loading", IsAI = true };
+                MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                // Wait for UI to update
+                await Task.Delay(50);
+
+                // Scroll to bottom
+                ChatScrollViewer.UpdateLayout();
+                ChatScrollViewer.ChangeView(null, double.MaxValue, null);
+            }
+        }
+
+
+        private void MessageTextBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Key pressed: {e.Key}");
+
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                //System.Diagnostics.Debug.WriteLine("Enter detected");
+                bool isShiftPressed = (Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
+
+                if (!isShiftPressed)
+                {
+                    //System.Diagnostics.Debug.WriteLine("No shift - sending message");
+                    e.Handled = true;
+                    SendButton_Click(sender, e);
+                    MessageTextBox.Text = string.Empty;
+                }
+                else
+                {
+                   // System.Diagnostics.Debug.WriteLine("Shift pressed - new line");
+                }
+            }
+        }
+
+
+
+
     }
 }
