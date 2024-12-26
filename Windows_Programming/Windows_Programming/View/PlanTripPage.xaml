@@ -286,12 +286,20 @@
                          <Run Text="{x:Bind PlanTripViewModel.EndDate}" />
                         </TextBlock>
 
-                        <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
-                            <StackPanel Orientation="Horizontal">
-                                <SymbolIcon Symbol="Link" />
-                                <TextBlock Text="View Excel" Margin="10,0,0,0"/>
-                            </StackPanel>
-                        </Button>
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Link" />
+                                    <TextBlock Text="View Excel" Margin="10,0,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="ExportPDF_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" Click="ExportPDF_Click" >
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Download" />
+                                    <TextBlock Text="Export PDF" Margin="10,0,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="20">
                             <Button x:Name="EditTripInfoAlone_Button" BorderBrush ="White" Foreground="Blue" Click="OnNavigationEditTripInfoForTripClick">
