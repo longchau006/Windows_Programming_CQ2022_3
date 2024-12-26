@@ -1,23 +1,19 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Gaming.Input.ForceFeedback;
-using Windows.System;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
+using WinRT.Interop;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
+using System.IO;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -116,6 +112,33 @@ namespace Windows_Programming.View
             }
         }
 
+        private async void ExportPDF_Click(object sender, RoutedEventArgs e)
+        {
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+            Window w = new();
+            var hWnd = WindowNative.GetWindowHandle(w);
+            InitializeWithWindow.Initialize(savePicker, hWnd);
+            savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            savePicker.FileTypeChoices.Add("PDF", new List<string>() { ".pdf" });
+            savePicker.SuggestedFileName = "TravelPlan";
+            Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
+            w.Close();
+            if (file != null)
+            {
+                var selectedPlan = (sender as Button).DataContext as Plan;
+                ExportPlanToPdf(selectedPlan, file.Path);
+
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Success",
+                    Content = "Exported to PDF successfully",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
+        }
+
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
             string searchText = Search_TextBox.Text.ToLower();
@@ -164,7 +187,7 @@ namespace Windows_Programming.View
                 check3 = true;
                 check4 = false;
                 check5 = false;
-               
+
             }
             else if (selectedCheckBox == PastTrips_CheckBox)
             {
@@ -184,7 +207,7 @@ namespace Windows_Programming.View
             }
 
             CheckFilter();
-            
+
         }
         private void OnNavigationCheckBoxUnchecked(object sender, RoutedEventArgs e)
         {
@@ -211,7 +234,7 @@ namespace Windows_Programming.View
                 check5 = false;
             }
 
-            CheckFilter();  
+            CheckFilter();
         }
 
         public void CheckFilter()
@@ -376,6 +399,79 @@ namespace Windows_Programming.View
                     }
                 }
                 return;
+            }
+        }
+
+        public static void ExportPlanToPdf(Plan plan, string filePath)
+        {
+            string fontPath = @"C:\Windows\Fonts\times.ttf"; // Đường dẫn tới phông chữ Arial
+
+            if (!File.Exists(fontPath))
+            {
+                throw new FileNotFoundException("Font không tồn tại. Kiểm tra đường dẫn tới phông chữ Arial hoặc sử dụng một phông chữ khác.");
+            }
+
+            PdfFont font = PdfFontFactory.CreateFont(fontPath, iText.IO.Font.PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+
+            using (PdfWriter writer = new PdfWriter(filePath))
+            {
+                using (PdfDocument pdf = new PdfDocument(writer))
+                {
+                    Document document = new Document(pdf);
+
+                    // Sử dụng phông chữ tùy chỉnh
+                    document.SetFont(font);
+
+                    // Tiêu đề kế hoạch
+                    document.Add(new Paragraph(plan.Name)
+                        .SetFontSize(20)
+                        .SetFont(font)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                        .SetMarginBottom(20));
+
+                    // Thông tin tổng quan
+                    document.Add(new Paragraph($"Địa điểm đi: {plan.StartLocation}")
+                        .SetFontSize(12));
+                    document.Add(new Paragraph($"Địa điểm đến: {plan.EndLocation}")
+                        .SetFontSize(12));
+                    document.Add(new Paragraph($"Ngày bắt đầu: {plan.StartDate:yyyy-MM-dd}")
+                        .SetFontSize(12));
+                    document.Add(new Paragraph($"Ngày kết thúc: {plan.EndDate:yyyy-MM-dd}")
+                        .SetFontSize(12));
+                    document.Add(new Paragraph($"Mô tả: {plan.Description}")
+                        .SetFontSize(12)
+                        .SetMarginBottom(20));
+
+                    // Các hoạt động
+                    foreach (var activity in plan.Activities)
+                    {
+                        string activityType = activity switch
+                        {
+                            Transport => "Phương tiện di chuyển",
+                            Lodging => "Chỗ ở",
+                            Extend => "Hoạt động khác",
+                            _ => "Địa điểm vui chơi"
+                        };
+
+                        document.Add(new Paragraph(activityType)
+                            .SetFontSize(16)
+                            .SetFont(font)
+                            .SetUnderline()
+                            .SetMarginTop(10));
+
+                        document.Add(new Paragraph($"- Tên sự kiện: {activity.Name}"));
+                        document.Add(new Paragraph($"- Địa điểm: {activity.Venue}"));
+                        document.Add(new Paragraph($"- Địa chỉ: {activity.Address}"));
+                        document.Add(new Paragraph($"- Bắt đầu: {activity.StartDate:yyyy-MM-dd HH:mm}"));
+                        document.Add(new Paragraph($"- Kết thúc: {activity.EndDate:yyyy-MM-dd HH:mm}"));
+                        document.Add(new Paragraph($"- Mô tả: {activity.Description}")
+                            .SetMarginBottom(10));
+                    }
+
+                    document.Close();
+                }
+
+
             }
         }
     }

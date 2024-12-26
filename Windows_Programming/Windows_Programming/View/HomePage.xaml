@@ -34,13 +34,21 @@
                             <Run Text="{x:Bind EndDate}" />
                         </TextBlock>
 
-                        <Button x:Name="ViewExcel_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
-                            <StackPanel Orientation="Horizontal">
-                                <SymbolIcon Symbol="Link" />
-                                <TextBlock Text="View Excel" Margin="10,0,0,0"/>
-                            </StackPanel>
-                        </Button>
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <Button x:Name="ViewExcel_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Link" />
+                                    <TextBlock Text="View Excel" Margin="10,0,0,0"/>
+                                </StackPanel>
+                            </Button>
 
+                            <Button x:Name="ExportPDF_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" Click="ExportPDF_Click" >
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Download" />
+                                    <TextBlock Text="Export PDF" Margin="10,0,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="20">
                             <Button x:Name="EditTripInfo_Button" BorderBrush ="White" Foreground="Blue" DataContext="{x:Bind}" Click="OnNavigationEditTripInfoForTripClick">
                                 <StackPanel Orientation="Horizontal">
