@@ -5,19 +5,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Windows_Programming.View"
     xmlns:myPath="using:Windows_Programming.Model"
-    xmlns:converters="using:Windows_Programming.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Trip Plan Application"
     mc:Ignorable="d">
-    
+
     <Grid x:Name="RootGrid">
         <Grid.RenderTransform>
             <CompositeTransform x:Name="RootTransform" />
         </Grid.RenderTransform>
-        <Grid.Resources>
-            <converters:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter"/>
-        </Grid.Resources>
 
         <NavigationView x:Name="Home_Nagigation" PaneDisplayMode="Left" IsSettingsVisible="False" IsBackEnabled="True" SelectionChanged="HomeNagigationSelectionChanged" BackRequested="OnBackRequested" CompactPaneLength="50" OpenPaneLength="150">
             <NavigationView.MenuItems>
@@ -51,62 +47,78 @@
         </Button>
         <!-- Giao diện Chat-->
         <Grid x:Name="ChatPanel"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-      Width="360"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Stretch"
-      Margin="0,0,60,65"
-      Visibility="Collapsed"
-      BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-      BorderThickness="1"
-      CornerRadius="8">
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Width="360"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Stretch"
+            Margin="0,0,60,65"
+            Visibility="Collapsed"
+            BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ChatGemini Support"
+                  Padding="12"
+                  Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                 <TextBlock x:Name="ResultTextBlock"
+                  TextWrapping="Wrap"
+                  Padding="16"
+                  Foreground="Red"
+                  Style="{StaticResource BodyTextBlockStyle}"/>
+            </StackPanel>
+            
 
-            <TextBlock Text="Chat Support"
+            <ScrollViewer 
+              x:Name="ChatScrollViewer" 
+              Grid.Row="1" 
               Padding="12"
-              Style="{ThemeResource SubtitleTextBlockStyle}"/>
-
-            <ScrollViewer Grid.Row="1"
-                 Padding="12">
-                <!-- Giao diện Chat
-                <ItemsControl ItemsSource="{x:Bind MyMessageChatViewModel.Messages}">
+              VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{x:Bind MyMessageChatViewModel.Messages, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate  x:DataType="myPath:Message">
-                            <Grid>
-                                <Border Background="{ThemeResource SystemListLowColor}"
-                                MaxWidth="240"
-                                Margin="0,4"
-                                Padding="12,8"
-                                CornerRadius="8"
-                                HorizontalAlignment="{x:Bind IsAI, Converter={StaticResource BoolToAlignmentConverter}}">
-                                    <TextBlock Text="{x:Bind Content}"
-                                     TextWrapping="Wrap"
-                                     FontSize="14"/>
+                        <DataTemplate x:DataType="myPath:Message">
+                            <Grid Margin="0,4">
+                                <Border MaxWidth="240"
+                            Background="{x:Bind BackgroundColor}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,8"
+                           HorizontalAlignment="{x:Bind Alignment}">
+                                    <TextBlock Text="{x:Bind Content}" 
+                                 TextWrapping="Wrap"/>
                                 </Border>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                -->
-                
-                <StackPanel>
-                    <TextBlock Text="ABCD"></TextBlock>
-                    <TextBlock Text="ABCD"></TextBlock>
-                </StackPanel>
-                 
-                
-            
-            
             </ScrollViewer>
+            <StackPanel Width="Auto" Orientation="Horizontal" Grid.Row="2" Margin="12">
+                <!-- TextBox for multi-line input -->
+                <TextBox 
+                x:Name="MessageTextBox"
+                PlaceholderText="Type a message..."
+                VerticalAlignment="Bottom"
+                AcceptsReturn="True"
+                TextWrapping="Wrap"
+                MaxHeight="100"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                HorizontalAlignment="Stretch"
+                PreviewKeyDown="MessageTextBox_PreviewKeyDown"
+                Width="290"
+                Margin="0,0,0,0"/>
 
-            <TextBox Grid.Row="2"
-             PlaceholderText="Type a message..."
-             Margin="12"/>
+                <!-- Send Button -->
+                <Button x:Name="SendButton"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SendButton_Click">
+                    <SymbolIcon Symbol="Send" />
+                </Button>
+            </StackPanel>
+
         </Grid>
     </Grid>
 
