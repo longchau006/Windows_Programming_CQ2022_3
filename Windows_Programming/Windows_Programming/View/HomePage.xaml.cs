@@ -984,22 +984,5 @@ namespace Windows_Programming.View
             }
 
         }
-
-        static int FindSecondUpperCase(string str)
-        {
-            bool firstUpperFound = false;
-            for (int i = 1; i < str.Length; i++)
-            {
-                if (char.IsUpper(str[i]))
-                {
-                    if (firstUpperFound)
-                    {
-                        return i;
-                    }
-                    firstUpperFound = true;
-                }
-            }
-            return str.Length; 
-        }
     }
 }
