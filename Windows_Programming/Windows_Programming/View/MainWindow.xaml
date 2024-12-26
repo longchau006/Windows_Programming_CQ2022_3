@@ -62,10 +62,17 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
-            <TextBlock Text="ChatGemini Support"
-              Padding="12"
-              Style="{ThemeResource SubtitleTextBlockStyle}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ChatGemini Support"
+                  Padding="12"
+                  Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                 <TextBlock x:Name="ResultTextBlock"
+                  TextWrapping="Wrap"
+                  Padding="16"
+                  Foreground="Red"
+                  Style="{StaticResource BodyTextBlockStyle}"/>
+            </StackPanel>
+            
 
             <ScrollViewer 
               x:Name="ChatScrollViewer" 
@@ -107,7 +114,7 @@
                 Margin="0,0,0,0"/>
 
                 <!-- Send Button -->
-                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SendButton_Click">
+                <Button x:Name="SendButton"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="SendButton_Click">
                     <SymbolIcon Symbol="Send" />
                 </Button>
             </StackPanel>

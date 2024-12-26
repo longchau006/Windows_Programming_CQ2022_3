@@ -27,6 +27,8 @@ using Windows_Programming.Helpers;
 using System.Collections.ObjectModel;
 using Google.Protobuf;
 using Windows.UI.Core;
+using static Google.Rpc.Context.AttributeContext.Types;
+using Windows_Programming.Configs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,6 +40,8 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        //ChatBot
+        private readonly GeminiService _geminiService;
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         private static Account myAccount=null;
@@ -52,6 +56,9 @@ namespace Windows_Programming.View
             // Initialize messages in constructor
             //Khoi tao user after go tu dang nhap hoac dang ki
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            _myMessagesChatViewModel = new MessagesChatViewModel();
+            _myMessagesChatViewModel.Init();
+            _geminiService = new GeminiService(EnvVariables.API_GEMINI_KEY);
             myAccount = new Account
             {
                 Id = -1,
@@ -89,8 +96,7 @@ namespace Windows_Programming.View
             _myPlansInTrashCanViewModel = new PlansInTrashCanViewModel();
             _myPlansInTrashCanViewModel.Init();
 
-            _myMessagesChatViewModel = new MessagesChatViewModel();
-            _myMessagesChatViewModel.Init();
+
 
 
             //contentNavigation.Navigate(typeof(HomePage));
@@ -207,11 +213,45 @@ namespace Windows_Programming.View
         {
             if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
             {
+                String sendMessageText = MessageTextBox.Text;
                 Message newMessage = new Message { Content = MessageTextBox.Text, IsAI = false };
                 MessageTextBox.Text = string.Empty;
                 MyMessageChatViewModel.AddNewMessageInHome(newMessage);
-                Message newAIMessage = new Message { Content = "Loading", IsAI = true };
-                MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+
+                //Message newAIMessage = new Message { Content = "Loading", IsAI = true };
+                //MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                // Wait for UI to update
+                await Task.Delay(50);
+
+                // Scroll to bottom
+                ChatScrollViewer.UpdateLayout();
+                ChatScrollViewer.ChangeView(null, double.MaxValue, null);
+
+
+                //Wait for chatbot
+                try
+                {
+                    SendButton.IsEnabled = false;
+                    ResultTextBlock.Text = "Processing...";
+
+                    string prompt = sendMessageText;
+                    string response = await _geminiService.ProcessPrompt(prompt);
+
+                    Message newAIMessage = new Message { Content = $"{response}", IsAI = true };
+                    MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                    ResultTextBlock.Text = $"";
+                }
+                catch (Exception ex)
+                {
+                    Message newAIMessage = new Message { Content = "Error occurre", IsAI = true };
+                    MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                }
+                finally
+                {
+                    SendButton.IsEnabled = true;
+                }
+
+
                 // Wait for UI to update
                 await Task.Delay(50);
 
@@ -224,7 +264,7 @@ namespace Windows_Programming.View
 
         private void MessageTextBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"Key pressed: {e.Key}");
+            //System.Diagnostics.Debug.WriteLine($"Key pressed: {e.Key}");
 
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
