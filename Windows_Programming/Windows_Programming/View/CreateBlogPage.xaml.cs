@@ -17,6 +17,8 @@ using WinRT.Interop;
 using Windows.Storage;
 using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
+using System.Buffers.Text;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,14 +33,19 @@ namespace Windows_Programming.View
         private ContentDialog loadingDialog;
 
         public string imagePath { get; set; }
+        public byte[] imageBytes { get; set; }
+        private string url_text { get; set; }
 
         public CreateBlogPage()
         {
             this.InitializeComponent();
+            imageBytes = null;
+            url_text = ImageURL.Text;
         }
 
         private async void SubmitClick(object sender, RoutedEventArgs e)
         {
+
             CreateLoadingDialog();
             Blog blog = new Blog();
             blog.Title = Title_TextBox.Text;
@@ -75,6 +82,18 @@ namespace Windows_Programming.View
 
         private async void ChooseImageClick(object sender, RoutedEventArgs e)
         {
+            if (imageBytes != null)
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "You can't choose image from URL and local file at the same time",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
             var openPicker = new FileOpenPicker();
             Window w = new();
             var hWnd = WindowNative.GetWindowHandle(w);
@@ -124,6 +143,77 @@ namespace Windows_Programming.View
                 IsSecondaryButtonEnabled = false,
                 XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
             };
+        }
+
+        private async void GetImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (ImageURL.Text == url_text)
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "You must enter image url",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(ImageURL.Text))
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "You must enter image url",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+
+            if (imagePath != null)
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "You can't choose image from URL and local file at the same time",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+            if (imagePath != null)
+            {
+                return;
+            }
+
+            try {
+                var httpClient = new System.Net.Http.HttpClient();
+                imageBytes = await httpClient.GetByteArrayAsync(ImageURL.Text);
+
+            } catch (Exception ex)
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = ex.Message,
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+            url.Content = "Downloaded";
+            url.IsEnabled = false;
+            // get folder Assets of current app
+            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+
+            StorageFile storageFile = await storageFolder.CreateFileAsync("image.jpg", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteBytesAsync(storageFile, imageBytes);
+            imagePath = storageFile.Path;
         }
     }
 }
