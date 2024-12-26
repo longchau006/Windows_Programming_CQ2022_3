@@ -25,6 +25,10 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using WinRT.Interop;
 using System.Globalization;
+using Windows.Devices.Sensors;
+using DocumentFormat.OpenXml.Office2016.Excel;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -150,7 +154,7 @@ namespace Windows_Programming.View
 
         private void OnNavigationCheckBoxChecked(object sender, RoutedEventArgs e)
         {
-            var selectedCheckBox = sender as CheckBox;
+            var selectedCheckBox = sender as Microsoft.UI.Xaml.Controls.CheckBox;
 
             if (selectedCheckBox == Traveller_CheckBox)
             {
@@ -195,7 +199,7 @@ namespace Windows_Programming.View
         }
         private void OnNavigationCheckBoxUnchecked(object sender, RoutedEventArgs e)
         {
-            var uncheckedCheckBox = sender as CheckBox;
+            var uncheckedCheckBox = sender as Microsoft.UI.Xaml.Controls.CheckBox;
 
             if (uncheckedCheckBox == Traveller_CheckBox)
             {
@@ -408,7 +412,7 @@ namespace Windows_Programming.View
             // Tạo workbook Excel
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.AddWorksheet("Plan " + plan.Name);
+                var worksheet = workbook.AddWorksheet("Plan " + (plan.Name.Length <= 20 ? plan.Name : plan.Name.Substring(0, 20)));
 
                 // Ghi dữ liệu kế hoạch
                 worksheet.Cell(1, 1).Value = "NAME";
@@ -428,7 +432,6 @@ namespace Windows_Programming.View
                 worksheet.Cell(6, 2).Value = "TIME";
                 worksheet.Cell(6, 3).Value = "ACTIVITY";
                 worksheet.Cell(6, 4).Value = "DESCRIPTION";
-                worksheet.Cell(6, 5).Value = "TYPE";
                 int i = 7;
                 if (plan.Activities != null && plan.Activities.Any())
                 {
@@ -471,18 +474,18 @@ namespace Windows_Programming.View
                                                          activity.Address;
                         }
                         worksheet.Cell(i, 4).Value = activity.Description;
-                        worksheet.Cell(i, 5).Value = activity.Type;
                         i++;
                     }
                 }
-                    // Lưu workbook vào file tạm
-                    string tempFilePath = Path.Combine(Path.GetTempPath(), "Plan " + plan.Name+ ".xlsx");
+                // Lưu workbook vào file tạm
+                string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "Plan " + (plan.Name.Length <= 20 ? plan.Name : plan.Name.Substring(0, 20)) + ".xlsx");
                 workbook.SaveAs(tempFilePath);
 
                 // Mở file Excel
                 OpenFile(tempFilePath);
             }
         }
+
         private void OpenFile(string filePath)
         {
             try
@@ -529,6 +532,21 @@ namespace Windows_Programming.View
 
             if (file != null)
             {
+                // Kiểm tra định dạng tệp
+                string fileExtension = Path.GetExtension(file.Path).ToLower();
+                if (fileExtension != ".xlsx" && fileExtension != ".xls")
+                {
+                    // Hiển thị thông báo lỗi nếu định dạng không hợp lệ
+                    var dialog = new ContentDialog
+                    {
+                        Title = "Invalid File Format",
+                        Content = "Please select an image file with a valid format (XLSX or XLS).",
+                        CloseButtonText = "OK",
+                        XamlRoot = this.XamlRoot
+                    };
+                    await dialog.ShowAsync();
+                    return;
+                }
                 using (var stream = await file.OpenStreamForReadAsync())
                 using (var workbook = new XLWorkbook(stream))
                 {
@@ -540,6 +558,28 @@ namespace Windows_Programming.View
                         string timeStr = worksheet.Cell(3, 2).GetValue<string>();
                         string description = worksheet.Cell(4, 2).GetValue<string>();
 
+                        // Danh sách chứa các thông báo lỗi
+                        List<string> errorMessages = new List<string>();
+                        // Kiểm tra các trường có bị trống hay không
+                        if (string.IsNullOrWhiteSpace(planName) ||
+                            string.IsNullOrWhiteSpace(locationStr) ||
+                            string.IsNullOrWhiteSpace(timeStr)||
+                            !locationStr.Contains("-")||
+                            !timeStr.Contains("-"))
+                                errorMessages.Add("File error form");
+                        // Nếu có lỗi, hiển thị thông báo
+                        if (errorMessages.Count > 0)
+                        {
+                            ContentDialog dialog = new ContentDialog
+                            {
+                                Title = "Incomplete or Invalid Information",
+                                Content = string.Join("\n", errorMessages),
+                                CloseButtonText = "OK",
+                                XamlRoot = this.XamlRoot
+                            };
+                            _ = dialog.ShowAsync();
+                            return;
+                        }
                         var locations = locationStr.Split(" - ");
                         string startLocation = locations[0];
                         string endLocation = locations[1];
@@ -559,6 +599,33 @@ namespace Windows_Programming.View
                             endDate = DateTime.TryParseExact(dates[1], dateTimeFormat, culture, DateTimeStyles.None, out DateTime parsedEndDate)
                                       ? parsedEndDate : null;
                         }
+                        // Kiểm tra các trường có bị trống hay không
+                        if (string.IsNullOrWhiteSpace(startLocation) ||
+                            string.IsNullOrWhiteSpace(endLocation) ||
+                            startDate == null ||
+                            endDate == null ||
+                            (startDate != null && endDate != null && startDate >= endDate))
+                            errorMessages.Add("File error form");
+                        // Nếu có lỗi, hiển thị thông báo
+                        if (errorMessages.Count > 0)
+                        {
+                            ContentDialog dialog = new ContentDialog
+                            {
+                                Title = "Incomplete or Invalid Information",
+                                Content = string.Join("\n", errorMessages),
+                                CloseButtonText = "OK",
+                                XamlRoot = this.XamlRoot
+                            };
+                            _ = dialog.ShowAsync();
+                            return;
+                        }
+                        ContentDialog loadingDialog = new ContentDialog
+                        {
+                            Title = "Create New Plan From Excel...",
+                            Content = new ProgressRing { IsActive = true },
+                            XamlRoot = this.XamlRoot
+                        };
+                        loadingDialog.ShowAsync();
 
                         // Ghi đối tượng plan lên Firestore
                         try
@@ -614,8 +681,31 @@ namespace Windows_Programming.View
                                         string timeAStr = worksheet.Cell(i, 2).GetValue<string>();
                                         string activityStr = worksheet.Cell(i, 3).GetValue<string>();
                                         string descriptionA = worksheet.Cell(i, 4).GetValue<string>();
-                                        int type = worksheet.Cell(i, 5).GetValue<int>();
 
+                                        // Kiểm tra các trường có bị trống hay không
+                                        if (string.IsNullOrWhiteSpace(nameA) ||
+                                            string.IsNullOrWhiteSpace(timeAStr) ||
+                                            string.IsNullOrWhiteSpace(activityStr) ||
+                                            (!activityStr.Contains("Discover") && 
+                                                !activityStr.Contains("Travel") && 
+                                                !activityStr.Contains("Stay") && 
+                                                !activityStr.Contains("-")) ||
+                                            !timeStr.Contains("-"))
+                                                errorMessages.Add("File error form");
+                                        // Nếu có lỗi, hiển thị thông báo
+                                        if (errorMessages.Count > 0)
+                                        {
+                                            loadingDialog.Hide();
+                                            ContentDialog dialog = new ContentDialog
+                                            {
+                                                Title = "Incomplete or Invalid Information",
+                                                Content = string.Join("\n", errorMessages),
+                                                CloseButtonText = "OK",
+                                                XamlRoot = this.XamlRoot
+                                            };
+                                            _ = dialog.ShowAsync();
+                                            return;
+                                        }
                                         var dateAs = timeAStr.Split(" - ");
                                         DateTime? startDateA = null;
                                         DateTime? endDateA = null;
@@ -628,12 +718,53 @@ namespace Windows_Programming.View
                                             endDateA = DateTime.TryParseExact(dateAs[1], dateTimeFormat, culture, DateTimeStyles.None, out DateTime parsedAEndDate)
                                                       ? parsedAEndDate : null;
                                         }
+                                        // Kiểm tra các trường có bị trống hay không
+                                        if (startDateA == null ||
+                                            endDateA == null ||
+                                            plan.StartDate > startDateA ||
+                                            startDateA > endDateA || 
+                                            endDateA > plan.EndDate)
+                                                errorMessages.Add("File error form");
+                                        // Nếu có lỗi, hiển thị thông báo
+                                        if (errorMessages.Count > 0)
+                                        {
+                                            loadingDialog.Hide();
+                                            ContentDialog dialog = new ContentDialog
+                                            {
+                                                Title = "Incomplete or Invalid Information",
+                                                Content = string.Join("\n", errorMessages),
+                                                CloseButtonText = "OK",
+                                                XamlRoot = this.XamlRoot
+                                            };
+                                            _ = dialog.ShowAsync();
 
-                                        if (type == 1)
+                                            return;
+                                        }
+
+                                        if (activityStr.Contains("Discover"))
                                         {
                                             int lastDashIndex = activityStr.LastIndexOf('-');
                                             string address = activityStr.Substring(lastDashIndex + 1).Trim();
                                             string venus = activityStr.Substring("Discover".Length, lastDashIndex - "Discover".Length).Trim();
+
+                                            // Kiểm tra các trường có bị trống hay không
+                                            if (string.IsNullOrWhiteSpace(address) ||
+                                                string.IsNullOrWhiteSpace(venus) )
+                                                    errorMessages.Add("File error form");
+                                            // Nếu có lỗi, hiển thị thông báo
+                                            if (errorMessages.Count > 0)
+                                            {
+                                                loadingDialog.Hide();
+                                                ContentDialog dialog = new ContentDialog
+                                                {
+                                                    Title = "Incomplete or Invalid Information",
+                                                    Content = string.Join("\n", errorMessages),
+                                                    CloseButtonText = "OK",
+                                                    XamlRoot = this.XamlRoot
+                                                };
+                                                _ = dialog.ShowAsync();
+                                                return;
+                                            }
 
                                             newActivity = new Windows_Programming.Model.Activity
                                             {
@@ -647,7 +778,7 @@ namespace Windows_Programming.View
                                                 Description = descriptionA
                                             };
                                         }
-                                        else if (type == 2)
+                                        else if (activityStr.Contains("Travel"))
                                         {
                                             int byIndex = activityStr.IndexOf("by") + "by".Length;
                                             int fromIndex = activityStr.IndexOf("from");
@@ -656,6 +787,26 @@ namespace Windows_Programming.View
                                             string vehicle = activityStr.Substring(byIndex, fromIndex - byIndex).Trim();
                                             string startLocationA = activityStr.Substring(fromIndex + "from".Length, toIndex - (fromIndex + "from".Length)).Trim();
                                             string endLocationA = activityStr.Substring(toIndex + "to".Length).Trim();
+
+                                            // Kiểm tra các trường có bị trống hay không
+                                            if (string.IsNullOrWhiteSpace(vehicle) ||
+                                                string.IsNullOrWhiteSpace(startLocationA) ||
+                                                string.IsNullOrWhiteSpace(endLocationA))
+                                                    errorMessages.Add("File error form");
+                                            // Nếu có lỗi, hiển thị thông báo
+                                            if (errorMessages.Count > 0)
+                                            {
+                                                loadingDialog.Hide();
+                                                ContentDialog dialog = new ContentDialog
+                                                {
+                                                    Title = "Incomplete or Invalid Information",
+                                                    Content = string.Join("\n", errorMessages),
+                                                    CloseButtonText = "OK",
+                                                    XamlRoot = this.XamlRoot
+                                                };
+                                                _ = dialog.ShowAsync();
+                                                return;
+                                            }
 
                                             newActivity = new Windows_Programming.Model.Transport
                                             {
@@ -670,11 +821,30 @@ namespace Windows_Programming.View
                                                 Description = descriptionA
                                             };
                                         }
-                                        else if (type == 3)
+                                        else if (activityStr.Contains("Stay"))
                                         {
                                             int lastDashIndex = activityStr.LastIndexOf('-');
                                             string address = activityStr.Substring(lastDashIndex + 1).Trim();
                                             string room = activityStr.Substring("Stay".Length, lastDashIndex - "Stay".Length).Trim();
+
+                                            // Kiểm tra các trường có bị trống hay không
+                                            if (string.IsNullOrWhiteSpace(address) ||
+                                                string.IsNullOrWhiteSpace(room))
+                                                errorMessages.Add("File error form");
+                                            // Nếu có lỗi, hiển thị thông báo
+                                            if (errorMessages.Count > 0)
+                                            {
+                                                loadingDialog.Hide();
+                                                ContentDialog dialog = new ContentDialog
+                                                {
+                                                    Title = "Incomplete or Invalid Information",
+                                                    Content = string.Join("\n", errorMessages),
+                                                    CloseButtonText = "OK",
+                                                    XamlRoot = this.XamlRoot
+                                                };
+                                                _ = dialog.ShowAsync();
+                                                return;
+                                            }
 
                                             newActivity = new Windows_Programming.Model.Lodging
                                             {
@@ -688,14 +858,35 @@ namespace Windows_Programming.View
                                                 Description = descriptionA
                                             };
                                         }
-                                        else if (type == 4)
+                                        else 
                                         {
-                                            int secondUpperIndex = FindSecondUpperCase(activityStr);
+                                            int firstSpaceIndex = activityStr.IndexOf(' ');
                                             int lastDashIndex = activityStr.LastIndexOf('-');
 
-                                            string act = activityStr.Substring(0, secondUpperIndex).Trim();
+                                            string act = activityStr.Substring(0, firstSpaceIndex).Trim();
                                             string address = activityStr.Substring(lastDashIndex + 1).Trim();
-                                            string venus = activityStr.Substring(secondUpperIndex, lastDashIndex - secondUpperIndex).Trim();
+                                            string venus = activityStr.Substring(firstSpaceIndex + 1, lastDashIndex - firstSpaceIndex - 1).Trim();
+
+                                            // Kiểm tra các trường có bị trống hay không
+                                            if (string.IsNullOrWhiteSpace(act) ||
+                                                string.IsNullOrWhiteSpace(address) ||
+                                                string.IsNullOrWhiteSpace(venus))
+
+                                                errorMessages.Add("File error form");
+                                            // Nếu có lỗi, hiển thị thông báo
+                                            if (errorMessages.Count > 0)
+                                            {
+                                                loadingDialog.Hide();
+                                                ContentDialog dialog = new ContentDialog
+                                                {
+                                                    Title = "Incomplete or Invalid Information",
+                                                    Content = string.Join("\n", errorMessages),
+                                                    CloseButtonText = "OK",
+                                                    XamlRoot = this.XamlRoot
+                                                };
+                                                _ = dialog.ShowAsync();
+                                                return;
+                                            }
 
                                             newActivity = new Windows_Programming.Model.Extend
                                             {
@@ -719,6 +910,7 @@ namespace Windows_Programming.View
                                         }
                                         catch (Exception ex)
                                         {
+                                            loadingDialog.Hide();
                                             Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
 
                                             ContentDialog errorDialog = new ContentDialog
@@ -733,7 +925,7 @@ namespace Windows_Programming.View
                                         }
                                         i++;
                                     }
-
+                                    break;    
                                 }
                             }
 
@@ -741,7 +933,7 @@ namespace Windows_Programming.View
                         catch (Exception ex)
                         {
                             Debug.WriteLine($"Failed to save to Firestore: {ex.Message}");
-
+                            loadingDialog.Hide();
                             ContentDialog errorDialog = new ContentDialog
                             {
                                 Title = "Error",
@@ -752,7 +944,7 @@ namespace Windows_Programming.View
                             _ = errorDialog.ShowAsync();
                             return;
                         }
-
+                        loadingDialog.Hide();
                         // Hiển thị thông báo thành công
                         ContentDialog successDialog = new ContentDialog
                         {
