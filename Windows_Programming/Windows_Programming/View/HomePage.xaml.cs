@@ -14,6 +14,7 @@ using iText.Layout.Properties;
 using iText.IO.Font.Constants;
 using iText.Kernel.Font;
 using System.IO;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,6 +26,7 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        private ContentDialog loadingDialog;
         private FirebaseServicesDAO firebaseServices;
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
         public PlansInTrashCanViewModel MyPlansInTrashCanViewModel => MainWindow.MyPlansTrashCanViewModel;
@@ -112,6 +114,11 @@ namespace Windows_Programming.View
             }
         }
 
+        private async Task ExportPlanToPdfAsync(Plan plan, string filePath)
+        {
+            await Task.Run(() => ExportPlanToPdf(plan, filePath));
+        }
+
         private async void ExportPDF_Click(object sender, RoutedEventArgs e)
         {
             var savePicker = new Windows.Storage.Pickers.FileSavePicker();
@@ -126,8 +133,10 @@ namespace Windows_Programming.View
             if (file != null)
             {
                 var selectedPlan = (sender as Button).DataContext as Plan;
-                ExportPlanToPdf(selectedPlan, file.Path);
-
+                CreateLoadingDialog();
+                var loadingTask = loadingDialog.ShowAsync();
+                await ExportPlanToPdfAsync(selectedPlan, file.Path);
+                loadingDialog.Hide();
                 ContentDialog dialog = new ContentDialog
                 {
                     Title = "Success",
@@ -429,6 +438,22 @@ namespace Windows_Programming.View
                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                         .SetMarginBottom(20));
 
+                    // image
+                    if (plan.PlanImage != null)
+                    {
+                        try
+                        {
+                            iText.Layout.Element.Image image = new iText.Layout.Element.Image(iText.IO.Image.ImageDataFactory.Create(plan.PlanImage))
+                                                                        .SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.CENTER)
+                                                                        .SetMaxWidth(400);
+                            document.Add(image.SetMarginBottom(20));
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+
                     // Thông tin tổng quan
                     document.Add(new Paragraph($"Địa điểm đi: {plan.StartLocation}")
                         .SetFontSize(12));
@@ -474,5 +499,39 @@ namespace Windows_Programming.View
 
             }
         }
+
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
+        }
+
     }
 }

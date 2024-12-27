@@ -23,6 +23,7 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
 using iText.IO.Font.Constants;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -34,6 +35,7 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class PlanTripPage : Page
     {
+        private ContentDialog loadingDialog;
         private FirebaseServicesDAO firebaseServices;
         public Plan PlanTripViewModel { get; set; }
         public PlansInHomeViewModel MyPlansHomeViewModel => MainWindow.MyPlansHomeViewModel;
@@ -98,7 +100,7 @@ namespace Windows_Programming.View
         }
         private void OnNavigationAddActivitiesForTripClick(object sender, RoutedEventArgs e)
         {
-                Frame.Navigate(typeof(AddActivitiesTripPage), PlanTripViewModel);
+            Frame.Navigate(typeof(AddActivitiesTripPage), PlanTripViewModel);
         }
 
         private async void OnNavigationDeleteActivityClick(object sender, RoutedEventArgs e)
@@ -135,10 +137,15 @@ namespace Windows_Programming.View
         {
             var selectedActivity = (sender as MenuFlyoutItem).CommandParameter as Model.Activity;
             if (selectedActivity != null)
-            { 
+            {
                 var parameters = Tuple.Create(PlanTripViewModel, selectedActivity);
                 Frame.Navigate(typeof(EditActivityPage), parameters);
             }
+        }
+
+        private async Task ExportPlanToPdfAsync(Plan plan, string filePath)
+        {
+            await Task.Run(() => ExportPlanToPdf(plan, filePath));
         }
 
         private async void ExportPDF_Click(object sender, RoutedEventArgs e)
@@ -154,9 +161,11 @@ namespace Windows_Programming.View
             w.Close();
             if (file != null)
             {
+                CreateLoadingDialog();
+                var loadingTask = loadingDialog.ShowAsync();
                 var selectedPlan = (sender as Button).DataContext as Plan;
-                ExportPlanToPdf(selectedPlan, file.Path);
-
+                await ExportPlanToPdfAsync(selectedPlan, file.Path);
+                loadingDialog.Hide();
                 ContentDialog dialog = new ContentDialog
                 {
                     Title = "Success",
@@ -194,6 +203,22 @@ namespace Windows_Programming.View
                         .SetFont(font)
                         .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                         .SetMarginBottom(20));
+
+                    // image
+                    if (plan.PlanImage != null)
+                    {
+                        try
+                        {
+                            iText.Layout.Element.Image image = new iText.Layout.Element.Image(iText.IO.Image.ImageDataFactory.Create(plan.PlanImage))
+                                                                        .SetHorizontalAlignment(iText.Layout.Properties.HorizontalAlignment.CENTER)
+                                                                        .SetMaxWidth(400);
+                            document.Add(image.SetMarginBottom(20));
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
 
                     // Thông tin tổng quan
                     document.Add(new Paragraph($"Địa điểm đi: {plan.StartLocation}")
@@ -239,6 +264,38 @@ namespace Windows_Programming.View
 
 
             }
+        }
+        private void CreateLoadingDialog()
+        {
+            StackPanel dialogContent = new StackPanel
+            {
+                Spacing = 10,
+                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center
+            };
+
+            ProgressRing progressRing = new ProgressRing
+            {
+                IsActive = true,
+                Width = 50,
+                Height = 50
+            };
+
+            TextBlock messageText = new TextBlock
+            {
+                Text = "Please wait...",
+                HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center
+            };
+
+            dialogContent.Children.Add(progressRing);
+            dialogContent.Children.Add(messageText);
+
+            loadingDialog = new ContentDialog
+            {
+                Content = dialogContent,
+                IsPrimaryButtonEnabled = false,
+                IsSecondaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot  // Set the XamlRoot from the current page
+            };
         }
 
     }
