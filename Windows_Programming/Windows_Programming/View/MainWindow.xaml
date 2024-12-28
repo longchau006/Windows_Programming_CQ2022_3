@@ -62,13 +62,31 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="ChatGemini Support"
-                  Padding="12"
-                  Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                 <TextBlock x:Name="ResultTextBlock"
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="ChatGemini Support"
+                              Margin="20,8,0,0"
+                              Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                    <!-- Menu Button with Flyout Function-->
+                    <Button Margin="20,12,0,10" Padding="0">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuFlyoutItem Text="Change user infor" Click="MenuFlyoutItem_ChangeUserInfor"/>
+                                <MenuFlyoutItem Text="Add Blog" Click="MenuFlyoutItem_AddBlog"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                        <SymbolIcon Symbol="More"/>
+                    </Button>
+                    <!-- Delete Button -->
+                    <Button x:Name="DeleteHistoryButton" Padding="0" Margin="60,10,0,10"  HorizontalAlignment="Right" VerticalAlignment="Center" Click="DeleteHistoryButton_Click">
+                        <SymbolIcon Symbol="Delete"  Foreground="Red" />
+                    </Button>
+                </StackPanel>
+                <TextBlock x:Name="ResultTextBlock"
+                  Visibility="Collapsed"
+                  TextAlignment="Center"
                   TextWrapping="Wrap"
-                  Padding="16"
+                  Padding="4"
                   Foreground="Red"
                   Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
@@ -82,18 +100,23 @@
                 <ItemsControl ItemsSource="{x:Bind MyMessageChatViewModel.Messages, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="myPath:Message">
-                            <Grid Margin="0,4">
+                            <StackPanel Margin="0,4" Orientation="Vertical" HorizontalAlignment="{x:Bind Alignment}">
+                                <TextBlock Text="{x:Bind GetFormattedTimeMessage}"
+                                    Margin="4,0,4,0"
+                                    FontSize="8"
+                                    HorizontalAlignment="{x:Bind Alignment}"     
+                                    TextWrapping="Wrap"/>
                                 <Border MaxWidth="240"
-                            Background="{x:Bind BackgroundColor}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="12,8"
-                           HorizontalAlignment="{x:Bind Alignment}">
+                                        Background="{x:Bind BackgroundColor}"
+                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="12,8"
+                                        >
                                     <TextBlock Text="{x:Bind Content}" 
                                  TextWrapping="Wrap"/>
                                 </Border>
-                            </Grid>
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
