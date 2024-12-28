@@ -202,6 +202,7 @@ namespace Windows_Programming.View
 
         private bool _isChatVisible = false;
 
+        //Hide/Display Chatbox
         private void ChatButton_Click(object sender, RoutedEventArgs e)
         {
             _isChatVisible = !_isChatVisible;
@@ -209,12 +210,14 @@ namespace Windows_Programming.View
         }
         private static MessagesChatViewModel _myMessagesChatViewModel;
         public MessagesChatViewModel MyMessageChatViewModel => _myMessagesChatViewModel;
+
+        //Send Message
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
             {
                 String sendMessageText = MessageTextBox.Text;
-                Message newMessage = new Message { Content = MessageTextBox.Text, IsAI = false };
+                Message newMessage = new Message { Content = MessageTextBox.Text, IsAI = false, TimeMessage = DateTime.Now };
                 MessageTextBox.Text = string.Empty;
                 MyMessageChatViewModel.AddNewMessageInHome(newMessage);
 
@@ -232,18 +235,22 @@ namespace Windows_Programming.View
                 try
                 {
                     SendButton.IsEnabled = false;
+                    ResultTextBlock.Visibility = Visibility.Visible;
                     ResultTextBlock.Text = "Processing...";
 
                     string prompt = sendMessageText;
                     string response = await _geminiService.ProcessPrompt(prompt);
 
-                    Message newAIMessage = new Message { Content = $"{response}", IsAI = true };
+                    Message newAIMessage = new Message { Content = $"{response}", IsAI = true, TimeMessage = DateTime.Now };
                     MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                    ResultTextBlock.Visibility = Visibility.Collapsed;
                     ResultTextBlock.Text = $"";
                 }
                 catch (Exception ex)
                 {
-                    Message newAIMessage = new Message { Content = "Error occurre", IsAI = true };
+                    ResultTextBlock.Visibility = Visibility.Collapsed;
+                    ResultTextBlock.Text = $"";
+                    Message newAIMessage = new Message { Content = "Have error", IsAI = true, TimeMessage = DateTime.Now };
                     MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
                 }
                 finally
@@ -261,7 +268,13 @@ namespace Windows_Programming.View
             }
         }
 
-
+        //Delete Message
+        private async void DeleteHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            MyMessageChatViewModel.DeleteAllHistoryChat();
+            SendButton.IsEnabled = true;
+            ResultTextBlock.Visibility= Visibility.Collapsed;
+        }
         private void MessageTextBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine($"Key pressed: {e.Key}");
@@ -285,8 +298,21 @@ namespace Windows_Programming.View
             }
         }
 
-
-
+        //Menu flyout for available function
+        private void MenuFlyoutItem_ChangeUserInfor(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Change my information with the following details:\n\n-Fullname: \n-Address: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Fullname:") + "Fullname:".Length + 1, 0);
+        }
+        private void MenuFlyoutItem_AddBlog(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Create a travel blog for me with the following details:\n\n-Title: \n-Content: Automatically generate a 100-word travel article.\n-Image URL: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Title:") + "Title:".Length + 1, 0);
+        }
 
     }
 }

@@ -9,7 +9,31 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!-- Left Column - Logo and Titles -->
+        <StackPanel Grid.Column="0" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Spacing="20">
+            <Image x:Name="MyLogo" 
+                   Source="/Assets/mylogo.png" 
+                   Width="200" 
+                   Height="200"/>
+            <TextBlock Text="TRAVEL TRIP PLAN" 
+                       FontSize="32" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Login to continue your journey" 
+                       FontSize="18"
+                       Opacity="0.8"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+        <!-- Right Column - Login Form --> 
+        <StackPanel Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
         <TextBlock Text="LOGIN" FontSize="25" FontWeight="Bold" Margin="0,0,0,18" HorizontalAlignment="Center"/>
 
         <TextBox x:Name="EmailInputLogin_TextBox" 
@@ -59,7 +83,7 @@
             </Hyperlink>
         </TextBlock>
 
-        <TextBlock x:Name="NotificationLogin_TextBlock"
+            <TextBlock x:Name="NotificationLogin_TextBlock"
              Opacity="0"
              Visibility="Collapsed"
              Foreground="Red" 
@@ -69,6 +93,6 @@
              HorizontalAlignment="Center" 
              VerticalAlignment="Top" 
              Margin="0,40,0,0" />
-        
-    </StackPanel>
+        </StackPanel>
+    </Grid>
 </Page>

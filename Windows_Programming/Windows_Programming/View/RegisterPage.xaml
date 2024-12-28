@@ -8,8 +8,31 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!-- Left Column - Logo and Titles -->
+        <StackPanel Grid.Column="0" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Spacing="20">
+            <Image x:Name="MyLogo" 
+                   Source="/Assets/mylogo.png" 
+                   Width="200" 
+                   Height="200"/>
+            <TextBlock Text="TRAVEL TRIP PLAN" 
+                       FontSize="32" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Register to start your journey" 
+                       FontSize="18"
+                       Opacity="0.8"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+        <!-- Right Column - Register Form -->
+        <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
         <TextBlock Text="REGISTER" FontSize="25" FontWeight="Bold" Margin="0,0,0,18" HorizontalAlignment="Center"/>
 
         <TextBox x:Name="EmailInputRegister_TextBox" 
@@ -73,4 +96,5 @@
              VerticalAlignment="Top" 
              Margin="0,40,0,0" />
     </StackPanel>
+    </Grid>
 </Page>
