@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using System.Linq;
 using Windows_Programming.Model.GeminiService;
+using Windows_Programming.Database;
+using Windows_Programming.View;
 //=======================================================================================
 public class GeminiService
 {
@@ -48,7 +50,25 @@ public class GeminiService
             {
                 { "message", new RequestGemini.ParameterDefinition { Type = "string", Description = "The user's message" } }
             }
-        }
+        }, 
+         new RequestGemini.FunctionDefinition
+         {
+             Name = "ChangeFullname",
+             Description = "Change user fullname",
+             Parameters = new Dictionary<string, RequestGemini.ParameterDefinition>
+             {
+                 {"fullname", new RequestGemini.ParameterDefinition {Type = "string", Description = "User's fullname" } }
+             }
+         },
+         new RequestGemini.FunctionDefinition
+         {
+             Name = "ChangeAddress",
+             Description = "Change user address",
+             Parameters = new Dictionary<string, RequestGemini.ParameterDefinition>
+             {
+                 {"address", new RequestGemini.ParameterDefinition {Type = "string", Description = "User's address" } }
+             }
+         },
     };
 
     
@@ -153,17 +173,19 @@ public class GeminiService
             case "AddUser":
                 AddUser(functionCall.Parameters["firstname"], functionCall.Parameters["lastname"]);
                 return "Add user successfully";
-                break;
             case "DeleteUser":
                 DeleteUser(functionCall.Parameters["username"]);
                 return "Delete user successfully";
-                break;
+            case "ChangeFullname":
+                ChangeFullname(functionCall.Parameters["fullname"]);
+                return "Change fullname successfully";
+            case "ChangeAddress":
+                ChangeAddress(functionCall.Parameters["address"]);
+                return "Change address successfully";
             case "GeneralConversation":
                 return HandleGeneralConversation(functionCall.Parameters["message"]);
-                break;
             default:
                 return HandleGeneralConversation(functionCall.Parameters["message"]);
-                break;
         }
     }
 
@@ -181,6 +203,19 @@ public class GeminiService
         Console.WriteLine();
         System.Diagnostics.Debug.WriteLine($"===================---->Deleting user: {username}");
     }
+
+    private async void ChangeFullname(string fullname)
+    {
+        IDao dao = FirebaseServicesDAO.Instance;
+        await dao.UpdateFullName(fullname, MainWindow.MyAccount.Id);
+    }
+
+    private void ChangeAddress(string address)
+    {
+        IDao dao = FirebaseServicesDAO.Instance;
+        dao.UpdateAddress(address, MainWindow.MyAccount.Id);
+    }
+
     private void PrintABC()
     {
         System.Diagnostics.Debug.WriteLine("--------------->Print ABCD");
