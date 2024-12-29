@@ -211,7 +211,7 @@ namespace Windows_Programming.View
         private static MessagesChatViewModel _myMessagesChatViewModel;
         public MessagesChatViewModel MyMessageChatViewModel => _myMessagesChatViewModel;
 
-        //Send Message
+        // SendButton_Click Method
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
@@ -221,8 +221,6 @@ namespace Windows_Programming.View
                 MessageTextBox.Text = string.Empty;
                 MyMessageChatViewModel.AddNewMessageInHome(newMessage);
 
-                //Message newAIMessage = new Message { Content = "Loading", IsAI = true };
-                //MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
                 // Wait for UI to update
                 await Task.Delay(50);
 
@@ -230,8 +228,7 @@ namespace Windows_Programming.View
                 ChatScrollViewer.UpdateLayout();
                 ChatScrollViewer.ChangeView(null, double.MaxValue, null);
 
-
-                //Wait for chatbot
+                // Wait for chatbot
                 try
                 {
                     SendButton.IsEnabled = false;
@@ -244,12 +241,12 @@ namespace Windows_Programming.View
                     Message newAIMessage = new Message { Content = $"{response}", IsAI = true, TimeMessage = DateTime.Now };
                     MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
                     ResultTextBlock.Visibility = Visibility.Collapsed;
-                    ResultTextBlock.Text = $"";
+                    ResultTextBlock.Text = $""; // Clear the result text
                 }
                 catch (Exception ex)
                 {
                     ResultTextBlock.Visibility = Visibility.Collapsed;
-                    ResultTextBlock.Text = $"";
+                    ResultTextBlock.Text = $""; // Clear the result text
                     Message newAIMessage = new Message { Content = "Have error", IsAI = true, TimeMessage = DateTime.Now };
                     MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
                 }
@@ -257,7 +254,6 @@ namespace Windows_Programming.View
                 {
                     SendButton.IsEnabled = true;
                 }
-
 
                 // Wait for UI to update
                 await Task.Delay(50);
@@ -314,5 +310,22 @@ namespace Windows_Programming.View
             MessageTextBox.Select(MessageTextBox.Text.IndexOf("Title:") + "Title:".Length + 1, 0);
         }
 
+        private void MenuFlyoutItem_ChangeFullname(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Change my fullname:\n\n-Fullname: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Fullname:") + "Fullname:".Length + 1, 0);
+
+
+        }
+
+        private void MenuFlyoutItem_ChangeAddress(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Change my address:\n\n-Address: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Address:") + "Address:".Length + 1, 0);
+        }
     }
 }

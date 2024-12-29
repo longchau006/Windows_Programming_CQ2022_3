@@ -73,6 +73,8 @@
                             <MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyoutItem Text="Change user infor" Click="MenuFlyoutItem_ChangeUserInfor"/>
                                 <MenuFlyoutItem Text="Add Blog" Click="MenuFlyoutItem_AddBlog"/>
+                                <MenuFlyoutItem Text="Change Fullname" Click="MenuFlyoutItem_ChangeFullname"/>
+                                <MenuFlyoutItem Text="Change Address" Click="MenuFlyoutItem_ChangeAddress"/>
                             </MenuFlyout>
                         </Button.Flyout>
                         <SymbolIcon Symbol="More"/>
