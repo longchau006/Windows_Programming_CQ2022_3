@@ -25,6 +25,7 @@
                     <TextBlock Text="Or choose image from url:" Margin="0,8,0,0" />
                     <TextBox x:Name="ImageURL" Text="Enter image url" Width="200"/>
                     <Button x:Name="url" Content="Get Image" Click="GetImage_Click"/>
+                    <Button x:Name="changeImage" Content="Change Image" Click="ChangeImage_Click" Visibility="Collapsed"/>
                 </StackPanel>
                 <Button Content="Publish" HorizontalAlignment="Right" Width="150" Click="SubmitClick" Margin="0,10,70,0"/>
 

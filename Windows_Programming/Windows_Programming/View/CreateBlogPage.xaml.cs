@@ -206,14 +206,25 @@ namespace Windows_Programming.View
                 await dialog.ShowAsync();
                 return;
             }
-            url.Content = "Downloaded";
-            url.IsEnabled = false;
             // get folder Assets of current app
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
 
             StorageFile storageFile = await storageFolder.CreateFileAsync("image.jpg", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteBytesAsync(storageFile, imageBytes);
             imagePath = storageFile.Path;
+            url.Content = "Downloaded";
+            url.IsEnabled = false;
+            changeImage.Visibility = Visibility.Visible;
+        }
+
+        private void ChangeImage_Click(object sender, RoutedEventArgs e)
+        {
+            url.Content = "Get Image";
+            url.IsEnabled = true;
+            changeImage.Visibility = Visibility.Collapsed;
+            imagePath = null;
+            imageBytes = null;
+            ImageURL.Text = "Enter image url";
         }
     }
 }
