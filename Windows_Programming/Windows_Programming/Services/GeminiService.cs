@@ -13,6 +13,10 @@ using System.Linq;
 using Windows_Programming.Model.GeminiService;
 using Windows_Programming.Database;
 using Windows_Programming.View;
+using Windows_Programming.Model;
+using Windows_Programming.ViewModel;
+using iText.IO.Image;
+using Windows.Storage;
 //=======================================================================================
 public class GeminiService
 {
@@ -20,28 +24,9 @@ public class GeminiService
     private const string API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
     //====================================================Function Setup
-    
+
     private readonly List<RequestGemini.FunctionDefinition> _functionDefinitions = new()
     {
-        new RequestGemini.FunctionDefinition
-        {
-            Name = "AddUser",
-            Description = "Add a user to the database with their first and last name",
-            Parameters = new Dictionary<string, RequestGemini.ParameterDefinition>
-            {
-                { "firstname", new RequestGemini.ParameterDefinition { Type = "string", Description = "First name of the user" } },
-                { "lastname", new RequestGemini.ParameterDefinition { Type = "string", Description = "Last name of the user" } }
-            }
-        },
-        new RequestGemini.FunctionDefinition
-        {
-            Name = "DeleteUser",
-            Description = "Delete a user from the database by username",
-            Parameters = new Dictionary<string, RequestGemini.ParameterDefinition>
-            {
-                { "username", new RequestGemini.ParameterDefinition { Type = "string", Description = "Username to delete" } }
-            }
-        },
          new RequestGemini.FunctionDefinition
         {
             Name = "GeneralConversation",
@@ -50,7 +35,7 @@ public class GeminiService
             {
                 { "message", new RequestGemini.ParameterDefinition { Type = "string", Description = "The user's message" } }
             }
-        }, 
+        },
          new RequestGemini.FunctionDefinition
          {
              Name = "ChangeFullname",
@@ -69,6 +54,17 @@ public class GeminiService
                  {"address", new RequestGemini.ParameterDefinition {Type = "string", Description = "User's address" } }
              }
          },
+         new RequestGemini.FunctionDefinition
+         {
+             Name = "AddBlog",
+             Description = "Add a blog to the database",
+             Parameters = new Dictionary<string, RequestGemini.ParameterDefinition>
+             {
+                 {"title", new RequestGemini.ParameterDefinition {Type = "string", Description = "Title of the blog" } },
+                 {"content", new RequestGemini.ParameterDefinition {Type = "string", Description = "Automatically generate content with the number of words entered. Otherwise, the content is based on what the user enters" } },
+                 {"image", new RequestGemini.ParameterDefinition {Type = "string", Description = "Image of the blog" } }
+             }
+         }
     };
 
     
@@ -170,12 +166,6 @@ public class GeminiService
     {
         switch (functionCall.Function)
         {
-            case "AddUser":
-                AddUser(functionCall.Parameters["firstname"], functionCall.Parameters["lastname"]);
-                return "Add user successfully";
-            case "DeleteUser":
-                DeleteUser(functionCall.Parameters["username"]);
-                return "Delete user successfully";
             case "ChangeFullname":
                 ChangeFullname(functionCall.Parameters["fullname"]);
                 return "Change fullname successfully";
@@ -184,6 +174,9 @@ public class GeminiService
                 return "Change address successfully";
             case "GeneralConversation":
                 return HandleGeneralConversation(functionCall.Parameters["message"]);
+            case "AddBlog":
+                AddBlog(functionCall.Parameters["title"], functionCall.Parameters["content"], functionCall.Parameters["image"]);
+                return "Add blog successfully";
             default:
                 return HandleGeneralConversation(functionCall.Parameters["message"]);
         }
@@ -214,6 +207,26 @@ public class GeminiService
     {
         IDao dao = FirebaseServicesDAO.Instance;
         dao.UpdateAddress(address, MainWindow.MyAccount.Id);
+    }
+
+    private async void AddBlog(string title, string content, string image)
+    {
+        Blog blog = new Blog();
+        blog.Title = title;
+        blog.Content = content;
+        blog.PublishDate = DateTime.Now;
+        blog.Author = MainWindow.MyAccount.Id;
+
+        var httpClient = new System.Net.Http.HttpClient();
+        byte[] imageBytes = await httpClient.GetByteArrayAsync(image);// get folder Assets of current app
+        StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+
+        StorageFile storageFile = await storageFolder.CreateFileAsync("image.jpg", CreationCollisionOption.ReplaceExisting);
+        await FileIO.WriteBytesAsync(storageFile, imageBytes);
+        blog.Image = storageFile.Path;
+
+        BlogViewModel blogViewModel = new BlogViewModel();
+        await blogViewModel.AddBlog(blog);
     }
 
     private void PrintABC()

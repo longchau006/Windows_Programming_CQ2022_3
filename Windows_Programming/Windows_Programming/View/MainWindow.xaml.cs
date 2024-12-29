@@ -294,14 +294,7 @@ namespace Windows_Programming.View
             }
         }
 
-        //Menu flyout for available function
-        private void MenuFlyoutItem_ChangeUserInfor(object sender, RoutedEventArgs e)
-        {
-            MessageTextBox.Text = "Change my information with the following details:\n\n-Fullname: \n-Address: ";
-            //Set locate con tro chuot
-            MessageTextBox.Focus(FocusState.Programmatic);
-            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Fullname:") + "Fullname:".Length + 1, 0);
-        }
+        
         private void MenuFlyoutItem_AddBlog(object sender, RoutedEventArgs e)
         {
             MessageTextBox.Text = "Create a travel blog for me with the following details:\n\n-Title: \n-Content: Automatically generate a 100-word travel article.\n-Image URL: ";

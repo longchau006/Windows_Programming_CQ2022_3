@@ -73,7 +73,7 @@ namespace Windows_Programming.View
             };
             deleteDialog.PrimaryButtonClick += async (_sender, _e) =>
             {
-                viewModel.DeleteBlog(blog.Id);
+                await viewModel.DeleteBlog(blog.Id);
                 Frame.GoBack();
             };
             await deleteDialog.ShowAsync();
