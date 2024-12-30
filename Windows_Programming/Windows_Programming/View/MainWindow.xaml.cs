@@ -46,7 +46,6 @@ namespace Windows_Programming.View
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         private static Account myAccount=null;
 
-
         private bool isChatVisible = false;
         // Change the Messages property to ObservableCollection
 
@@ -320,5 +319,7 @@ namespace Windows_Programming.View
             MessageTextBox.Focus(FocusState.Programmatic);
             MessageTextBox.Select(MessageTextBox.Text.IndexOf("Address:") + "Address:".Length + 1, 0);
         }
+
+        
     }
 }

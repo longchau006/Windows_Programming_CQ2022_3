@@ -10,7 +10,7 @@
     Title="Trip Plan Application"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" Background="Transparent">
         <Grid.RenderTransform>
             <CompositeTransform x:Name="RootTransform" />
         </Grid.RenderTransform>
@@ -36,9 +36,9 @@
         <Button x:Name="ChatButton"
                 Click="ChatButton_Click"
                 Style="{StaticResource AccentButtonStyle}"
-                HorizontalAlignment="Right"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
-                Margin="0,0,20,20"
+                Margin="20,0,0,20"
                 Width="50"
                 Height="50"
                 CornerRadius="25">
@@ -49,9 +49,9 @@
         <Grid x:Name="ChatPanel"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             Width="360"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Left"
             VerticalAlignment="Stretch"
-            Margin="0,0,60,65"
+            Margin="100,20,0,65"
             Visibility="Collapsed"
             BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
             BorderThickness="1"
