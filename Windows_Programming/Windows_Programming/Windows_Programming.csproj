@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
     <PackageReference Include="FirebaseAuthentication.WinUI3" Version="4.1.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.68.0" />

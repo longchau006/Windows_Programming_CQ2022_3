@@ -90,13 +90,21 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button x:Name="AddATrip_Button"  Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationAddButtonClick">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Add" Foreground="Blue"/>
+                                <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
+                            </StackPanel>
+                        </Button>
 
-                    <Button x:Name="AddATrip_Button" Grid.Column="0" Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Click="OnNavigationAddButtonClick">
-                        <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="Add" Foreground="Blue"/>
-                            <TextBlock Text="Add a Plan" Margin="10,0,0,0" Foreground="Blue"/>
-                        </StackPanel>
-                    </Button>
+                        <Button x:Name="UploadATrip_Button"  Style="{StaticResource AccentButtonStyle}" Background="White" BorderBrush ="White"  Margin="10,0,0,0" VerticalAlignment="Center" Click="OnNavigationUploadButtonClick">
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Add" Foreground="Blue"/>
+                                <TextBlock Text="Upload Excel" Margin="10,0,0,0" Foreground="Blue"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
 
                     <StackPanel Spacing="20" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
                         <Button x:Name="FindATrip_Button" Background="White" BorderBrush ="White"  HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" >
