@@ -25,6 +25,10 @@ using Windows_Programming.Database;
 using System.Threading.Tasks;
 using Windows_Programming.Helpers;
 using System.Collections.ObjectModel;
+using Google.Protobuf;
+using Windows.UI.Core;
+using static Google.Rpc.Context.AttributeContext.Types;
+using Windows_Programming.Configs;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,11 +40,11 @@ namespace Windows_Programming.View
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        //ChatBot
+        private readonly GeminiService _geminiService;
         private static PlansInHomeViewModel _myPlansHomeViewModel;
         private static PlansInTrashCanViewModel _myPlansInTrashCanViewModel;
         private static Account myAccount=null;
-        private static MessagesChatViewModel _myMessagesChatViewModel;
-        public MessagesChatViewModel MyMessageChatViewModel =>_myMessagesChatViewModel;
 
         private bool isChatVisible = false;
         // Change the Messages property to ObservableCollection
@@ -51,6 +55,9 @@ namespace Windows_Programming.View
             // Initialize messages in constructor
             //Khoi tao user after go tu dang nhap hoac dang ki
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            _myMessagesChatViewModel = new MessagesChatViewModel();
+            _myMessagesChatViewModel.Init();
+            _geminiService = new GeminiService(EnvVariables.API_GEMINI_KEY);
             myAccount = new Account
             {
                 Id = -1,
@@ -88,8 +95,7 @@ namespace Windows_Programming.View
             _myPlansInTrashCanViewModel = new PlansInTrashCanViewModel();
             _myPlansInTrashCanViewModel.Init();
 
-            _myMessagesChatViewModel = new MessagesChatViewModel();
-            _myMessagesChatViewModel.Init();
+
 
 
             //contentNavigation.Navigate(typeof(HomePage));
@@ -193,17 +199,127 @@ namespace Windows_Programming.View
 
         //ChatBot:
 
-        // Add this to your MainWindow class
-        // Change from static to instance property
-
-
-
         private bool _isChatVisible = false;
 
+        //Hide/Display Chatbox
         private void ChatButton_Click(object sender, RoutedEventArgs e)
         {
             _isChatVisible = !_isChatVisible;
             ChatPanel.Visibility = _isChatVisible ? Visibility.Visible : Visibility.Collapsed;
         }
+        private static MessagesChatViewModel _myMessagesChatViewModel;
+        public MessagesChatViewModel MyMessageChatViewModel => _myMessagesChatViewModel;
+
+        // SendButton_Click Method
+        private async void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
+            {
+                String sendMessageText = MessageTextBox.Text;
+                Message newMessage = new Message { Content = MessageTextBox.Text, IsAI = false, TimeMessage = DateTime.Now };
+                MessageTextBox.Text = string.Empty;
+                MyMessageChatViewModel.AddNewMessageInHome(newMessage);
+
+                // Wait for UI to update
+                await Task.Delay(50);
+
+                // Scroll to bottom
+                ChatScrollViewer.UpdateLayout();
+                ChatScrollViewer.ChangeView(null, double.MaxValue, null);
+
+                // Wait for chatbot
+                try
+                {
+                    SendButton.IsEnabled = false;
+                    ResultTextBlock.Visibility = Visibility.Visible;
+                    ResultTextBlock.Text = "Processing...";
+
+                    string prompt = sendMessageText;
+                    string response = await _geminiService.ProcessPrompt(prompt);
+
+                    Message newAIMessage = new Message { Content = $"{response}", IsAI = true, TimeMessage = DateTime.Now };
+                    MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                    ResultTextBlock.Visibility = Visibility.Collapsed;
+                    ResultTextBlock.Text = $""; // Clear the result text
+                }
+                catch (Exception ex)
+                {
+                    ResultTextBlock.Visibility = Visibility.Collapsed;
+                    ResultTextBlock.Text = $""; // Clear the result text
+                    Message newAIMessage = new Message { Content = "Have error", IsAI = true, TimeMessage = DateTime.Now };
+                    MyMessageChatViewModel.AddNewMessageInHome(newAIMessage);
+                }
+                finally
+                {
+                    SendButton.IsEnabled = true;
+                }
+
+                // Wait for UI to update
+                await Task.Delay(50);
+
+                // Scroll to bottom
+                ChatScrollViewer.UpdateLayout();
+                ChatScrollViewer.ChangeView(null, double.MaxValue, null);
+            }
+        }
+
+        //Delete Message
+        private async void DeleteHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            MyMessageChatViewModel.DeleteAllHistoryChat();
+            SendButton.IsEnabled = true;
+            ResultTextBlock.Visibility= Visibility.Collapsed;
+        }
+        private void MessageTextBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine($"Key pressed: {e.Key}");
+
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                //System.Diagnostics.Debug.WriteLine("Enter detected");
+                bool isShiftPressed = (Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Shift) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
+
+                if (!isShiftPressed)
+                {
+                    //System.Diagnostics.Debug.WriteLine("No shift - sending message");
+                    e.Handled = true;
+                    SendButton_Click(sender, e);
+                    MessageTextBox.Text = string.Empty;
+                }
+                else
+                {
+                   // System.Diagnostics.Debug.WriteLine("Shift pressed - new line");
+                }
+            }
+        }
+
+        
+        private void MenuFlyoutItem_AddBlog(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Create a travel blog for me with the following details:\n\n-Title: \n-Content: Automatically generate a 100-word travel article.\n-Image URL: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Title:") + "Title:".Length + 1, 0);
+        }
+
+        private void MenuFlyoutItem_ChangeFullname(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Change my fullname:\n\n-Fullname: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Fullname:") + "Fullname:".Length + 1, 0);
+
+
+        }
+
+        private void MenuFlyoutItem_ChangeAddress(object sender, RoutedEventArgs e)
+        {
+            MessageTextBox.Text = "Change my address:\n\n-Address: ";
+            //Set locate con tro chuot
+            MessageTextBox.Focus(FocusState.Programmatic);
+            MessageTextBox.Select(MessageTextBox.Text.IndexOf("Address:") + "Address:".Length + 1, 0);
+        }
+
+        
     }
 }

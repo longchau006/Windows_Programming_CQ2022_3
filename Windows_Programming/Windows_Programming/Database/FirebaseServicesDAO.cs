@@ -736,12 +736,12 @@ namespace Windows_Programming.Database
             }
         }
 
-        public Task DeleteBlog(string id)
+        public async Task DeleteBlog(string id)
         {
             var docRef = firestoreDb.Collection("blogs").Document(id);
             var objectName = $"blogs/{id}";
-            storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);
-            return docRef.DeleteAsync();
+            await storageClient.DeleteObjectAsync("tripplandatabase-8fbf9.appspot.com", objectName);
+            await docRef.DeleteAsync();
         }
 
         public Task<bool> CheckOwnBlog(string id, int accountId)
@@ -899,5 +899,6 @@ namespace Windows_Programming.Database
 
 
         }
+        
     }
 }

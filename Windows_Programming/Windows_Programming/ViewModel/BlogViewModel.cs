@@ -73,10 +73,10 @@ namespace Windows_Programming.ViewModel
             await dao.UpdateBlog(blog);
         }
 
-        public void DeleteBlog(string id)
+        public async Task DeleteBlog(string id)
         {
             IDao dao = FirebaseServicesDAO.Instance;
-            dao.DeleteBlog(id);
+            await dao.DeleteBlog(id);
         }
 
         public void searchBlog(string keyword)
