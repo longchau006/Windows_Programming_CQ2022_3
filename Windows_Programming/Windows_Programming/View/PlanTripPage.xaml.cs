@@ -138,7 +138,6 @@ namespace Windows_Programming.View
         public void OnNavigationViewExcelButtonClick(object sender, RoutedEventArgs e)
         {
            
-            MyPlansHomeViewModel.SortActivitiesByStartDate(PlanTripViewModel);
             if (PlanTripViewModel == null)
             {
                 // Hiển thị thông báo nếu không có kế hoạch nào được chọn
@@ -156,7 +155,7 @@ namespace Windows_Programming.View
             // Tạo workbook Excel
             using (var workbook = new XLWorkbook())
             {
-                var worksheet = workbook.AddWorksheet("Plan " + PlanTripViewModel.Name);
+                var worksheet = workbook.AddWorksheet("Plan " + (PlanTripViewModel.Name.Length <= 20 ? PlanTripViewModel.Name : PlanTripViewModel.Name.Substring(0, 20)));
 
                 // Ghi dữ liệu kế hoạch
                 worksheet.Cell(1, 1).Value = "NAME";
@@ -179,50 +178,53 @@ namespace Windows_Programming.View
                 worksheet.Cell(6, 5).Value = "TYPE";
 
                 int i = 7;
-
-                foreach (var activity in PlanTripViewModel.Activities)
+                if (PlanTripViewModel.Activities != null && PlanTripViewModel.Activities.Any())
                 {
-                    worksheet.Cell(i, 1).Value = activity.Name;
-                    worksheet.Cell(i, 2).Value = (activity.StartDate.HasValue ? activity.StartDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A") +
-                                                 " - " +
-                                                 (activity.EndDate.HasValue ? activity.EndDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A");
+                    MyPlansHomeViewModel.SortActivitiesByStartDate(PlanTripViewModel);
+                    foreach (var activity in PlanTripViewModel.Activities)
+                    {
+                        worksheet.Cell(i, 1).Value = activity.Name;
+                        worksheet.Cell(i, 2).Value = (activity.StartDate.HasValue ? activity.StartDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A") +
+                                                     " - " +
+                                                     (activity.EndDate.HasValue ? activity.EndDate.Value.ToString("dd/MM/yyyy hh:mm:ss tt") : "N/A");
 
-                    if (activity is Model.Transport transport)
-                    {
-                        worksheet.Cell(i, 3).Value = "Travel by " +
-                                                     transport.Vehicle +
-                                                     " from " +
-                                                     transport.StartLocation +
-                                                     " to " +
-                                                     transport.EndLocation;
+                        if (activity is Model.Transport transport)
+                        {
+                            worksheet.Cell(i, 3).Value = "Travel by " +
+                                                         transport.Vehicle +
+                                                         " from " +
+                                                         transport.StartLocation +
+                                                         " to " +
+                                                         transport.EndLocation;
+                        }
+                        else if (activity is Model.Lodging lodging)
+                        {
+                            worksheet.Cell(i, 3).Value = "Stay " +
+                                                         lodging.RoomInfo +
+                                                         " - " +
+                                                         lodging.Address;
+                        }
+                        else if (activity is Model.Extend extend)
+                        {
+                            worksheet.Cell(i, 3).Value = extend.NameMore +
+                                                         extend.Venue +
+                                                         " - " +
+                                                         extend.Address;
+                        }
+                        else if (activity is Model.Activity)
+                        {
+                            worksheet.Cell(i, 3).Value = "Discover" +
+                                                         activity.Venue +
+                                                         " - " +
+                                                         activity.Address;
+                        }
+                        worksheet.Cell(i, 4).Value = activity.Description;
+                        worksheet.Cell(i, 5).Value = activity.Type;
+                        i++;
                     }
-                    else if (activity is Model.Lodging lodging)
-                    {
-                        worksheet.Cell(i, 3).Value = "Stay " +
-                                                     lodging.RoomInfo +
-                                                     " - " +
-                                                     lodging.Address;
-                    }
-                    else if (activity is Model.Extend extend)
-                    {
-                        worksheet.Cell(i, 3).Value = extend.NameMore +
-                                                     extend.Venue +
-                                                     " - " +
-                                                     extend.Address;
-                    }
-                    else if (activity is Model.Activity)
-                    {
-                        worksheet.Cell(i, 3).Value = "Discover" +
-                                                     activity.Venue +
-                                                     " - " +
-                                                     activity.Address;
-                    }
-                    worksheet.Cell(i, 4).Value = activity.Description;
-                    worksheet.Cell(i, 5).Value = activity.Type;
-                    i++;
                 }
                 // Lưu workbook vào file tạm
-                string tempFilePath = Path.Combine(Path.GetTempPath(), "Plan " + PlanTripViewModel.Name + ".xlsx");
+                string tempFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "Plan " + (PlanTripViewModel.Name.Length <= 20 ? PlanTripViewModel.Name : PlanTripViewModel.Name.Substring(0, 20)) + ".xlsx");
                 workbook.SaveAs(tempFilePath);
 
                 // Mở file Excel
