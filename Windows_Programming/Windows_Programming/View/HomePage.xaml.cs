@@ -94,7 +94,7 @@ namespace Windows_Programming.View
         }
         private async void OnNavigationDeleteTripClick(object sender, RoutedEventArgs e)
         {
-            var selectedPlan = (sender as MenuFlyoutItem).CommandParameter as Plan;
+            var selectedPlan = (sender as Button).DataContext as Plan;
             if (selectedPlan != null)
             {
                 // Gọi phương thức xóa kế hoạch từ PlansInHomeViewModel
@@ -135,18 +135,18 @@ namespace Windows_Programming.View
 
         private async void ExportPDF_Click(object sender, RoutedEventArgs e)
         {
+            var selectedPlan = (sender as Button).DataContext as Plan;
             var savePicker = new Windows.Storage.Pickers.FileSavePicker();
             Window w = new();
             var hWnd = WindowNative.GetWindowHandle(w);
             InitializeWithWindow.Initialize(savePicker, hWnd);
             savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             savePicker.FileTypeChoices.Add("PDF", new List<string>() { ".pdf" });
-            savePicker.SuggestedFileName = "TravelPlan";
+            savePicker.SuggestedFileName = "Plan " + (selectedPlan.Name.Length <= 20 ? selectedPlan.Name : selectedPlan.Name.Substring(0, 20));
             Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
             w.Close();
             if (file != null)
             {
-                var selectedPlan = (sender as Button).DataContext as Plan;
                 CreateLoadingDialog();
                 var loadingTask = loadingDialog.ShowAsync();
                 await ExportPlanToPdfAsync(selectedPlan, file.Path);

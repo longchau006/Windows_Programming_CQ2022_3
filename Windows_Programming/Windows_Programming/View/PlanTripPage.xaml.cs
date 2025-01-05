@@ -157,7 +157,7 @@ namespace Windows_Programming.View
             InitializeWithWindow.Initialize(savePicker, hWnd);
             savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             savePicker.FileTypeChoices.Add("PDF", new List<string>() { ".pdf" });
-            savePicker.SuggestedFileName = "TravelPlan";
+            savePicker.SuggestedFileName = "Plan " + (PlanTripViewModel.Name.Length <= 20 ? PlanTripViewModel.Name : PlanTripViewModel.Name.Substring(0, 20));
             Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
             w.Close();
             if (file != null)
@@ -339,7 +339,6 @@ namespace Windows_Programming.View
                 worksheet.Cell(6, 2).Value = "TIME";
                 worksheet.Cell(6, 3).Value = "ACTIVITY";
                 worksheet.Cell(6, 4).Value = "DESCRIPTION";
-                worksheet.Cell(6, 5).Value = "TYPE";
 
                 int i = 7;
                 if (PlanTripViewModel.Activities != null && PlanTripViewModel.Activities.Any())
@@ -382,8 +381,7 @@ namespace Windows_Programming.View
                                                          " - " +
                                                          activity.Address;
                         }
-                        worksheet.Cell(i, 4).Value = activity.Description;
-                        worksheet.Cell(i, 5).Value = activity.Type;
+                        worksheet.Cell(i, 4).Value = activity.Description;  
                         i++;
                     }
                 }

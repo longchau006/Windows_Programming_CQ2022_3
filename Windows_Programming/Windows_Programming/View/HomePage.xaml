@@ -35,7 +35,7 @@
                         </TextBlock>
 
                         <StackPanel Orientation="Horizontal" Spacing="20">
-                            <Button x:Name="ViewExcel_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                            <Button x:Name="ViewExcel_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" Click ="OnNavigationViewExcelButtonClick">
                                 <StackPanel Orientation="Horizontal">
                                     <SymbolIcon Symbol="Link" />
                                     <TextBlock Text="View Excel" Margin="10,0,0,0"/>
@@ -56,17 +56,11 @@
                                     <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="MoreOptions_Button" BorderBrush ="White" Foreground="Blue">
+                            <Button x:Name="DeleteTrip_Button" BorderBrush ="White" Foreground="Blue" DataContext="{x:Bind}" Click="OnNavigationDeleteTripClick">
                                 <StackPanel Orientation="Horizontal">
-                                    <SymbolIcon Symbol="More" />
-                                    <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                    <SymbolIcon Symbol="Delete" />
+                                    <TextBlock Text="Delete" Margin="10,0,0,0"/>
                                 </StackPanel>
-                                <Button.Flyout >
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem x:Name="PrintTrip_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
-                                        <MenuFlyoutItem x:Name="DeleteTrip_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" CommandParameter="{x:Bind}" Click="OnNavigationDeleteTripClick"/>
-                                    </MenuFlyout>
-                                </Button.Flyout>
                             </Button>
                         </StackPanel>
                     </StackPanel>

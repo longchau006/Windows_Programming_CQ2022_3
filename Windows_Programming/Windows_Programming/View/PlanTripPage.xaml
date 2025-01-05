@@ -287,7 +287,7 @@
                         </TextBlock>
 
                         <StackPanel Orientation="Horizontal" Spacing="20">
-                            <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" >
+                            <Button x:Name="ViewExcelAlone_Button" BorderBrush ="White" Foreground="Blue" FontSize="12" Click ="OnNavigationViewExcelButtonClick">
                                 <StackPanel Orientation="Horizontal">
                                     <SymbolIcon Symbol="Link" />
                                     <TextBlock Text="View Excel" Margin="10,0,0,0"/>
@@ -308,17 +308,11 @@
                                     <TextBlock Text="Edit_Trip_Info" Margin="10,0,0,0"/>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="MoreOptionsAlone_Button" BorderBrush ="White" Foreground="Blue">
+                            <Button x:Name="DeleteTripAlone_Button" BorderBrush ="White" Foreground="Blue"  Click="OnNavigationDeleteTripClick">
                                 <StackPanel Orientation="Horizontal">
-                                    <SymbolIcon Symbol="More" />
-                                    <TextBlock Text="More_Options" Margin="10,0,0,5"/>
+                                    <SymbolIcon Symbol="Delete" />
+                                    <TextBlock Text="Delete" Margin="10,0,0,0"/>
                                 </StackPanel>
-                                <Button.Flyout >
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem x:Name="PrintTripAlone_MenuFlyoutItem" Text="Print Trip" Foreground="Blue"  />
-                                        <MenuFlyoutItem x:Name="DeleteTripAlone_MenuFlyoutItem" Text="Delete Trip" Foreground="Blue" Click="OnNavigationDeleteTripClick"/>
-                                    </MenuFlyout>
-                                </Button.Flyout>
                             </Button>
                         </StackPanel>
                     </StackPanel>
