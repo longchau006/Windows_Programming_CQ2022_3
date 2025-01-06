@@ -1,9 +1,7 @@
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Windows_Programming.Model;
-using Windows_Programming.ViewModel;
 
 namespace Windows_Programming.View
 {

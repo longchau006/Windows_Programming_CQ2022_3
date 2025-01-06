@@ -11,17 +11,10 @@ using Google.Cloud.Storage.V1;
 using Windows_Programming.Model;
 using Windows_Programming.Configs;
 using Windows_Programming.Helpers;
-using System.Diagnostics;
-using Windows_Programming.View;
-using Microsoft.Windows.Storage;
-using Windows.Storage;
 using ApplicationData = Windows.Storage.ApplicationData;
 using ApplicationDataContainer = Windows.Storage.ApplicationDataContainer;
-using Google.Protobuf.WellKnownTypes;
-using System.Threading;
 using Timestamp = Google.Cloud.Firestore.Timestamp;
 using System.Net.Http;
-using System.Buffers.Text;
 using System.Linq;
 
 

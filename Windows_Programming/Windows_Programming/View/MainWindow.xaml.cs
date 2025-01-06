@@ -1,33 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows_Programming.ViewModel;
 using Windows_Programming.Model;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System.Security.Cryptography;
 using Windows.Storage;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Text;
-using Windows_Programming.Database;
 using System.Threading.Tasks;
-using Windows_Programming.Helpers;
-using System.Collections.ObjectModel;
-using Google.Protobuf;
-using Windows.UI.Core;
-using static Google.Rpc.Context.AttributeContext.Types;
 using Windows_Programming.Configs;
 
 // To learn more about WinUI, the WinUI project structure,

@@ -1,15 +1,5 @@
-﻿using Google.Cloud.Firestore.V1;
-using Google.Protobuf.WellKnownTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.Devices.Sensors;
 using Windows_Programming.Model;
 
 namespace Windows_Programming.Helpers

@@ -7,7 +7,6 @@ using System;
 using System.Text;
 using Windows_Programming.Database;
 using System.Threading.Tasks;
-using Firebase.Auth;
 using Windows_Programming.Model;
 using Windows_Programming.Helpers;
 

@@ -2,12 +2,8 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using GenerativeAI.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using System.Linq;
 using Windows_Programming.Model.GeminiService;
@@ -15,7 +11,6 @@ using Windows_Programming.Database;
 using Windows_Programming.View;
 using Windows_Programming.Model;
 using Windows_Programming.ViewModel;
-using iText.IO.Image;
 using Windows.Storage;
 //=======================================================================================
 public class GeminiService
@@ -185,18 +180,6 @@ public class GeminiService
 
 
     //All Function Demo
-    private void AddUser(string firstname, string lastname)
-    {
-        System.Diagnostics.Debug.WriteLine("--------------->Adding usser");
-        System.Diagnostics.Debug.WriteLine($"===================---->Add user: {firstname} ");
-    }
-
-    private void DeleteUser(string username)
-    {
-        Console.WriteLine();
-        System.Diagnostics.Debug.WriteLine($"===================---->Deleting user: {username}");
-    }
-
     private async void ChangeFullname(string fullname)
     {
         IDao dao = FirebaseServicesDAO.Instance;

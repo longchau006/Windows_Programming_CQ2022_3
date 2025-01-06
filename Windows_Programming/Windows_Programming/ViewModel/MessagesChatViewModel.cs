@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows_Programming.Database;
 using Windows_Programming.Model;
-using Windows_Programming.View;
 
 namespace Windows_Programming.ViewModel
 {

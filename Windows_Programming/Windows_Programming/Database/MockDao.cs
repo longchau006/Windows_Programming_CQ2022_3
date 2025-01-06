@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows_Programming.Model;
-using Windows_Programming.Database;
-using System.Reflection.Metadata;
-using System.Security.Principal;
 using System.IO;
 
 namespace Windows_Programming.Database

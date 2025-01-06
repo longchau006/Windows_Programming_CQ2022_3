@@ -1,12 +1,9 @@
-﻿using Firebase.Auth.Providers;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows_Programming.Database;
 using Windows_Programming.Model;
