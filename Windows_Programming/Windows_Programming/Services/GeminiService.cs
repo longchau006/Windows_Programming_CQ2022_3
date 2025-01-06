@@ -82,28 +82,28 @@ public class GeminiService
         {
             contents = new[]
             {
-            new
-            {
-                parts = new[]
+                new
                 {
-                    new
+                    parts = new[]
                     {
-                        text = $@"
-                        You are an AI assistant that handles both specific functions and general queries.
-                        Available functions: {functionsJson}
+                        new
+                        {
+                            text = $@"
+                            You are an AI assistant that handles both specific functions and general queries.
+                            Available functions: {functionsJson}
 
-                        User request: {prompt}
+                            User request: {prompt}
 
-                        If the request matches any defined function in the available functions list, use that function.
-                        For all other requests, provide a detailed, informative response using GeneralConversation.
+                            If the request matches any defined function in the available functions list, use that function.
+                            For all other requests, provide a detailed, informative response using GeneralConversation.
 
-                        Respond ONLY with a JSON object containing:
-                        {{
-                            ""function"": ""function_name"",
-                            ""parameters"": {{parameter_values}}
-                        }}
+                            Respond ONLY with a JSON object containing:
+                            {{
+                                ""function"": ""function_name"",
+                                ""parameters"": {{parameter_values}}
+                            }}
 
-                        For general queries, ensure the response is comprehensive and informative."
+                            For general queries, ensure the response is comprehensive and informative."
                         }
                     }
                 }
@@ -114,7 +114,6 @@ public class GeminiService
         var responseContent = await response.Content.ReadAsStringAsync();
 
         System.Diagnostics.Debug.WriteLine($"--------------->API Response: {responseContent}");
-
 
         try
         {
@@ -133,15 +132,13 @@ public class GeminiService
             System.Diagnostics.Debug.WriteLine($"--------------->Parsed Function: {functionCall.Function}");
             System.Diagnostics.Debug.WriteLine($"--------------->Parameters: {string.Join(", ", functionCall.Parameters.Select(p => $"{p.Key}={p.Value}"))}");
 
-            return ExecuteFunction(functionCall);
+            return await ExecuteFunction(functionCall);
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"--------------->Error: {ex.Message}");
             return $"Error processing response: {ex.Message}";
         }
-
-
     }
 
     //Detach function name and parameter of function
@@ -157,21 +154,18 @@ public class GeminiService
 
 
     //Do function and return result to MainWindow.cs
-    private String ExecuteFunction(FunctionCallResponse functionCall)
+    private async Task<string> ExecuteFunction(FunctionCallResponse functionCall)
     {
         switch (functionCall.Function)
         {
             case "ChangeFullname":
-                ChangeFullname(functionCall.Parameters["fullname"]);
-                return "Change fullname successfully";
+                return await ChangeFullname(functionCall.Parameters["fullname"]);
             case "ChangeAddress":
-                ChangeAddress(functionCall.Parameters["address"]);
-                return "Change address successfully";
+                return await ChangeAddress(functionCall.Parameters["address"]);
             case "GeneralConversation":
                 return HandleGeneralConversation(functionCall.Parameters["message"]);
             case "AddBlog":
-                AddBlog(functionCall.Parameters["title"], functionCall.Parameters["content"], functionCall.Parameters["image"]);
-                return "Add blog successfully";
+                return await AddBlog(functionCall.Parameters["title"], functionCall.Parameters["content"], functionCall.Parameters["image"]);
             default:
                 return HandleGeneralConversation(functionCall.Parameters["message"]);
         }
@@ -180,20 +174,34 @@ public class GeminiService
 
 
     //All Function Demo
-    private async void ChangeFullname(string fullname)
+    private async Task<string> ChangeFullname(string fullname)
     {
+        if (string.IsNullOrWhiteSpace(fullname))
+        {
+            return "Fullname cannot be empty";
+        }
         IDao dao = FirebaseServicesDAO.Instance;
         await dao.UpdateFullName(fullname, MainWindow.MyAccount.Id);
+        return "Change fullname successfully";
     }
 
-    private void ChangeAddress(string address)
+    private async Task<string> ChangeAddress(string address)
     {
+        if(string.IsNullOrWhiteSpace(address))
+        {
+            return "Address cannot be empty";
+        }
         IDao dao = FirebaseServicesDAO.Instance;
-        dao.UpdateAddress(address, MainWindow.MyAccount.Id);
+        await dao.UpdateAddress(address, MainWindow.MyAccount.Id);
+        return "Change address successfully";
     }
 
-    private async void AddBlog(string title, string content, string image)
+    private async Task<string> AddBlog(string title, string content, string image)
     {
+        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(content) || string.IsNullOrWhiteSpace(image))
+        {
+            return "Title, content and image cannot be empty";
+        }
         Blog blog = new Blog();
         blog.Title = title;
         blog.Content = content;
@@ -210,6 +218,7 @@ public class GeminiService
 
         BlogViewModel blogViewModel = new BlogViewModel();
         await blogViewModel.AddBlog(blog);
+        return "Add blog successfully";
     }
 
     private void PrintABC()
